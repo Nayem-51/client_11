@@ -1,5 +1,5 @@
-import React from 'react'
-import './Pages.css'
+import React from "react";
+import "./Pages.css";
 
 const Profile = () => {
   return (
@@ -7,7 +7,7 @@ const Profile = () => {
       <h1>My Profile</h1>
       <p>Profile page content coming soon...</p>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

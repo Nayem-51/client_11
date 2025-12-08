@@ -1,5 +1,5 @@
-import React from 'react'
-import './Pages.css'
+import React from "react";
+import "./Pages.css";
 
 const NotFound = () => {
   return (
@@ -8,10 +8,12 @@ const NotFound = () => {
         <h1>404</h1>
         <h2>Page Not Found</h2>
         <p>The page you are looking for does not exist.</p>
-        <a href="/" className="btn btn-primary">Go Home</a>
+        <a href="/" className="btn btn-primary">
+          Go Home
+        </a>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NotFound
+export default NotFound;

@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../../hooks/useAuth'
-import './Header.css'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import "./Header.css";
 
 const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth()
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const { isAuthenticated, user, logout } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen)
-  }
+    setDropdownOpen(!dropdownOpen);
+  };
 
   const handleLogout = () => {
-    logout()
-    setDropdownOpen(false)
-  }
+    logout();
+    setDropdownOpen(false);
+  };
 
   return (
     <header className="header">
@@ -25,14 +25,24 @@ const Header = () => {
         </Link>
 
         <nav className="navbar">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/lessons" className="nav-link">Public Lessons</Link>
+          <Link to="/" className="nav-link">
+            Home
+          </Link>
+          <Link to="/lessons" className="nav-link">
+            Public Lessons
+          </Link>
 
           {isAuthenticated && (
             <>
-              <Link to="/dashboard/add-lesson" className="nav-link">Add Lesson</Link>
-              <Link to="/dashboard/my-lessons" className="nav-link">My Lessons</Link>
-              <Link to="/pricing" className="nav-link">Pricing/Upgrade</Link>
+              <Link to="/dashboard/add-lesson" className="nav-link">
+                Add Lesson
+              </Link>
+              <Link to="/dashboard/my-lessons" className="nav-link">
+                My Lessons
+              </Link>
+              <Link to="/pricing" className="nav-link">
+                Pricing/Upgrade
+              </Link>
             </>
           )}
         </nav>
@@ -40,20 +50,21 @@ const Header = () => {
         <div className="header-right">
           {!isAuthenticated ? (
             <div className="auth-buttons">
-              <Link to="/login" className="btn btn-login">Login</Link>
-              <Link to="/register" className="btn btn-signup">Sign Up</Link>
+              <Link to="/login" className="btn btn-login">
+                Login
+              </Link>
+              <Link to="/register" className="btn btn-signup">
+                Sign Up
+              </Link>
             </div>
           ) : (
             <div className="user-dropdown">
-              <button
-                className="avatar-btn"
-                onClick={toggleDropdown}
-              >
+              <button className="avatar-btn" onClick={toggleDropdown}>
                 <img
-                  src={user?.photoURL || '/default-avatar.png'}
+                  src={user?.photoURL || "/default-avatar.png"}
                   alt={user?.name}
                   className="avatar-img"
-                  onError={(e) => e.target.src = '/default-avatar.png'}
+                  onError={(e) => (e.target.src = "/default-avatar.png")}
                 />
               </button>
 
@@ -92,7 +103,7 @@ const Header = () => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

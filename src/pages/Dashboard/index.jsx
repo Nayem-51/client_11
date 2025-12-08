@@ -1,5 +1,5 @@
-import React from 'react'
-import './Pages.css'
+import React from "react";
+import "./Pages.css";
 
 const Dashboard = () => {
   return (
@@ -7,7 +7,7 @@ const Dashboard = () => {
       <h1>My Dashboard</h1>
       <p>Dashboard page content coming soon...</p>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

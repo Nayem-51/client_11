@@ -1,5 +1,5 @@
-import React from 'react'
-import '../Pages.css'
+import React from "react";
+import "../Pages.css";
 
 const AdminPanel = () => {
   return (
@@ -7,7 +7,7 @@ const AdminPanel = () => {
       <h1>Admin Panel</h1>
       <p>Admin panel content coming soon...</p>
     </div>
-  )
-}
+  );
+};
 
-export default AdminPanel
+export default AdminPanel;

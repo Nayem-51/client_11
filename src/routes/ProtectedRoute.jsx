@@ -1,45 +1,45 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-page">Loading...</div>
+    return <div className="loading-page">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
-  return children
-}
+  return children;
+};
 
 export const AdminRoute = ({ children }) => {
-  const { isAuthenticated, user, loading } = useAuth()
+  const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-page">Loading...</div>
+    return <div className="loading-page">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
-  if (user?.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />
+  if (user?.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
   }
 
-  return children
-}
+  return children;
+};
 
 export const PublicRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/dashboard" replace />;
   }
 
-  return children
-}
+  return children;
+};

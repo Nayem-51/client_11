@@ -1,5 +1,5 @@
-import React from 'react'
-import '../Pages.css'
+import React from "react";
+import "../Pages.css";
 
 const MyFavorites = () => {
   return (
@@ -7,7 +7,7 @@ const MyFavorites = () => {
       <h1>My Favorites</h1>
       <p>My favorites page content coming soon...</p>
     </div>
-  )
-}
+  );
+};
 
-export default MyFavorites
+export default MyFavorites;

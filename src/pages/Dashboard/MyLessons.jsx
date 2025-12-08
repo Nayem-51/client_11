@@ -1,5 +1,5 @@
-import React from 'react'
-import '../Pages.css'
+import React from "react";
+import "../Pages.css";
 
 const MyLessons = () => {
   return (
@@ -7,7 +7,7 @@ const MyLessons = () => {
       <h1>My Lessons</h1>
       <p>My lessons page content coming soon...</p>
     </div>
-  )
-}
+  );
+};
 
-export default MyLessons
+export default MyLessons;

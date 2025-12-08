@@ -1,10 +1,10 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import './Pages.css'
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import "./Pages.css";
 
 const Home = () => {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="page home-page">
@@ -13,9 +13,13 @@ const Home = () => {
           <h1>Welcome to Lessons App</h1>
           <p>Learn and share knowledge with our community</p>
           <div className="cta-buttons">
-            <Link to="/lessons" className="btn btn-primary">Browse Lessons</Link>
+            <Link to="/lessons" className="btn btn-primary">
+              Browse Lessons
+            </Link>
             {!isAuthenticated && (
-              <Link to="/register" className="btn btn-secondary">Get Started</Link>
+              <Link to="/register" className="btn btn-secondary">
+                Get Started
+              </Link>
             )}
           </div>
         </div>
@@ -42,7 +46,7 @@ const Home = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

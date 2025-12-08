@@ -65,22 +65,22 @@ client_11/
 ## Features
 
 ### Layout Structure
-- **Header/Navbar**: 
+
+- **Header/Navbar**:
   - Navigation links (Home, Public Lessons, Add Lesson, My Lessons, Pricing/Upgrade)
   - Conditional Login/Sign Up buttons for unauthenticated users
   - User avatar dropdown with Profile, Dashboard, and Logout options for authenticated users
-  
-- **Sidebar**: 
+- **Sidebar**:
   - Visible only on desktop (1024px+)
   - Shows user profile and navigation for authenticated users
-  
-- **Footer**: 
+- **Footer**:
   - Logo, website name, and description
   - Quick links and legal information
   - Social media links
   - Footer appears on all pages except 404
 
 ### Authentication
+
 - Login & Registration pages
 - Protected routes for authenticated users
 - Admin-only routes
@@ -88,16 +88,19 @@ client_11/
 - Token management with localStorage
 
 ### Providers
+
 - **AuthContext**: Manages user authentication state
 - **ThemeContext**: Manages light/dark theme
 
 ### Hooks
+
 - `useAuth()`: Access authentication state
 - `useTheme()`: Access theme settings
 - `useFetch()`: Data fetching utility
 - `useProtectedRoute()`: Protect routes from unauthorized access
 
 ### Routes
+
 - `/` - Home page
 - `/lessons` - Public lessons
 - `/lessons/:id` - Lesson details
@@ -143,12 +146,14 @@ VITE_API_URL=http://localhost:3000/api
 ## Components
 
 ### Header Component
+
 - Displays navigation links
 - Shows Login/Sign Up buttons for unauthenticated users
 - Displays user avatar dropdown for authenticated users
 - Responsive design with mobile-first approach
 
 ### Footer Component
+
 - Contains company information
 - Quick navigation links
 - Legal links (Terms, Privacy, Cookies)
@@ -156,6 +161,7 @@ VITE_API_URL=http://localhost:3000/api
 - Responsive grid layout
 
 ### Layout Component
+
 - Wraps all pages except 404
 - Includes Header, Sidebar, and Footer
 - Main content area for page content

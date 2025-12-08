@@ -1,23 +1,23 @@
-import { useState, useCallback } from 'react'
-import { apiClient } from '../api/apiClient'
+import { useState, useCallback } from "react";
+import { apiClient } from "../api/apiClient";
 
 export const useFetch = (url, options = {}) => {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const response = await apiClient.get(url, options)
-      setData(response.data)
+      const response = await apiClient.get(url, options);
+      setData(response.data);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [url, options])
+  }, [url, options]);
 
-  return { data, loading, error, fetchData }
-}
+  return { data, loading, error, fetchData };
+};
