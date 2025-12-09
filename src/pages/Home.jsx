@@ -11,7 +11,7 @@ const HERO_SLIDES = [
       "Collect real-world insights from people who turned setbacks into breakthroughs.",
     cta: { label: "Explore lessons", to: "/lessons" },
     accent: "#7c3aed",
-    badge: "Community"
+    badge: "Community",
   },
   {
     title: "Share your story, mentor others",
@@ -19,7 +19,7 @@ const HERO_SLIDES = [
       "Publish your lived experiences so others can avoid pitfalls and grow faster.",
     cta: { label: "Start teaching", to: "/dashboard" },
     accent: "#2563eb",
-    badge: "Teach"
+    badge: "Teach",
   },
   {
     title: "Grow a habit of learning from life",
@@ -27,8 +27,8 @@ const HERO_SLIDES = [
       "Save the lessons that resonate, revisit them weekly, and apply them intentionally.",
     cta: { label: "Save favorites", to: "/lessons" },
     accent: "#ea580c",
-    badge: "Habits"
-  }
+    badge: "Habits",
+  },
 ];
 
 const normalizeLessons = (payload) => {
@@ -39,7 +39,8 @@ const normalizeLessons = (payload) => {
 
 const deriveFeatured = (lessons) => {
   const featured = lessons.filter(
-    (lesson) => lesson.isFeatured || lesson.featured || lesson.status === "featured"
+    (lesson) =>
+      lesson.isFeatured || lesson.featured || lesson.status === "featured"
   );
 
   const pool = featured.length ? featured : lessons;
@@ -60,7 +61,7 @@ const deriveTopContributors = (lessons) => {
         name: instructor,
         avatar: lesson.instructor?.photoURL || null,
         lessons: 0,
-        highlights: lesson.category || "Life Lesson"
+        highlights: lesson.category || "Life Lesson",
       };
     }
 
@@ -82,14 +83,14 @@ const deriveMostSaved = (lessons) => {
       lesson.saves ??
       (Array.isArray(lesson.savedBy) ? lesson.savedBy.length : 0) ??
       (Array.isArray(lesson.favorites) ? lesson.favorites.length : 0) ??
-      (Array.isArray(lesson.enrolledStudents) ? lesson.enrolledStudents.length : 0);
+      (Array.isArray(lesson.enrolledStudents)
+        ? lesson.enrolledStudents.length
+        : 0);
 
     return { ...lesson, saves: saves || 0 };
   });
 
-  return withSaves
-    .sort((a, b) => (b.saves || 0) - (a.saves || 0))
-    .slice(0, 4);
+  return withSaves.sort((a, b) => (b.saves || 0) - (a.saves || 0)).slice(0, 4);
 };
 
 const Home = () => {
@@ -127,7 +128,9 @@ const Home = () => {
         setMostSavedLessons(deriveMostSaved(lessons));
       } catch (err) {
         if (!isMounted) return;
-        setError("Unable to load the latest lessons right now. Please try again shortly.");
+        setError(
+          "Unable to load the latest lessons right now. Please try again shortly."
+        );
         setFeaturedLessons([]);
         setTopContributors([]);
         setMostSavedLessons([]);
@@ -144,7 +147,9 @@ const Home = () => {
   }, []);
 
   const handlePrev = () => {
-    setActiveSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setActiveSlide(
+      (prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length
+    );
   };
 
   const handleNext = () => {
@@ -158,9 +163,11 @@ const Home = () => {
           {HERO_SLIDES.map((slide, index) => (
             <article
               key={slide.title}
-              className={`hero-slide ${index === activeSlide ? "is-active" : ""}`}
+              className={`hero-slide ${
+                index === activeSlide ? "is-active" : ""
+              }`}
               style={{
-                background: `linear-gradient(120deg, ${slide.accent} 0%, #0f172a 100%)`
+                background: `linear-gradient(120deg, ${slide.accent} 0%, #0f172a 100%)`,
               }}
             >
               <div className="hero-slide__badge">{slide.badge}</div>
@@ -213,8 +220,8 @@ const Home = () => {
             </div>
           </div>
           <p className="aside-note">
-            Curated weekly by the admin team and surfaced automatically from the latest
-            life lessons.
+            Curated weekly by the admin team and surfaced automatically from the
+            latest life lessons.
           </p>
         </div>
       </section>
@@ -272,7 +279,10 @@ const Home = () => {
                           "Community mentor"}
                       </span>
                     </div>
-                    <Link to={`/lessons/${lessonId}`} className="btn btn-secondary">
+                    <Link
+                      to={`/lessons/${lessonId}`}
+                      className="btn btn-secondary"
+                    >
                       View lesson
                     </Link>
                   </div>
@@ -288,19 +298,29 @@ const Home = () => {
         <div className="benefits-grid">
           <div className="benefit-card">
             <h3>Real-world wisdom</h3>
-            <p>Skip theory. Learn from real people navigating real constraints.</p>
+            <p>
+              Skip theory. Learn from real people navigating real constraints.
+            </p>
           </div>
           <div className="benefit-card">
             <h3>Compounding growth</h3>
-            <p>Capture lessons, revisit weekly, and watch small actions compound.</p>
+            <p>
+              Capture lessons, revisit weekly, and watch small actions compound.
+            </p>
           </div>
           <div className="benefit-card">
             <h3>Save time and energy</h3>
-            <p>Avoid costly detours by applying proven playbooks from the community.</p>
+            <p>
+              Avoid costly detours by applying proven playbooks from the
+              community.
+            </p>
           </div>
           <div className="benefit-card">
             <h3>Build resilience</h3>
-            <p>See how others handled setbacks so you can respond with confidence.</p>
+            <p>
+              See how others handled setbacks so you can respond with
+              confidence.
+            </p>
           </div>
         </div>
       </section>
@@ -351,7 +371,8 @@ const Home = () => {
             <p className="eyebrow">Most Saved Lessons</p>
             <h2>Community favorites this week</h2>
             <p className="section-subtitle">
-              Pulled dynamically from lessons with the highest saves and enrollments.
+              Pulled dynamically from lessons with the highest saves and
+              enrollments.
             </p>
           </div>
           <Link to="/dashboard/favorites" className="text-link">
@@ -383,8 +404,13 @@ const Home = () => {
                   <h3>{lesson.title}</h3>
                   <p>{lesson.description?.slice(0, 120) || "No description"}</p>
                   <div className="saved-card__footer">
-                    <span className="price">{lesson.price ? `$${lesson.price}` : "Free"}</span>
-                    <Link to={`/lessons/${lessonId}`} className="btn btn-secondary">
+                    <span className="price">
+                      {lesson.price ? `$${lesson.price}` : "Free"}
+                    </span>
+                    <Link
+                      to={`/lessons/${lessonId}`}
+                      className="btn btn-secondary"
+                    >
                       Read lesson
                     </Link>
                   </div>
