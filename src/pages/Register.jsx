@@ -79,43 +79,51 @@ const Register = () => {
     try {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({
-        prompt: 'select_account'
+        prompt: "select_account",
       });
-      
+
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
       const token = await firebaseUser.getIdToken();
-      
+
       // Sync with backend
       await authAPI.register({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
-        displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        displayName:
+          firebaseUser.displayName || firebaseUser.email.split("@")[0],
         photoURL: firebaseUser.photoURL,
       });
-      
+
       localStorage.setItem("token", token);
-      
+
       // Fetch user from backend to get complete data
       const userResponse = await authAPI.getCurrentUser();
-      const backendUser = userResponse.data?.data?.user || userResponse.data?.user;
-      
+      const backendUser =
+        userResponse.data?.data?.user || userResponse.data?.user;
+
       login(backendUser);
       showToast("Signed up with Google", "success");
       navigate("/dashboard");
     } catch (err) {
       console.error("Google register error:", err);
-      
+
       // Handle popup blocker
-      if (err.code === 'auth/popup-blocked') {
-        showToast("Popup was blocked. Please allow popups for this site.", "error");
-      } else if (err.code === 'auth/popup-closed-by-user') {
+      if (err.code === "auth/popup-blocked") {
+        showToast(
+          "Popup was blocked. Please allow popups for this site.",
+          "error"
+        );
+      } else if (err.code === "auth/popup-closed-by-user") {
         showToast("Sign-in cancelled", "error");
-      } else if (err.code === 'auth/cancelled-popup-request') {
+      } else if (err.code === "auth/cancelled-popup-request") {
         // User clicked button multiple times, ignore
         return;
       } else {
-        showToast(err.response?.data?.message || err.message || "Google signup failed", "error");
+        showToast(
+          err.response?.data?.message || err.message || "Google signup failed",
+          "error"
+        );
       }
     } finally {
       setLoading(false);

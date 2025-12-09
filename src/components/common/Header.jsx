@@ -43,8 +43,8 @@ const Header = () => {
           alt={user.displayName || user.name || "User"}
           className="avatar-img"
           onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'flex';
+            e.target.style.display = "none";
+            e.target.nextSibling.style.display = "flex";
           }}
         />
       );
@@ -114,18 +114,19 @@ const Header = () => {
                       alt={user.displayName || user.name || "User"}
                       className="avatar-img"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
                       }}
                     />
-                    <div className="avatar-initials" style={{ display: 'none' }}>
+                    <div
+                      className="avatar-initials"
+                      style={{ display: "none" }}
+                    >
                       {getUserInitials()}
                     </div>
                   </>
                 ) : (
-                  <div className="avatar-initials">
-                    {getUserInitials()}
-                  </div>
+                  <div className="avatar-initials">{getUserInitials()}</div>
                 )}
               </button>
 

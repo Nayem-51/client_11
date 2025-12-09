@@ -62,7 +62,9 @@ const Profile = () => {
     return "";
   }, [form.photoURL, user?.photoURL]);
 
-  const initials = (user?.displayName || user?.name || user?.email || "U").slice(0, 2).toUpperCase();
+  const initials = (user?.displayName || user?.name || user?.email || "U")
+    .slice(0, 2)
+    .toUpperCase();
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -163,7 +165,9 @@ const Profile = () => {
                   src={avatar}
                   alt={user.displayName || user.name || "User avatar"}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  onError={(e) => { e.target.style.display = 'none'; }}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
                 />
               ) : (
                 <span style={{ fontWeight: 700, color: "#4338ca" }}>
@@ -226,7 +230,9 @@ const Profile = () => {
               <input
                 type="text"
                 value={form.displayName}
-                onChange={(e) => setForm({ ...form, displayName: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, displayName: e.target.value })
+                }
                 disabled={updating}
                 required
               />

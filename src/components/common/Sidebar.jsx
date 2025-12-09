@@ -25,18 +25,19 @@ const Sidebar = () => {
                 alt={user.displayName || user.name || "User"}
                 className="avatar"
                 onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
                 }}
               />
-              <div className="avatar avatar-initials" style={{ display: 'none' }}>
+              <div
+                className="avatar avatar-initials"
+                style={{ display: "none" }}
+              >
                 {getUserInitials()}
               </div>
             </>
           ) : (
-            <div className="avatar avatar-initials">
-              {getUserInitials()}
-            </div>
+            <div className="avatar avatar-initials">{getUserInitials()}</div>
           )}
           <h3>{user?.displayName || user?.name}</h3>
           <p>{user?.email}</p>

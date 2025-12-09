@@ -7,7 +7,12 @@ import "../../Pages.css";
 
 const deriveVisibility = (lesson) => {
   if (lesson?.accessLevel === "premium" || lesson?.isPremium) return "Premium";
-  if (lesson?.isPublic || lesson?.isPublished || lesson?.visibility === "public") return "Public";
+  if (
+    lesson?.isPublic ||
+    lesson?.isPublished ||
+    lesson?.visibility === "public"
+  )
+    return "Public";
   return "Private";
 };
 
@@ -58,7 +63,9 @@ const AdminProfile = () => {
     const publicLessons = lessons.filter(
       (l) => l.isPublic || l.isPublished || l.visibility === "public"
     ).length;
-    const privateLessons = lessons.filter((l) => !l.isPublic && !l.isPublished).length;
+    const privateLessons = lessons.filter(
+      (l) => !l.isPublic && !l.isPublished
+    ).length;
     const flaggedLessons = lessons.filter((l) => isFlagged(l)).length;
     const featuredLessons = lessons.filter((l) => l.isFeatured).length;
     return { publicLessons, privateLessons, flaggedLessons, featuredLessons };
@@ -114,12 +121,17 @@ const AdminProfile = () => {
   }
 
   return (
-    <div className="page admin-page" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div
+      className="page admin-page"
+      style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+    >
       <div className="admin-header" style={{ alignItems: "center" }}>
         <div>
           <p className="eyebrow">Administrator</p>
           <h1>Admin Profile</h1>
-          <p className="muted">Manage your admin identity and keep your details current.</p>
+          <p className="muted">
+            Manage your admin identity and keep your details current.
+          </p>
         </div>
         <div className="admin-actions">
           <span className="badge badge-success">Admin</span>
@@ -131,12 +143,22 @@ const AdminProfile = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
       {success && (
-        <div className="alert" style={{ background: "#ecfdf3", color: "#166534", border: "1px solid #bbf7d0" }}>
+        <div
+          className="alert"
+          style={{
+            background: "#ecfdf3",
+            color: "#166534",
+            border: "1px solid #bbf7d0",
+          }}
+        >
           {success}
         </div>
       )}
 
-      <div className="dashboard-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+      <div
+        className="dashboard-grid"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}
+      >
         <div className="dashboard-card" style={{ gap: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             <div
@@ -158,7 +180,9 @@ const AdminProfile = () => {
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca" }}>{initials}</span>
+                <span style={{ fontWeight: 700, color: "#4338ca" }}>
+                  {initials}
+                </span>
               )}
             </div>
             <div>
@@ -169,7 +193,10 @@ const AdminProfile = () => {
             </div>
           </div>
 
-          <div className="stats-grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+          <div
+            className="stats-grid"
+            style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+          >
             <div className="stat-box">
               <p className="stat-box__label">Public lessons</p>
               <p className="stat-box__value">{stats.publicLessons}</p>
@@ -220,10 +247,19 @@ const AdminProfile = () => {
             <div className="form-group">
               <label>Email</label>
               <input type="email" value={user.email} disabled />
-              <p className="form-group__hint">Email cannot be edited for security.</p>
+              <p className="form-group__hint">
+                Email cannot be edited for security.
+              </p>
             </div>
-            <div className="form-actions" style={{ justifyContent: "flex-start" }}>
-              <button type="submit" className="btn btn-primary" disabled={updating}>
+            <div
+              className="form-actions"
+              style={{ justifyContent: "flex-start" }}
+            >
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={updating}
+              >
                 {updating ? "Saving..." : "Save Changes"}
               </button>
             </div>
@@ -238,10 +274,16 @@ const AdminProfile = () => {
             <h3>Moderation Snapshot</h3>
           </div>
           <div className="admin-actions">
-            <Link to="/dashboard/admin/manage-lessons" className="btn btn-secondary">
+            <Link
+              to="/dashboard/admin/manage-lessons"
+              className="btn btn-secondary"
+            >
               Manage Lessons
             </Link>
-            <Link to="/dashboard/admin/reported-lessons" className="btn btn-secondary">
+            <Link
+              to="/dashboard/admin/reported-lessons"
+              className="btn btn-secondary"
+            >
               Reported Lessons
             </Link>
           </div>
