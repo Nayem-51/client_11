@@ -224,7 +224,8 @@ const LessonDetails = () => {
     "Community Mentor";
   const creatorPhoto =
     lesson.creator?.photoURL || lesson.authorPhoto || lesson.creator?.avatar;
-  const creatorLessonCount = lesson.creator?.totalLessons || lesson.totalLessons;
+  const creatorLessonCount =
+    lesson.creator?.totalLessons || lesson.totalLessons;
 
   return (
     <div className="page lesson-details-page">
@@ -257,7 +258,9 @@ const LessonDetails = () => {
               <span className="pill pill-accent">
                 {lesson.emotionalTone || "Balanced"}
               </span>
-              {isPremiumLesson && <span className="pill pill-warning">Premium</span>}
+              {isPremiumLesson && (
+                <span className="pill pill-warning">Premium</span>
+              )}
             </div>
             <h1>{lesson.title}</h1>
             <p className="lesson-subline">{lesson.description}</p>
@@ -307,7 +310,9 @@ const LessonDetails = () => {
             <div>
               <p className="creator-name">{creatorName}</p>
               <p className="creator-sub">
-                {creatorLessonCount ? `${creatorLessonCount} lessons` : "Author"}
+                {creatorLessonCount
+                  ? `${creatorLessonCount} lessons`
+                  : "Author"}
               </p>
             </div>
           </div>
@@ -317,9 +322,15 @@ const LessonDetails = () => {
         </section>
 
         <section className="stats-grid">
-          <div className="stat-card">❤️ {likesCount.toLocaleString()} Likes</div>
-          <div className="stat-card">🔖 {(lesson.favoritesCount || 0).toLocaleString()} Favorites</div>
-          <div className="stat-card">👀 {randomViews.toLocaleString()} Views</div>
+          <div className="stat-card">
+            ❤️ {likesCount.toLocaleString()} Likes
+          </div>
+          <div className="stat-card">
+            🔖 {(lesson.favoritesCount || 0).toLocaleString()} Favorites
+          </div>
+          <div className="stat-card">
+            👀 {randomViews.toLocaleString()} Views
+          </div>
         </section>
 
         <section className="actions-row">
@@ -327,7 +338,10 @@ const LessonDetails = () => {
             {isLiked ? "❤️ Liked" : "❤️ Like"}
           </button>
           {isFavorite ? (
-            <button onClick={handleRemoveFavorite} className="btn btn-secondary">
+            <button
+              onClick={handleRemoveFavorite}
+              className="btn btn-secondary"
+            >
               🔖 Saved
             </button>
           ) : (
@@ -335,7 +349,10 @@ const LessonDetails = () => {
               🔖 Save to Favorites
             </button>
           )}
-          <button onClick={() => setReportOpen(true)} className="btn btn-secondary">
+          <button
+            onClick={() => setReportOpen(true)}
+            className="btn btn-secondary"
+          >
             🚩 Report Lesson
           </button>
           <button onClick={handleShare} className="btn btn-secondary">
@@ -406,7 +423,8 @@ const LessonDetails = () => {
             {similarLessons.map((item) => {
               const lessonId = item._id || item.id;
               const locked =
-                item.accessLevel?.toLowerCase?.() === "premium" && !user?.isPremium;
+                item.accessLevel?.toLowerCase?.() === "premium" &&
+                !user?.isPremium;
               return (
                 <div
                   key={lessonId}
@@ -418,7 +436,9 @@ const LessonDetails = () => {
                     <span className="pill">{item.category || "Life"}</span>
                     <span
                       className={`pill ${
-                        item.accessLevel?.toLowerCase?.() === "premium" ? "pill-accent" : ""
+                        item.accessLevel?.toLowerCase?.() === "premium"
+                          ? "pill-accent"
+                          : ""
                       }`}
                     >
                       {item.accessLevel || "Public"}
@@ -429,7 +449,9 @@ const LessonDetails = () => {
                     {item.description?.slice(0, 120) || "No description"}
                   </p>
                   <div className="lesson-meta-line">
-                    <span className="tone">Tone: {item.emotionalTone || "Balanced"}</span>
+                    <span className="tone">
+                      Tone: {item.emotionalTone || "Balanced"}
+                    </span>
                     <span className="date">
                       {item.createdAt
                         ? new Date(item.createdAt).toLocaleDateString()
@@ -474,7 +496,10 @@ const LessonDetails = () => {
               <option>Other</option>
             </select>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setReportOpen(false)}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setReportOpen(false)}
+              >
                 Cancel
               </button>
               <button className="btn btn-primary" onClick={handleReport}>
