@@ -1544,6 +1544,13 @@
   overflow: hidden;
 }
 
+.admin-table-wrapper {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
 .admin-table thead {
   background: #f8fafc;
   border-bottom: 2px solid #e5e7eb;
