@@ -159,7 +159,23 @@
   transition: transform 0.3s ease;
 }
 
-.avatar-btn:hover .avatar-img {
+.avatar-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2563eb;
+  transition: transform 0.3s ease;
+}
+
+.avatar-btn:hover .avatar-img,
+.avatar-btn:hover .avatar-initials {
   transform: scale(1.05);
 }
 

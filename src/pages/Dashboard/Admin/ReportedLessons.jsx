@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../../api/endpoints";
+import Spinner from "../../../components/common/Spinner";
 import "../../Pages.css";
 
 const collectReports = (lesson) => {
@@ -121,7 +122,7 @@ const ReportedLessons = () => {
         </div>
 
         {loading ? (
-          <p className="muted">Loading reported lessons...</p>
+          <Spinner label="Loading reported lessons..." />
         ) : flaggedLessons.length === 0 ? (
           <p className="muted">No reported lessons at the moment.</p>
         ) : (

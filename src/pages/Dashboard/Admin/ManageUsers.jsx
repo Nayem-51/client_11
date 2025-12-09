@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../../api/endpoints";
+import Spinner from "../../../components/common/Spinner";
 import "../../Pages.css";
 
 const getUserId = (lesson) => {
@@ -161,7 +162,7 @@ const ManageUsers = () => {
         </div>
 
         {loading ? (
-          <p className="muted">Loading users...</p>
+          <Spinner label="Loading users..." />
         ) : filteredUsers.length === 0 ? (
           <p className="muted">No users match your filters.</p>
         ) : (

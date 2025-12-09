@@ -17,6 +17,7 @@ import AdminPanel from "../pages/Dashboard/Admin";
 import ManageLessons from "../pages/Dashboard/Admin/ManageLessons";
 import ReportedLessons from "../pages/Dashboard/Admin/ReportedLessons";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
+import AdminProfile from "../pages/Dashboard/Admin/AdminProfile";
 import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
 import PaymentCancel from "../pages/PaymentCancel";
@@ -116,6 +117,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <ManageLessons />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "dashboard/admin/profile",
+        element: (
+          <AdminRoute>
+            <AdminProfile />
           </AdminRoute>
         ),
       },

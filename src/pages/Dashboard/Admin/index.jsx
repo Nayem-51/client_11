@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../../api/endpoints";
+import Spinner from "../../../components/common/Spinner";
 import "../../Pages.css";
 
 const monthKeys = (count = 6) => {
@@ -174,7 +175,7 @@ const AdminPanel = () => {
   if (loading) {
     return (
       <div className="page admin-panel-page">
-        <p>Loading admin dashboard...</p>
+        <Spinner label="Loading admin dashboard..." />
       </div>
     );
   }
@@ -204,6 +205,9 @@ const AdminPanel = () => {
             className="btn btn-secondary"
           >
             Reported Lessons
+          </Link>
+          <Link to="/dashboard/admin/profile" className="btn btn-secondary">
+            Admin Profile
           </Link>
           <Link to="/dashboard/admin/manage-users" className="btn btn-primary">
             Manage Users

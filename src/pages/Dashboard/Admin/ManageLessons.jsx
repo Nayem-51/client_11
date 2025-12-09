@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../../api/endpoints";
+import Spinner from "../../../components/common/Spinner";
 import "../../Pages.css";
 
 const deriveVisibility = (lesson) => {
@@ -221,7 +222,7 @@ const ManageLessons = () => {
         </div>
 
         {loading ? (
-          <p className="muted">Loading lessons...</p>
+          <Spinner label="Loading lessons..." />
         ) : filteredLessons.length === 0 ? (
           <p className="muted">No lessons match your filters.</p>
         ) : (

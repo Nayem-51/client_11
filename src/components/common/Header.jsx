@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import "./Header.css";
@@ -6,6 +6,7 @@ import "./Header.css";
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -14,6 +15,46 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
+
+  // Generate avatar or initials
+  const getAvatarContent = () => {
+    if (user?.photoURL) {
+      return (
+        <img
+          src={user.photoURL}
+          alt={user.displayName || user.name || "User"}
+          className="avatar-img"
+          onError={(e) => {
+            e.target.style.display = 'none';
+            e.target.nextSibling.style.display = 'flex';
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  const getUserInitials = () => {
+    const name = user?.displayName || user?.name || user?.email || "U";
+    return name.slice(0, 2).toUpperCase();
   };
 
   return (
@@ -64,21 +105,35 @@ const Header = () => {
               </Link>
             </div>
           ) : (
-            <div className="user-dropdown">
+            <div className="user-dropdown" ref={dropdownRef}>
               <button className="avatar-btn" onClick={toggleDropdown}>
-                <img
-                  src={user?.photoURL || "/default-avatar.png"}
-                  alt={user?.name || user?.displayName || "User"}
-                  className="avatar-img"
-                  onError={(e) => (e.target.src = "/default-avatar.png")}
-                />
+                {user?.photoURL ? (
+                  <>
+                    <img
+                      src={user.photoURL}
+                      alt={user.displayName || user.name || "User"}
+                      className="avatar-img"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="avatar-initials" style={{ display: 'none' }}>
+                      {getUserInitials()}
+                    </div>
+                  </>
+                ) : (
+                  <div className="avatar-initials">
+                    {getUserInitials()}
+                  </div>
+                )}
               </button>
 
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
                     <p className="user-name">
-                      {user?.name || user?.displayName}
+                      {user?.displayName || user?.name}
                     </p>
                     <p className="user-email">{user?.email}</p>
                   </div>

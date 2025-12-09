@@ -9,17 +9,36 @@ const Sidebar = () => {
     return null;
   }
 
+  const getUserInitials = () => {
+    const name = user?.displayName || user?.name || user?.email || "U";
+    return name.slice(0, 2).toUpperCase();
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-content">
         <div className="user-profile">
-          <img
-            src={user?.photoURL || "/default-avatar.png"}
-            alt={user?.name}
-            className="avatar"
-            onError={(e) => (e.target.src = "/default-avatar.png")}
-          />
-          <h3>{user?.name}</h3>
+          {user?.photoURL ? (
+            <>
+              <img
+                src={user.photoURL}
+                alt={user.displayName || user.name || "User"}
+                className="avatar"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="avatar avatar-initials" style={{ display: 'none' }}>
+                {getUserInitials()}
+              </div>
+            </>
+          ) : (
+            <div className="avatar avatar-initials">
+              {getUserInitials()}
+            </div>
+          )}
+          <h3>{user?.displayName || user?.name}</h3>
           <p>{user?.email}</p>
         </div>
 

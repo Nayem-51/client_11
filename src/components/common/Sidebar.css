@@ -36,6 +36,18 @@
   border: 3px solid #2563eb;
 }
 
+.avatar-initials {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .user-profile h3 {
   margin: 8px 0 4px 0;
   color: #111827;

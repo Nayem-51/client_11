@@ -56,13 +56,14 @@ const Register = () => {
     setLoading(true);
     try {
       const response = await authAPI.register({
-        name: formData.name,
+        displayName: formData.name,
         email: formData.email,
         photoURL: formData.photoURL,
         password: formData.password,
       });
-      localStorage.setItem("token", response.data.token);
-      login(response.data.user);
+      const { token, user } = response.data.data;
+      localStorage.setItem("token", token);
+      login(user);
       showToast("Account created successfully", "success");
       navigate("/dashboard");
     } catch (err) {
@@ -77,21 +78,45 @@ const Register = () => {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
       const token = await firebaseUser.getIdToken();
-      localStorage.setItem("token", token);
-      login({
-        name: firebaseUser.displayName,
-        email: firebaseUser.email,
-        photoURL: firebaseUser.photoURL,
+      
+      // Sync with backend
+      await authAPI.register({
         uid: firebaseUser.uid,
-        isPremium: false,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        photoURL: firebaseUser.photoURL,
       });
+      
+      localStorage.setItem("token", token);
+      
+      // Fetch user from backend to get complete data
+      const userResponse = await authAPI.getCurrentUser();
+      const backendUser = userResponse.data?.data?.user || userResponse.data?.user;
+      
+      login(backendUser);
       showToast("Signed up with Google", "success");
       navigate("/dashboard");
     } catch (err) {
-      showToast(err.message || "Google signup failed", "error");
+      console.error("Google register error:", err);
+      
+      // Handle popup blocker
+      if (err.code === 'auth/popup-blocked') {
+        showToast("Popup was blocked. Please allow popups for this site.", "error");
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        showToast("Sign-in cancelled", "error");
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        // User clicked button multiple times, ignore
+        return;
+      } else {
+        showToast(err.response?.data?.message || err.message || "Google signup failed", "error");
+      }
     } finally {
       setLoading(false);
     }
@@ -192,7 +217,7 @@ const Register = () => {
             disabled={loading}
             style={{ marginTop: 10 }}
           >
-            Continue with Google
+            {loading ? "Signing up..." : "Continue with Google"}
           </button>
         </form>
 

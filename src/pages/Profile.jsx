@@ -10,7 +10,7 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [form, setForm] = useState({
-    name: "",
+    displayName: "",
     photoURL: "",
   });
   const [updating, setUpdating] = useState(false);
@@ -18,7 +18,7 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       setForm({
-        name: user.name || "",
+        displayName: user.displayName || user.name || "",
         photoURL: user.photoURL || "",
       });
     }
@@ -62,11 +62,11 @@ const Profile = () => {
     return "";
   }, [form.photoURL, user?.photoURL]);
 
-  const initials = (user?.name || user?.email || "U").slice(0, 2).toUpperCase();
+  const initials = (user?.displayName || user?.name || user?.email || "U").slice(0, 2).toUpperCase();
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) {
+    if (!form.displayName.trim()) {
       setError("Display name is required.");
       return;
     }
@@ -74,7 +74,7 @@ const Profile = () => {
     try {
       setUpdating(true);
       await userAPI.updateProfile({
-        name: form.name.trim(),
+        displayName: form.displayName.trim(),
         photoURL: form.photoURL.trim(),
       });
       await refreshUser();
@@ -161,8 +161,9 @@ const Profile = () => {
               {avatar ? (
                 <img
                   src={avatar}
-                  alt={user.name || "User avatar"}
+                  alt={user.displayName || user.name || "User avatar"}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
               ) : (
                 <span style={{ fontWeight: 700, color: "#4338ca" }}>
@@ -172,7 +173,7 @@ const Profile = () => {
             </div>
             <div>
               <h2 style={{ margin: "0 0 4px 0" }}>
-                {user.name || "Your name"}
+                {user.displayName || user.name || "Your name"}
               </h2>
               <p style={{ margin: 0, color: "#6b7280" }}>{user.email}</p>
               {user.isPremium ? (
@@ -224,8 +225,8 @@ const Profile = () => {
               <label>Display Name</label>
               <input
                 type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                value={form.displayName}
+                onChange={(e) => setForm({ ...form, displayName: e.target.value })}
                 disabled={updating}
                 required
               />
