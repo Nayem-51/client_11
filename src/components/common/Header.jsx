@@ -77,7 +77,9 @@ const Header = () => {
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
-                    <p className="user-name">{user?.name || user?.displayName}</p>
+                    <p className="user-name">
+                      {user?.name || user?.displayName}
+                    </p>
                     <p className="user-email">{user?.email}</p>
                   </div>
                   <div className="dropdown-divider"></div>

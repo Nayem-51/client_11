@@ -32,7 +32,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(currentUser));
       }
     } catch (error) {
-      console.error("Failed to sync user from backend:", error?.message || error);
+      console.error(
+        "Failed to sync user from backend:",
+        error?.message || error
+      );
       logout();
     } finally {
       setLoading(false);

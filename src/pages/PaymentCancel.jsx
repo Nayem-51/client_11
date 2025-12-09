@@ -8,8 +8,8 @@ const PaymentCancel = () => {
       <section className="guarantee-card" style={{ marginTop: 32 }}>
         <h2>Payment canceled</h2>
         <p>
-          Your Stripe checkout was canceled or failed. You have not been charged. You can
-          try again anytime to upgrade to Premium.
+          Your Stripe checkout was canceled or failed. You have not been
+          charged. You can try again anytime to upgrade to Premium.
         </p>
         <div className="cta-buttons" style={{ justifyContent: "flex-start" }}>
           <Link to="/pricing" className="btn btn-primary">

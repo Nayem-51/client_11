@@ -92,7 +92,8 @@ const Pricing = () => {
 
       window.location.href = redirectUrl;
     } catch (err) {
-      const message = err?.response?.data?.message || err?.message || "Payment failed.";
+      const message =
+        err?.response?.data?.message || err?.message || "Payment failed.";
       setError(message);
     } finally {
       setLoading(false);
@@ -111,16 +112,22 @@ const Pricing = () => {
           <div className="plan-meta">
             <span className="price-chip">{priceDisplay.amount}</span>
             <span className="plan-label">{priceDisplay.label}</span>
-            {isPremium && <span className="status-badge">Premium ⭐ Active</span>}
+            {isPremium && (
+              <span className="status-badge">Premium ⭐ Active</span>
+            )}
           </div>
-          {successMessage && <div className="inline-alert success-alert">{successMessage}</div>}
+          {successMessage && (
+            <div className="inline-alert success-alert">{successMessage}</div>
+          )}
           {error && <div className="inline-alert">{error}</div>}
         </div>
         <div className="plan-card">
           <p className="eyebrow">Premium Plan</p>
           <h2>Lifetime Premium</h2>
           <p className="plan-price">{priceDisplay.amount}</p>
-          <p className="plan-caption">One-time payment. Keep premium forever.</p>
+          <p className="plan-caption">
+            One-time payment. Keep premium forever.
+          </p>
           <button
             className="btn btn-primary btn-block"
             onClick={handleCheckout}
@@ -129,7 +136,8 @@ const Pricing = () => {
             {isPremium ? "You are already Premium" : "Upgrade to Premium"}
           </button>
           <p className="small-note">
-            Powered by Stripe Checkout (test mode). You will be redirected to Stripe.
+            Powered by Stripe Checkout (test mode). You will be redirected to
+            Stripe.
           </p>
         </div>
       </section>
@@ -163,12 +171,13 @@ const Pricing = () => {
         <div className="guarantee-card">
           <h3>Single source of truth</h3>
           <p>
-            Your premium status is always verified against our database on each session. If you
-            upgrade, your account instantly reflects it after Stripe confirms payment.
+            Your premium status is always verified against our database on each
+            session. If you upgrade, your account instantly reflects it after
+            Stripe confirms payment.
           </p>
           <p className="section-subtitle">
-            If payment fails or is canceled, you will be redirected to the cancel page with a
-            clear message.
+            If payment fails or is canceled, you will be redirected to the
+            cancel page with a clear message.
           </p>
         </div>
       </section>
