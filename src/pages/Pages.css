@@ -510,7 +510,11 @@
 .lesson-lock-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.6));
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.7),
+    rgba(15, 23, 42, 0.6)
+  );
   border-radius: 12px;
   pointer-events: none;
 }

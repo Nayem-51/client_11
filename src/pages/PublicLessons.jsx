@@ -68,7 +68,8 @@ const PublicLessons = () => {
           <p className="eyebrow">Browse Public Life Lessons</p>
           <h1>Shared wisdom from the community</h1>
           <p className="section-subtitle">
-            Discover public lessons. Premium lessons stay locked until you upgrade.
+            Discover public lessons. Premium lessons stay locked until you
+            upgrade.
           </p>
         </div>
       </div>
@@ -102,18 +103,23 @@ const PublicLessons = () => {
           return (
             <div
               key={lessonId}
-              className={`lesson-card lesson-card--public ${locked ? "lesson-card--locked" : ""}`}
+              className={`lesson-card lesson-card--public ${
+                locked ? "lesson-card--locked" : ""
+              }`}
             >
               <div className="lesson-card__top">
                 <span className="pill">{lesson.category || "Life"}</span>
-                <span className={`pill ${isPremiumLesson ? "pill-accent" : ""}`}>
+                <span
+                  className={`pill ${isPremiumLesson ? "pill-accent" : ""}`}
+                >
                   {isPremiumLesson ? "Premium" : "Public"}
                 </span>
               </div>
 
               <h3>{lesson.title}</h3>
               <p className="lesson-desc">
-                {lesson.description?.slice(0, 150) || "No description provided."}
+                {lesson.description?.slice(0, 150) ||
+                  "No description provided."}
               </p>
 
               <div className="lesson-meta-line">
@@ -123,11 +129,17 @@ const PublicLessons = () => {
 
               <div className="creator-row">
                 <div className="creator-avatar" aria-hidden>
-                  {creatorPhoto ? <img src={creatorPhoto} alt={creatorName} /> : creatorName[0]}
+                  {creatorPhoto ? (
+                    <img src={creatorPhoto} alt={creatorName} />
+                  ) : (
+                    creatorName[0]
+                  )}
                 </div>
                 <div>
                   <div className="creator-name">{creatorName}</div>
-                  <div className="creator-sub">Access: {isPremiumLesson ? "Premium" : "Public"}</div>
+                  <div className="creator-sub">
+                    Access: {isPremiumLesson ? "Premium" : "Public"}
+                  </div>
                 </div>
               </div>
 
@@ -137,7 +149,10 @@ const PublicLessons = () => {
                     🔒 Premium Lesson – Upgrade to view
                   </Link>
                 ) : (
-                  <Link to={`/lessons/${lessonId}`} className="btn btn-secondary btn-block">
+                  <Link
+                    to={`/lessons/${lessonId}`}
+                    className="btn btn-secondary btn-block"
+                  >
                     See Details
                   </Link>
                 )}
