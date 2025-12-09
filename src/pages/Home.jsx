@@ -121,13 +121,16 @@ const Home = () => {
         // Try to fetch public lessons first
         let response;
         let lessons = [];
-        
+
         try {
           response = await lessonsAPI.getPublic();
           lessons = normalizeLessons(response.data);
         } catch (publicErr) {
           // Fallback to getAll if getPublic fails
-          console.log("Public lessons failed, trying getAll:", publicErr.message);
+          console.log(
+            "Public lessons failed, trying getAll:",
+            publicErr.message
+          );
           response = await lessonsAPI.getAll();
           lessons = normalizeLessons(response.data);
         }
@@ -135,7 +138,7 @@ const Home = () => {
         if (!isMounted) return;
 
         console.log("Fetched lessons:", lessons.length);
-        
+
         setFeaturedLessons(deriveFeatured(lessons));
         setTopContributors(deriveTopContributors(lessons));
         setMostSavedLessons(deriveMostSaved(lessons));
