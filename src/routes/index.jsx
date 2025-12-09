@@ -14,6 +14,9 @@ import AddLesson from "../pages/Dashboard/AddLesson";
 import MyLessons from "../pages/Dashboard/MyLessons";
 import MyFavorites from "../pages/Dashboard/MyFavorites";
 import AdminPanel from "../pages/Dashboard/Admin";
+import ManageLessons from "../pages/Dashboard/Admin/ManageLessons";
+import ReportedLessons from "../pages/Dashboard/Admin/ReportedLessons";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
 import PaymentCancel from "../pages/PaymentCancel";
@@ -105,6 +108,30 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminPanel />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "dashboard/admin/manage-lessons",
+        element: (
+          <AdminRoute>
+            <ManageLessons />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "dashboard/admin/manage-users",
+        element: (
+          <AdminRoute>
+            <ManageUsers />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "dashboard/admin/reported-lessons",
+        element: (
+          <AdminRoute>
+            <ReportedLessons />
           </AdminRoute>
         ),
       },
