@@ -61,13 +61,14 @@ const AddLesson = () => {
         title: formData.title,
         description: formData.description,
         category: formData.category,
-        emotionalTone: formData.emotionalTone,
-        featuredImage: formData.image,
-        visibility: formData.privacy,
-        accessLevel: formData.accessLevel,
+        level: "beginner",
+        price: formData.accessLevel === "premium" ? 9.99 : 0,
+        image: formData.image || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800",
+        duration: 30,
         content: formData.content,
         isPublished: formData.privacy === "public",
         isPremium: formData.accessLevel === "premium",
+        tags: [formData.category, formData.emotionalTone],
       };
 
       await lessonsAPI.create(payload);

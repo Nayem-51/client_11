@@ -50,13 +50,14 @@
 
 .user-profile h3 {
   margin: 8px 0 4px 0;
-  color: #111827;
+  color: #0f172a;
   font-size: 16px;
+  font-weight: 600;
 }
 
 .user-profile p {
   margin: 0;
-  color: #6b7280;
+  color: #64748b;
   font-size: 13px;
 }
 
@@ -68,10 +69,10 @@
 .sidebar-nav h4 {
   font-size: 12px;
   text-transform: uppercase;
-  color: #6b7280;
+  color: #64748b;
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .sidebar-nav ul {
@@ -86,11 +87,12 @@
 .sidebar-nav a {
   display: block;
   padding: 10px 12px;
-  color: #374151;
+  color: #475569;
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.2s ease;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .sidebar-nav a:hover {

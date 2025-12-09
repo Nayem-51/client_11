@@ -118,16 +118,30 @@ const Home = () => {
       setError("");
 
       try {
-        const response = await lessonsAPI.getPublic();
-        const lessons = normalizeLessons(response.data);
+        // Try to fetch public lessons first
+        let response;
+        let lessons = [];
+        
+        try {
+          response = await lessonsAPI.getPublic();
+          lessons = normalizeLessons(response.data);
+        } catch (publicErr) {
+          // Fallback to getAll if getPublic fails
+          console.log("Public lessons failed, trying getAll:", publicErr.message);
+          response = await lessonsAPI.getAll();
+          lessons = normalizeLessons(response.data);
+        }
 
         if (!isMounted) return;
 
+        console.log("Fetched lessons:", lessons.length);
+        
         setFeaturedLessons(deriveFeatured(lessons));
         setTopContributors(deriveTopContributors(lessons));
         setMostSavedLessons(deriveMostSaved(lessons));
       } catch (err) {
         if (!isMounted) return;
+        console.error("Error loading home data:", err);
         setError(
           "Unable to load the latest lessons right now. Please try again shortly."
         );
