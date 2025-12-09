@@ -429,11 +429,94 @@
   padding: 20px;
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .lesson-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-card--public {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lesson-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lesson-desc {
+  color: #4b5563;
+  margin: 0;
+}
+
+.lesson-meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.creator-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.creator-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #4338ca;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.creator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.creator-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.creator-sub {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.lesson-card--locked .lesson-desc,
+.lesson-card--locked .creator-row,
+.lesson-card--locked .lesson-meta-line,
+.lesson-card--locked h3 {
+  filter: blur(2px);
+  user-select: none;
+}
+
+.lesson-lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.6));
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.tone {
+  font-weight: 600;
 }
 
 .lesson-card h3 {
