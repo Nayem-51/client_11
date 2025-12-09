@@ -18,8 +18,9 @@ const Dashboard = () => {
       try {
         // Fetch user's lessons (would need an endpoint)
         const lessonsResponse = await lessonsAPI.getAll();
-        const lessons = lessonsResponse.data?.data || lessonsResponse.data || [];
-        
+        const lessons =
+          lessonsResponse.data?.data || lessonsResponse.data || [];
+
         // Filter user's own lessons (would ideally filter by creator/instructor on backend)
         const userLessons = lessons.filter(
           (l) => l.instructor?._id === user?._id || l.creator?._id === user?._id
@@ -71,7 +72,9 @@ const Dashboard = () => {
         </div>
         <div className="stat-box">
           <p className="stat-label">Account Status</p>
-          <p className="stat-value">{user?.isPremium ? "Premium ⭐" : "Free"}</p>
+          <p className="stat-value">
+            {user?.isPremium ? "Premium ⭐" : "Free"}
+          </p>
         </div>
       </div>
 

@@ -72,7 +72,7 @@ const AddLesson = () => {
 
       await lessonsAPI.create(payload);
       showToast("Lesson created successfully!", "success");
-      
+
       setTimeout(() => {
         navigate("/dashboard/my-lessons");
       }, 2000);
@@ -156,7 +156,9 @@ const AddLesson = () => {
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
             />
-            <p className="form-hint">Optional: Add a cover image for your lesson</p>
+            <p className="form-hint">
+              Optional: Add a cover image for your lesson
+            </p>
           </div>
         </div>
 
@@ -237,7 +239,9 @@ const AddLesson = () => {
                 disabled={!user?.isPremium}
               >
                 <option value="free">Free</option>
-                {user?.isPremium && <option value="premium">Premium Only</option>}
+                {user?.isPremium && (
+                  <option value="premium">Premium Only</option>
+                )}
               </select>
               {!user?.isPremium && formData.accessLevel === "free" && (
                 <p className="form-hint">
@@ -256,11 +260,7 @@ const AddLesson = () => {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Creating..." : "Create Lesson"}
           </button>
         </div>

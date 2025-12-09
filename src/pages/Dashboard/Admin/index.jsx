@@ -16,8 +16,9 @@ const AdminPanel = () => {
     const fetchAdminData = async () => {
       try {
         const lessonsResponse = await lessonsAPI.getAll();
-        const allLessons = lessonsResponse.data?.data || lessonsResponse.data || [];
-        
+        const allLessons =
+          lessonsResponse.data?.data || lessonsResponse.data || [];
+
         setLessons(allLessons);
         setStats({
           totalLessons: allLessons.length,
@@ -138,7 +139,9 @@ const AdminPanel = () => {
                       </td>
                       <td>
                         <button className="btn btn-small">View</button>
-                        <button className="btn btn-small btn-danger">Remove</button>
+                        <button className="btn btn-small btn-danger">
+                          Remove
+                        </button>
                       </td>
                     </tr>
                   ))}

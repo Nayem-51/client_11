@@ -87,15 +87,23 @@ const MyFavorites = () => {
                 <div className="lesson-card__meta">
                   <span className="pill">{lesson.category || "General"}</span>
                   {lesson.accessLevel === "premium" && (
-                    <span className="pill" style={{ background: "#fef3c7", color: "#b45309" }}>
+                    <span
+                      className="pill"
+                      style={{ background: "#fef3c7", color: "#b45309" }}
+                    >
                       Premium
                     </span>
                   )}
                 </div>
 
-                <div className="creator-row" style={{ marginTop: "12px", fontSize: "13px" }}>
+                <div
+                  className="creator-row"
+                  style={{ marginTop: "12px", fontSize: "13px" }}
+                >
                   <span className="creator-name">
-                    {lesson.instructor?.name || lesson.creator?.name || "Anonymous"}
+                    {lesson.instructor?.name ||
+                      lesson.creator?.name ||
+                      "Anonymous"}
                   </span>
                 </div>
 

@@ -99,9 +99,7 @@ const MyLessons = () => {
                 <div className="lesson-card__meta">
                   <span className="pill">{lesson.category || "General"}</span>
                   <span className="pill pill-accent">
-                    {lesson.accessLevel === "premium"
-                      ? "Premium"
-                      : "Free"}
+                    {lesson.accessLevel === "premium" ? "Premium" : "Free"}
                   </span>
                 </div>
 
@@ -139,9 +137,7 @@ const MyLessons = () => {
                     </p>
                     <div className="table-actions">
                       <button
-                        onClick={() =>
-                          handleDelete(lesson._id)
-                        }
+                        onClick={() => handleDelete(lesson._id)}
                         className="btn btn-danger"
                         style={{ flex: 1 }}
                       >
