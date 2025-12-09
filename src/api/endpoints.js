@@ -23,3 +23,8 @@ export const userAPI = {
   updateProfile: (data) => apiClient.put("/users/profile", data),
   getFavorites: () => apiClient.get("/users/favorites"),
 };
+
+export const stripeAPI = {
+  createCheckoutSession: (payload) =>
+    apiClient.post("/stripe/create-checkout-session", payload),
+};

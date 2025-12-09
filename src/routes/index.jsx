@@ -16,6 +16,7 @@ import MyFavorites from "../pages/Dashboard/MyFavorites";
 import AdminPanel from "../pages/Dashboard/Admin";
 import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
+import PaymentCancel from "../pages/PaymentCancel";
 import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
             <AdminPanel />
           </AdminRoute>
         ),
+      },
+      {
+        path: "payment/cancel",
+        element: <PaymentCancel />,
       },
     ],
   },

@@ -40,9 +40,15 @@ const Header = () => {
               <Link to="/dashboard/my-lessons" className="nav-link">
                 My Lessons
               </Link>
-              <Link to="/pricing" className="nav-link">
-                Pricing/Upgrade
-              </Link>
+              {user?.isPremium ? (
+                <span className="nav-badge" aria-label="Premium user">
+                  Premium ⭐
+                </span>
+              ) : (
+                <Link to="/pricing" className="nav-link">
+                  Pricing/Upgrade
+                </Link>
+              )}
             </>
           )}
         </nav>
@@ -62,7 +68,7 @@ const Header = () => {
               <button className="avatar-btn" onClick={toggleDropdown}>
                 <img
                   src={user?.photoURL || "/default-avatar.png"}
-                  alt={user?.name}
+                  alt={user?.name || user?.displayName || "User"}
                   className="avatar-img"
                   onError={(e) => (e.target.src = "/default-avatar.png")}
                 />
@@ -71,7 +77,7 @@ const Header = () => {
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
-                    <p className="user-name">{user?.name}</p>
+                    <p className="user-name">{user?.name || user?.displayName}</p>
                     <p className="user-email">{user?.email}</p>
                   </div>
                   <div className="dropdown-divider"></div>

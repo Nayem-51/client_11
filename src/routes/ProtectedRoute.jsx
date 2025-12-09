@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, refreshUser } = useAuth();
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   if (loading) {
     return <div className="loading-page">Loading...</div>;
@@ -17,7 +21,11 @@ export const ProtectedRoute = ({ children }) => {
 };
 
 export const AdminRoute = ({ children }) => {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading, refreshUser } = useAuth();
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   if (loading) {
     return <div className="loading-page">Loading...</div>;

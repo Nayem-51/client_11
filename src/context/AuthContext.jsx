@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
+import { authAPI } from "../api/endpoints";
 
 export const AuthContext = createContext();
 
@@ -7,19 +8,53 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const logout = useCallback(() => {
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  }, []);
+
+  const syncUserFromApi = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await authAPI.getCurrentUser();
+      const currentUser = response.data?.user || response.data || null;
+
+      if (currentUser) {
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        localStorage.setItem("user", JSON.stringify(currentUser));
+      }
+    } catch (error) {
+      console.error("Failed to sync user from backend:", error?.message || error);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  }, [logout]);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Failed to parse stored user:", error);
         localStorage.removeItem("user");
       }
     }
-    setLoading(false);
-  }, []);
+
+    // Always re-sync from backend (single source of truth for premium plan)
+    syncUserFromApi();
+  }, [syncUserFromApi]);
 
   const login = (userData) => {
     setUser(userData);
@@ -27,17 +62,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-  };
-
   const value = {
     user,
     loading,
     isAuthenticated,
+    refreshUser: syncUserFromApi,
     login,
     logout,
   };
