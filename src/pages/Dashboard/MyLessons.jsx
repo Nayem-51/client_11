@@ -74,9 +74,7 @@ const MyLessons = () => {
 
       // Update local state
       setLessons(
-        lessons.map((l) =>
-          l._id === lessonId ? { ...l, ...editForm } : l
-        )
+        lessons.map((l) => (l._id === lessonId ? { ...l, ...editForm } : l))
       );
 
       setSuccess("Lesson updated successfully! ✓");
@@ -124,11 +122,14 @@ const MyLessons = () => {
 
   const handleToggleAccessLevel = async (lesson) => {
     if (!user?.isPremium && lesson.accessLevel === "free") {
-      setError("You need an active Premium subscription to set premium access level.");
+      setError(
+        "You need an active Premium subscription to set premium access level."
+      );
       return;
     }
 
-    const newAccessLevel = lesson.accessLevel === "premium" ? "free" : "premium";
+    const newAccessLevel =
+      lesson.accessLevel === "premium" ? "free" : "premium";
     try {
       await lessonsAPI.update(lesson._id, {
         ...lesson,
@@ -168,7 +169,14 @@ const MyLessons = () => {
 
       {error && <div className="alert alert-error">{error}</div>}
       {success && (
-        <div className="alert" style={{ background: "#ecfdf3", color: "#166534", border: "1px solid #bbf7d0" }}>
+        <div
+          className="alert"
+          style={{
+            background: "#ecfdf3",
+            color: "#166534",
+            border: "1px solid #bbf7d0",
+          }}
+        >
           {success}
         </div>
       )}
@@ -214,7 +222,9 @@ const MyLessons = () => {
                       </div>
                     </td>
                     <td>
-                      <span className="pill">{lesson.category || "General"}</span>
+                      <span className="pill">
+                        {lesson.category || "General"}
+                      </span>
                     </td>
                     <td>
                       <button
@@ -255,16 +265,16 @@ const MyLessons = () => {
                           border: "none",
                           padding: "6px 12px",
                         }}
-                        disabled={!user?.isPremium && lesson.accessLevel === "free"}
+                        disabled={
+                          !user?.isPremium && lesson.accessLevel === "free"
+                        }
                         title={
                           !user?.isPremium
                             ? "Premium subscription required"
                             : "Click to toggle"
                         }
                       >
-                        {lesson.accessLevel === "premium"
-                          ? "Premium"
-                          : "Free"}
+                        {lesson.accessLevel === "premium" ? "Premium" : "Free"}
                       </button>
                     </td>
                     <td>
@@ -279,9 +289,7 @@ const MyLessons = () => {
                         saves
                       </div>
                     </td>
-                    <td>
-                      {new Date(lesson.createdAt).toLocaleDateString()}
-                    </td>
+                    <td>{new Date(lesson.createdAt).toLocaleDateString()}</td>
                     <td>
                       <div className="table-actions">
                         <button
@@ -320,7 +328,10 @@ const MyLessons = () => {
 
       {/* Update Modal */}
       {editModal && (
-        <div className="modal-backdrop" onClick={() => !updating && setEditModal(null)}>
+        <div
+          className="modal-backdrop"
+          onClick={() => !updating && setEditModal(null)}
+        >
           <div
             className="modal"
             onClick={(e) => e.stopPropagation()}
@@ -360,7 +371,13 @@ const MyLessons = () => {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "12px",
+                }}
+              >
                 <div className="form-group">
                   <label>Category</label>
                   <select
@@ -385,7 +402,10 @@ const MyLessons = () => {
                   <select
                     value={editForm.emotionalTone}
                     onChange={(e) =>
-                      setEditForm({ ...editForm, emotionalTone: e.target.value })
+                      setEditForm({
+                        ...editForm,
+                        emotionalTone: e.target.value,
+                      })
                     }
                     disabled={updating}
                   >
@@ -398,7 +418,13 @@ const MyLessons = () => {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "12px",
+                }}
+              >
                 <div className="form-group">
                   <label>Visibility</label>
                   <select
@@ -422,9 +448,7 @@ const MyLessons = () => {
                     }
                     disabled={updating || !user?.isPremium}
                     title={
-                      !user?.isPremium
-                        ? "Premium subscription required"
-                        : ""
+                      !user?.isPremium ? "Premium subscription required" : ""
                     }
                   >
                     <option value="free">Free</option>
@@ -487,7 +511,8 @@ const MyLessons = () => {
               Delete Lesson?
             </h2>
             <p style={{ color: "#6b7280", marginBottom: "20px" }}>
-              This action cannot be undone. The lesson will be permanently removed from the database.
+              This action cannot be undone. The lesson will be permanently
+              removed from the database.
             </p>
             <div className="modal-actions">
               <button
