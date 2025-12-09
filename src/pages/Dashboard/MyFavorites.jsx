@@ -47,7 +47,8 @@ const MyFavorites = () => {
         ? (lesson.category || "").toLowerCase() === categoryFilter.toLowerCase()
         : true;
       const matchesTone = toneFilter
-        ? (lesson.emotionalTone || "").toLowerCase() === toneFilter.toLowerCase()
+        ? (lesson.emotionalTone || "").toLowerCase() ===
+          toneFilter.toLowerCase()
         : true;
       return matchesCategory && matchesTone;
     });
@@ -89,7 +90,11 @@ const MyFavorites = () => {
       {success && (
         <div
           className="alert"
-          style={{ background: "#ecfdf3", color: "#166534", border: "1px solid #bbf7d0" }}
+          style={{
+            background: "#ecfdf3",
+            color: "#166534",
+            border: "1px solid #bbf7d0",
+          }}
         >
           {success}
         </div>
@@ -107,10 +112,14 @@ const MyFavorites = () => {
         </div>
       ) : (
         <div>
-          <div className="section-with-header" style={{ alignItems: "flex-end" }}>
+          <div
+            className="section-with-header"
+            style={{ alignItems: "flex-end" }}
+          >
             <div>
               <p style={{ color: "#6b7280", margin: "0 0 6px 0" }}>
-                {favorites.length} saved lesson{favorites.length !== 1 ? "s" : ""}
+                {favorites.length} saved lesson
+                {favorites.length !== 1 ? "s" : ""}
               </p>
               <h2 style={{ margin: 0 }}>Favorites Library</h2>
             </div>
@@ -171,10 +180,15 @@ const MyFavorites = () => {
                       </div>
                     </td>
                     <td>
-                      <span className="pill">{lesson.category || "General"}</span>
+                      <span className="pill">
+                        {lesson.category || "General"}
+                      </span>
                     </td>
                     <td>
-                      <span className="pill pill-warning" style={{ background: "#eef2ff", color: "#4338ca" }}>
+                      <span
+                        className="pill pill-warning"
+                        style={{ background: "#eef2ff", color: "#4338ca" }}
+                      >
                         {lesson.emotionalTone || "-"}
                       </span>
                     </td>
@@ -183,9 +197,13 @@ const MyFavorites = () => {
                         className="badge"
                         style={{
                           background:
-                            lesson.accessLevel === "premium" ? "#fef3c7" : "#dbeafe",
+                            lesson.accessLevel === "premium"
+                              ? "#fef3c7"
+                              : "#dbeafe",
                           color:
-                            lesson.accessLevel === "premium" ? "#b45309" : "#1e40af",
+                            lesson.accessLevel === "premium"
+                              ? "#b45309"
+                              : "#1e40af",
                         }}
                       >
                         {lesson.accessLevel === "premium" ? "Premium" : "Free"}
@@ -196,9 +214,13 @@ const MyFavorites = () => {
                         className="badge"
                         style={{
                           background:
-                            lesson.visibility === "public" ? "#ecfdf3" : "#fee2e2",
+                            lesson.visibility === "public"
+                              ? "#ecfdf3"
+                              : "#fee2e2",
                           color:
-                            lesson.visibility === "public" ? "#15803d" : "#991b1b",
+                            lesson.visibility === "public"
+                              ? "#15803d"
+                              : "#991b1b",
                         }}
                       >
                         {lesson.visibility === "public" ? "Public" : "Private"}
@@ -206,11 +228,15 @@ const MyFavorites = () => {
                     </td>
                     <td>
                       <strong>{lesson.likes?.length || 0}</strong>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>reactions</div>
+                      <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                        reactions
+                      </div>
                     </td>
                     <td>
                       <strong>{lesson.favorites?.length || 0}</strong>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>saves</div>
+                      <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                        saves
+                      </div>
                     </td>
                     <td>
                       <div className="table-actions">

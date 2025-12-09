@@ -34,7 +34,8 @@ const Profile = () => {
         const userLessons = allLessons
           .filter(
             (l) =>
-              (l.instructor?._id === user?._id || l.creator?._id === user?._id) &&
+              (l.instructor?._id === user?._id ||
+                l.creator?._id === user?._id) &&
               (l.visibility || "public") === "public"
           )
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -97,25 +98,53 @@ const Profile = () => {
   }
 
   return (
-    <div className="page profile-page" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div
+      className="page profile-page"
+      style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+    >
       <div className="dashboard-header" style={{ alignItems: "center" }}>
         <div>
           <p className="eyebrow">Your account</p>
           <h1>Profile</h1>
         </div>
-        {user.isPremium && <span className="pill" style={{ background: "#fef3c7", color: "#b45309" }}>Premium ⭐</span>}
+        {user.isPremium && (
+          <span
+            className="pill"
+            style={{ background: "#fef3c7", color: "#b45309" }}
+          >
+            Premium ⭐
+          </span>
+        )}
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
       {success && (
-        <div className="alert" style={{ background: "#ecfdf3", color: "#166534", border: "1px solid #bbf7d0" }}>
+        <div
+          className="alert"
+          style={{
+            background: "#ecfdf3",
+            color: "#166534",
+            border: "1px solid #bbf7d0",
+          }}
+        >
           {success}
         </div>
       )}
 
-      <div className="profile-grid" style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: "20px", alignItems: "start" }}>
+      <div
+        className="profile-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "320px 1fr",
+          gap: "20px",
+          alignItems: "start",
+        }}
+      >
         {/* Left: user info + stats */}
-        <div className="lesson-card" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div
+          className="lesson-card"
+          style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             <div
               style={{
@@ -136,21 +165,46 @@ const Profile = () => {
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca" }}>{initials}</span>
+                <span style={{ fontWeight: 700, color: "#4338ca" }}>
+                  {initials}
+                </span>
               )}
             </div>
             <div>
-              <h2 style={{ margin: "0 0 4px 0" }}>{user.name || "Your name"}</h2>
+              <h2 style={{ margin: "0 0 4px 0" }}>
+                {user.name || "Your name"}
+              </h2>
               <p style={{ margin: 0, color: "#6b7280" }}>{user.email}</p>
               {user.isPremium ? (
-                <span className="badge" style={{ background: "#ecfdf3", color: "#15803d", marginTop: 6 }}>Premium ⭐</span>
+                <span
+                  className="badge"
+                  style={{
+                    background: "#ecfdf3",
+                    color: "#15803d",
+                    marginTop: 6,
+                  }}
+                >
+                  Premium ⭐
+                </span>
               ) : (
-                <span className="badge" style={{ background: "#eef2ff", color: "#4338ca", marginTop: 6 }}>Free plan</span>
+                <span
+                  className="badge"
+                  style={{
+                    background: "#eef2ff",
+                    color: "#4338ca",
+                    marginTop: 6,
+                  }}
+                >
+                  Free plan
+                </span>
               )}
             </div>
           </div>
 
-          <div className="stats-grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+          <div
+            className="stats-grid"
+            style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+          >
             <div className="stat-box">
               <p className="stat-box__label">Lessons created</p>
               <p className="stat-box__value">{lessonsCreatedCount}</p>
@@ -191,11 +245,20 @@ const Profile = () => {
             <div className="form-group">
               <label>Email</label>
               <input type="email" value={user.email} disabled />
-              <p className="form-group__hint">Email cannot be edited for security.</p>
+              <p className="form-group__hint">
+                Email cannot be edited for security.
+              </p>
             </div>
 
-            <div className="form-actions" style={{ justifyContent: "flex-start" }}>
-              <button type="submit" className="btn btn-primary" disabled={updating}>
+            <div
+              className="form-actions"
+              style={{ justifyContent: "flex-start" }}
+            >
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={updating}
+              >
                 {updating ? "Updating..." : "Save Changes"}
               </button>
             </div>
@@ -207,9 +270,7 @@ const Profile = () => {
       <div className="dashboard-section">
         <div className="section-with-header">
           <h2>Your public lessons</h2>
-          <p style={{ margin: 0, color: "#6b7280" }}>
-            Sorted by newest first
-          </p>
+          <p style={{ margin: 0, color: "#6b7280" }}>Sorted by newest first</p>
         </div>
 
         {loading ? (
@@ -228,7 +289,10 @@ const Profile = () => {
                 </div>
                 <p className="lesson-desc">{lesson.description}</p>
                 <div className="lesson-card__meta">
-                  <span className="pill" style={{ background: "#eef2ff", color: "#4338ca" }}>
+                  <span
+                    className="pill"
+                    style={{ background: "#eef2ff", color: "#4338ca" }}
+                  >
                     {lesson.emotionalTone || "Reflective"}
                   </span>
                   <span className="pill pill-accent">
@@ -236,17 +300,27 @@ const Profile = () => {
                   </span>
                 </div>
                 <div className="lesson-meta-line">
-                  <span className="creator-name">{lesson.instructor?.name || lesson.creator?.name || "You"}</span>
-                  <span className="muted">{new Date(lesson.createdAt).toLocaleDateString()}</span>
+                  <span className="creator-name">
+                    {lesson.instructor?.name || lesson.creator?.name || "You"}
+                  </span>
+                  <span className="muted">
+                    {new Date(lesson.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="lesson-meta-line">
-                  <span className="muted">{lesson.likes?.length || 0} reactions</span>
-                  <span className="muted">{lesson.favorites?.length || 0} saves</span>
+                  <span className="muted">
+                    {lesson.likes?.length || 0} reactions
+                  </span>
+                  <span className="muted">
+                    {lesson.favorites?.length || 0} saves
+                  </span>
                 </div>
                 <div className="lesson-footer">
                   <button
                     className="btn btn-primary"
-                    onClick={() => window.open(`/lessons/${lesson._id}`, "_self")}
+                    onClick={() =>
+                      window.open(`/lessons/${lesson._id}`, "_self")
+                    }
                   >
                     View lesson
                   </button>
