@@ -43,14 +43,23 @@ const ReportedLessons = () => {
     fetchLessons();
   }, []);
 
-  const flaggedLessons = useMemo(() => lessons.filter((l) => isFlagged(l)), [lessons]);
+  const flaggedLessons = useMemo(
+    () => lessons.filter((l) => isFlagged(l)),
+    [lessons]
+  );
 
   const openModal = (lesson) => setSelected(lesson);
   const closeModal = () => setSelected(null);
 
   const deleteLesson = (id) => {
     const target = lessons.find((l) => l._id === id);
-    if (!window.confirm(`Delete lesson "${target?.title || "this lesson"}"? This cannot be undone here.`)) {
+    if (
+      !window.confirm(
+        `Delete lesson "${
+          target?.title || "this lesson"
+        }"? This cannot be undone here.`
+      )
+    ) {
       return;
     }
     setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
@@ -74,7 +83,9 @@ const ReportedLessons = () => {
         <div>
           <p className="eyebrow">Moderation</p>
           <h1>Reported Lessons</h1>
-          <p className="muted">Review community reports, inspect reasons, and take action.</p>
+          <p className="muted">
+            Review community reports, inspect reasons, and take action.
+          </p>
         </div>
         <div className="admin-actions">
           <button className="btn" onClick={fetchLessons} disabled={loading}>
@@ -129,16 +140,27 @@ const ReportedLessons = () => {
                   <tr key={lesson._id}>
                     <td>{lesson.title}</td>
                     <td>{lesson.category || "General"}</td>
-                    <td>{lesson.reportCount || collectReports(lesson).length || 1}</td>
+                    <td>
+                      {lesson.reportCount || collectReports(lesson).length || 1}
+                    </td>
                     <td>
                       <div className="table-actions">
-                        <button className="btn btn-primary" onClick={() => openModal(lesson)}>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => openModal(lesson)}
+                        >
                           View Reasons
                         </button>
-                        <button className="btn btn-danger" onClick={() => deleteLesson(lesson._id)}>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => deleteLesson(lesson._id)}
+                        >
                           Delete Lesson
                         </button>
-                        <button className="btn" onClick={() => ignoreReports(lesson._id)}>
+                        <button
+                          className="btn"
+                          onClick={() => ignoreReports(lesson._id)}
+                        >
                           Ignore
                         </button>
                       </div>
@@ -158,7 +180,14 @@ const ReportedLessons = () => {
             <p className="muted" style={{ marginTop: "4px" }}>
               {selected.title}
             </p>
-            <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div
+              style={{
+                marginTop: "12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
               {collectReports(selected).length === 0 ? (
                 <p className="muted">Flagged without detailed reasons.</p>
               ) : (
@@ -172,14 +201,20 @@ const ReportedLessons = () => {
                       background: "#f9fafb",
                     }}
                   >
-                    <p style={{ margin: 0, fontWeight: 600 }}>{report.reason || "Report"}</p>
+                    <p style={{ margin: 0, fontWeight: 600 }}>
+                      {report.reason || "Report"}
+                    </p>
                     {report.detail && (
                       <p className="muted" style={{ margin: "4px 0" }}>
                         {report.detail}
                       </p>
                     )}
-                    <p className="muted" style={{ margin: 0, fontSize: "12px" }}>
-                      Reporter: {report.reporterName || report.reporter || "Unknown"}
+                    <p
+                      className="muted"
+                      style={{ margin: 0, fontSize: "12px" }}
+                    >
+                      Reporter:{" "}
+                      {report.reporterName || report.reporter || "Unknown"}
                       {report.reporterEmail ? ` • ${report.reporterEmail}` : ""}
                     </p>
                   </div>
@@ -190,10 +225,16 @@ const ReportedLessons = () => {
               <button className="btn" onClick={closeModal}>
                 Close
               </button>
-              <button className="btn btn-danger" onClick={() => deleteLesson(selected._id)}>
+              <button
+                className="btn btn-danger"
+                onClick={() => deleteLesson(selected._id)}
+              >
                 Delete Lesson
               </button>
-              <button className="btn btn-primary" onClick={() => ignoreReports(selected._id)}>
+              <button
+                className="btn btn-primary"
+                onClick={() => ignoreReports(selected._id)}
+              >
                 Ignore Reports
               </button>
             </div>

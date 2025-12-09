@@ -10,7 +10,12 @@ const getUserId = (lesson) => {
 
 const getUserName = (lesson) => {
   const contributor = lesson?.instructor || lesson?.creator || lesson?.author;
-  return contributor?.name || contributor?.fullName || contributor?.email || "Unknown";
+  return (
+    contributor?.name ||
+    contributor?.fullName ||
+    contributor?.email ||
+    "Unknown"
+  );
 };
 
 const getUserEmail = (lesson) => {
@@ -32,7 +37,10 @@ const ManageUsers = () => {
       const id = getUserId(lesson);
       if (!id) return;
       const role =
-        lesson?.instructor?.role || lesson?.creator?.role || lesson?.author?.role || "user";
+        lesson?.instructor?.role ||
+        lesson?.creator?.role ||
+        lesson?.author?.role ||
+        "user";
       const entry = map.get(id) || {
         id,
         name: getUserName(lesson),
@@ -42,7 +50,9 @@ const ManageUsers = () => {
       };
       map.set(id, { ...entry, totalLessons: entry.totalLessons + 1 });
     });
-    return Array.from(map.values()).sort((a, b) => b.totalLessons - a.totalLessons);
+    return Array.from(map.values()).sort(
+      (a, b) => b.totalLessons - a.totalLessons
+    );
   };
 
   const fetchUsers = async () => {
@@ -50,7 +60,8 @@ const ManageUsers = () => {
     setError("");
     try {
       const lessonsResponse = await lessonsAPI.getAll();
-      const allLessons = lessonsResponse.data?.data || lessonsResponse.data || [];
+      const allLessons =
+        lessonsResponse.data?.data || lessonsResponse.data || [];
       setUsers(hydrateUsers(allLessons));
     } catch (err) {
       setError("Could not load users. Please try again.");
@@ -97,7 +108,10 @@ const ManageUsers = () => {
         <div>
           <p className="eyebrow">Admin Control</p>
           <h1>Manage Users</h1>
-          <p className="muted">View all contributors, promote admins, and keep the community healthy.</p>
+          <p className="muted">
+            View all contributors, promote admins, and keep the community
+            healthy.
+          </p>
         </div>
         <div className="admin-actions">
           <button className="btn" onClick={fetchUsers} disabled={loading}>
@@ -124,12 +138,20 @@ const ManageUsers = () => {
               placeholder="Search by name or email"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+              style={{
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+              }}
             />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              style={{ padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+              style={{
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+              }}
             >
               <option value="all">All roles</option>
               <option value="admin">Admins</option>
@@ -160,7 +182,13 @@ const ManageUsers = () => {
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>
-                      <span className={`badge ${user.role === "admin" ? "badge-success" : "badge-warning"}`}>
+                      <span
+                        className={`badge ${
+                          user.role === "admin"
+                            ? "badge-success"
+                            : "badge-warning"
+                        }`}
+                      >
                         {user.role === "admin" ? "Admin" : "User"}
                       </span>
                     </td>
@@ -168,11 +196,17 @@ const ManageUsers = () => {
                     <td>
                       <div className="table-actions">
                         {user.role !== "admin" && (
-                          <button className="btn btn-primary" onClick={() => promoteToAdmin(user.id)}>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => promoteToAdmin(user.id)}
+                          >
                             Make Admin
                           </button>
                         )}
-                        <button className="btn btn-danger" onClick={() => deleteUser(user.id)}>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => deleteUser(user.id)}
+                        >
                           Delete
                         </button>
                       </div>

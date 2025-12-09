@@ -6,7 +6,11 @@ import "../../Pages.css";
 const monthKeys = (count = 6) => {
   const now = new Date();
   return Array.from({ length: count }, (_, idx) => {
-    const date = new Date(now.getFullYear(), now.getMonth() - (count - 1 - idx), 1);
+    const date = new Date(
+      now.getFullYear(),
+      now.getMonth() - (count - 1 - idx),
+      1
+    );
     return {
       key: `${date.getFullYear()}-${date.getMonth()}`,
       label: date.toLocaleDateString(undefined, { month: "short" }),
@@ -22,7 +26,12 @@ const getContributorId = (lesson) => {
 
 const getContributorName = (lesson) => {
   const contributor = lesson?.instructor || lesson?.creator || lesson?.author;
-  return contributor?.name || contributor?.fullName || contributor?.email || "Unknown";
+  return (
+    contributor?.name ||
+    contributor?.fullName ||
+    contributor?.email ||
+    "Unknown"
+  );
 };
 
 const AdminPanel = () => {
@@ -36,7 +45,8 @@ const AdminPanel = () => {
     setError("");
     try {
       const lessonsResponse = await lessonsAPI.getAll();
-      const allLessons = lessonsResponse.data?.data || lessonsResponse.data || [];
+      const allLessons =
+        lessonsResponse.data?.data || lessonsResponse.data || [];
       setLessons(allLessons);
     } catch (err) {
       setError("Failed to load admin analytics. Please retry.");
@@ -54,14 +64,20 @@ const AdminPanel = () => {
     const today = new Date();
     return lessons.filter((lesson) => {
       const created = new Date(lesson?.createdAt || lesson?.updatedAt || 0);
-      return !Number.isNaN(created) && created.toDateString() === today.toDateString();
+      return (
+        !Number.isNaN(created) &&
+        created.toDateString() === today.toDateString()
+      );
     });
   }, [lessons]);
 
   const flaggedLessons = useMemo(
     () =>
       lessons.filter(
-        (lesson) => lesson?.isFlagged || lesson?.status === "flagged" || (lesson?.reportCount || 0) > 0
+        (lesson) =>
+          lesson?.isFlagged ||
+          lesson?.status === "flagged" ||
+          (lesson?.reportCount || 0) > 0
       ),
     [lessons]
   );
@@ -69,7 +85,11 @@ const AdminPanel = () => {
   const publicLessons = useMemo(
     () =>
       lessons.filter(
-        (lesson) => lesson?.isPublished || lesson?.isPublic || lesson?.accessLevel === "public" || lesson?.visibility === "public"
+        (lesson) =>
+          lesson?.isPublished ||
+          lesson?.isPublic ||
+          lesson?.accessLevel === "public" ||
+          lesson?.visibility === "public"
       ),
     [lessons]
   );
@@ -79,7 +99,11 @@ const AdminPanel = () => {
     lessons.forEach((lesson) => {
       const id = getContributorId(lesson);
       if (!id) return;
-      const existing = map.get(id) || { id, name: getContributorName(lesson), lessons: 0 };
+      const existing = map.get(id) || {
+        id,
+        name: getContributorName(lesson),
+        lessons: 0,
+      };
       map.set(id, { ...existing, lessons: existing.lessons + 1 });
     });
     return Array.from(map.values()).sort((a, b) => b.lessons - a.lessons);
@@ -92,7 +116,9 @@ const AdminPanel = () => {
     const firstContribution = new Map();
 
     lessons.forEach((lesson) => {
-      const created = new Date(lesson?.createdAt || lesson?.updatedAt || Date.now());
+      const created = new Date(
+        lesson?.createdAt || lesson?.updatedAt || Date.now()
+      );
       if (Number.isNaN(created)) return;
       const key = `${created.getFullYear()}-${created.getMonth()}`;
       if (lessonMap[key] !== undefined) {
@@ -116,8 +142,14 @@ const AdminPanel = () => {
     });
 
     return {
-      lessonGrowth: months.map(({ key, label }) => ({ label, value: lessonMap[key] || 0 })),
-      userGrowth: months.map(({ key, label }) => ({ label, value: userMap[key] || 0 })),
+      lessonGrowth: months.map(({ key, label }) => ({
+        label,
+        value: lessonMap[key] || 0,
+      })),
+      userGrowth: months.map(({ key, label }) => ({
+        label,
+        value: userMap[key] || 0,
+      })),
     };
   }, [lessons]);
 
@@ -130,7 +162,13 @@ const AdminPanel = () => {
       todayNew: todayLessons.length,
       topContributors: contributors.slice(0, 5),
     }),
-    [contributors, flaggedLessons.length, lessons.length, publicLessons.length, todayLessons.length]
+    [
+      contributors,
+      flaggedLessons.length,
+      lessons.length,
+      publicLessons.length,
+      todayLessons.length,
+    ]
   );
 
   if (loading) {
@@ -147,16 +185,24 @@ const AdminPanel = () => {
         <div>
           <p className="eyebrow">System Control</p>
           <h1>Admin Dashboard</h1>
-          <p className="muted">Monitor platform activity, content health, and growth.</p>
+          <p className="muted">
+            Monitor platform activity, content health, and growth.
+          </p>
         </div>
         <div className="admin-actions">
           <button className="btn" onClick={fetchAdminData}>
             Refresh
           </button>
-          <Link to="/dashboard/admin/manage-lessons" className="btn btn-secondary">
+          <Link
+            to="/dashboard/admin/manage-lessons"
+            className="btn btn-secondary"
+          >
             Manage Lessons
           </Link>
-          <Link to="/dashboard/admin/reported-lessons" className="btn btn-secondary">
+          <Link
+            to="/dashboard/admin/reported-lessons"
+            className="btn btn-secondary"
+          >
             Reported Lessons
           </Link>
           <Link to="/dashboard/admin/manage-users" className="btn btn-primary">
@@ -307,7 +353,8 @@ const AdminPanel = () => {
                       <div>
                         <p className="list-title">{lesson.title}</p>
                         <p className="muted">
-                          {lesson.category || "General"} • {lesson.accessLevel || "free"}
+                          {lesson.category || "General"} •{" "}
+                          {lesson.accessLevel || "free"}
                         </p>
                       </div>
                       <Link to={`/lessons/${lesson._id}`} className="text-link">
@@ -392,7 +439,9 @@ const AdminPanel = () => {
                           <span className="badge badge-warning">Draft</span>
                         )}
                       </td>
-                      <td>{lesson.reportCount || (lesson.isFlagged ? 1 : 0)}</td>
+                      <td>
+                        {lesson.reportCount || (lesson.isFlagged ? 1 : 0)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -406,7 +455,8 @@ const AdminPanel = () => {
         <div className="admin-section">
           <h3>Content Reports</h3>
           <p className="muted">
-            Reports and moderation workflows can be wired here once the API is available.
+            Reports and moderation workflows can be wired here once the API is
+            available.
           </p>
         </div>
       )}
