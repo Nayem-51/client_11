@@ -81,7 +81,7 @@ const Pricing = () => {
         price: 1500,
         currency: "bdt",
         mode: "payment",
-        successUrl: `${window.location.origin}/pricing?status=success`,
+        successUrl: `${window.location.origin}/payment/success`,
         cancelUrl: `${window.location.origin}/payment/cancel`,
       });
 
