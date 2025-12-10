@@ -16,6 +16,7 @@ export const lessonsAPI = {
   getPublic: () => apiClient.get("/lessons/public"),
   addFavorite: (id) => apiClient.post(`/lessons/${id}/favorite`),
   removeFavorite: (id) => apiClient.delete(`/lessons/${id}/favorite`),
+  toggleFeature: (id) => apiClient.put(`/lessons/${id}/feature`),
 };
 
 export const userAPI = {

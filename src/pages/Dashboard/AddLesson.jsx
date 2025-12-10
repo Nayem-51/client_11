@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Lottie from "lottie-react";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
+import successAnimation from "../../assets/animations/success.json";
 import "../Pages.css";
 
 const AddLesson = () => {
@@ -9,6 +11,7 @@ const AddLesson = () => {
   const { user } = useAuth();
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -74,11 +77,12 @@ const AddLesson = () => {
       };
 
       await lessonsAPI.create(payload);
-      showToast("Lesson created successfully!", "success");
-
+      setShowSuccessModal(true);
+      
       setTimeout(() => {
+        setShowSuccessModal(false);
         navigate("/dashboard/my-lessons");
-      }, 2000);
+      }, 3000);
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to create lesson",
@@ -103,6 +107,18 @@ const AddLesson = () => {
 
       {toast && (
         <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
+
+      {showSuccessModal && (
+        <div className="modal-backdrop">
+          <div className="modal modal-center">
+            <div style={{ width: 200, margin: "0 auto" }}>
+              <Lottie animationData={successAnimation} loop={false} />
+            </div>
+            <h3 style={{ textAlign: "center" }}>Lesson Created!</h3>
+            <p style={{ textAlign: "center" }}>Redirecting you to your lessons...</p>
+          </div>
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className="lesson-form">

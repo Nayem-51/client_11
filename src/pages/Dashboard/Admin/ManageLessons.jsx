@@ -100,14 +100,20 @@ const ManageLessons = () => {
     setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
   };
 
-  const toggleFeatured = (id) => {
-    setLessons((prev) =>
-      prev.map((lesson) =>
-        lesson._id === id
-          ? { ...lesson, isFeatured: !lesson.isFeatured }
-          : lesson
-      )
-    );
+  const toggleFeatured = async (id) => {
+    try {
+      await lessonsAPI.toggleFeature(id);
+      setLessons((prev) =>
+        prev.map((lesson) =>
+          lesson._id === id
+            ? { ...lesson, isFeatured: !lesson.isFeatured }
+            : lesson
+        )
+      );
+    } catch (err) {
+      console.error("Failed to toggle feature:", err);
+      alert("Failed to update featured status");
+    }
   };
 
   const markReviewed = (id) => {
