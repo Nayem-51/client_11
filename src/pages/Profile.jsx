@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { lessonsAPI, userAPI } from "../api/endpoints";
 import { useAuth } from "../hooks/useAuth";
+import { toast, Toaster } from "react-hot-toast";
 import "./Pages.css";
 
 const Profile = () => {
   const { user, refreshUser } = useAuth();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [form, setForm] = useState({
     displayName: "",
     photoURL: "",
@@ -41,10 +40,9 @@ const Profile = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         setLessons(userLessons);
-        setError("");
       } catch (err) {
         console.error("Failed to fetch profile lessons:", err);
-        setError("Failed to load your lessons. Please try again.");
+        toast.error("Failed to load your lessons.");
       } finally {
         setLoading(false);
       }
@@ -69,7 +67,7 @@ const Profile = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!form.displayName.trim()) {
-      setError("Display name is required.");
+      toast.error("Display name is required.");
       return;
     }
 
@@ -80,12 +78,10 @@ const Profile = () => {
         photoURL: form.photoURL.trim(),
       });
       await refreshUser();
-      setSuccess("Profile updated successfully! ✓");
-      setTimeout(() => setSuccess(""), 3000);
-      setError("");
+      toast.success("Profile updated successfully! ✓");
     } catch (err) {
       console.error("Failed to update profile:", err);
-      setError("Failed to update profile. Please try again.");
+      toast.error("Failed to update profile. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -104,6 +100,7 @@ const Profile = () => {
       className="page profile-page"
       style={{ display: "flex", flexDirection: "column", gap: "20px" }}
     >
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="dashboard-header" style={{ alignItems: "center" }}>
         <div>
           <p className="eyebrow">Your account</p>
@@ -118,20 +115,6 @@ const Profile = () => {
           </span>
         )}
       </div>
-
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && (
-        <div
-          className="alert"
-          style={{
-            background: "#ecfdf3",
-            color: "#166534",
-            border: "1px solid #bbf7d0",
-          }}
-        >
-          {success}
-        </div>
-      )}
 
       <div
         className="profile-grid"

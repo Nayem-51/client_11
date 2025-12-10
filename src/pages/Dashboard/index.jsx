@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import "../Pages.css";
 
 const Dashboard = () => {
@@ -75,6 +76,40 @@ const Dashboard = () => {
           <p className="stat-value">
             {user?.isPremium ? "Premium ⭐" : "Free"}
           </p>
+        </div>
+      </div>
+
+      <div className="dashboard-section">
+        <div className="section-header">
+          <div>
+            <p className="eyebrow">Analytics</p>
+            <h3>Activity Overview</h3>
+          </div>
+        </div>
+        <div style={{ height: 300, width: "100%", background: "#fff", padding: "20px", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={[
+                { name: 'Mon', views: 40, likes: 24 },
+                { name: 'Tue', views: 30, likes: 13 },
+                { name: 'Wed', views: 20, likes: 58 },
+                { name: 'Thu', views: 27, likes: 39 },
+                { name: 'Fri', views: 18, likes: 48 },
+                { name: 'Sat', views: 23, likes: 38 },
+                { name: 'Sun', views: 34, likes: 43 },
+              ]}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              />
+              <Line type="monotone" dataKey="views" stroke="#4338ca" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="likes" stroke="#15803d" strokeWidth={3} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

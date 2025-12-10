@@ -1,31 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../api/endpoints";
 import { auth } from "../firebase/firebase.config";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { toast, Toaster } from "react-hot-toast";
 import "./Pages.css";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setToast(null);
     setLoading(true);
 
     try {
@@ -33,17 +22,16 @@ const Login = () => {
       const { token, user } = response.data.data;
       localStorage.setItem("token", token);
       login(user);
-      showToast("Logged in successfully", "success");
+      toast.success("Logged in successfully");
       navigate("/dashboard");
     } catch (err) {
-      showToast(err.response?.data?.message || "Login failed", "error");
+      toast.error(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setToast(null);
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
@@ -72,26 +60,21 @@ const Login = () => {
         userResponse.data?.data?.user || userResponse.data?.user;
 
       login(backendUser);
-      showToast("Logged in with Google", "success");
+      toast.success("Logged in with Google");
       navigate("/dashboard");
     } catch (err) {
       console.error("Google login error:", err);
 
       // Handle popup blocker
       if (err.code === "auth/popup-blocked") {
-        showToast(
-          "Popup was blocked. Please allow popups for this site.",
-          "error"
-        );
+        toast.error("Popup was blocked. Please allow popups for this site.");
       } else if (err.code === "auth/popup-closed-by-user") {
-        showToast("Sign-in cancelled", "error");
+        toast.error("Sign-in cancelled");
       } else if (err.code === "auth/cancelled-popup-request") {
-        // User clicked button multiple times, ignore
         return;
       } else {
-        showToast(
-          err.response?.data?.message || err.message || "Google login failed",
-          "error"
+        toast.error(
+          err.response?.data?.message || err.message || "Google login failed"
         );
       }
     } finally {
@@ -108,11 +91,9 @@ const Login = () => {
 
   return (
     <div className="page auth-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="form-container">
         <h2>Login</h2>
-        {toast && (
-          <div className={`toast toast-${toast.type}`}>{toast.message}</div>
-        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

@@ -4,12 +4,12 @@ import Lottie from "lottie-react";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
 import successAnimation from "../../assets/animations/success.json";
+import { toast, Toaster } from "react-hot-toast";
 import "../Pages.css";
 
 const AddLesson = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -24,11 +24,6 @@ const AddLesson = () => {
     content: "",
   });
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -39,21 +34,20 @@ const AddLesson = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setToast(null);
 
     // Validation
     if (!formData.title.trim()) {
-      showToast("Please enter a lesson title", "error");
+      toast.error("Please enter a lesson title");
       return;
     }
 
     if (!formData.description.trim()) {
-      showToast("Please enter a lesson description", "error");
+      toast.error("Please enter a lesson description");
       return;
     }
 
     if (!user?.isPremium && formData.accessLevel === "premium") {
-      showToast("Only premium users can create premium lessons", "error");
+      toast.error("Only premium users can create premium lessons");
       return;
     }
 
@@ -82,11 +76,11 @@ const AddLesson = () => {
       setTimeout(() => {
         setShowSuccessModal(false);
         navigate("/dashboard/my-lessons");
+        toast.success("Lesson created successfully!");
       }, 3000);
     } catch (err) {
-      showToast(
-        err.response?.data?.message || "Failed to create lesson",
-        "error"
+      toast.error(
+        err.response?.data?.message || "Failed to create lesson"
       );
     } finally {
       setLoading(false);
@@ -95,6 +89,7 @@ const AddLesson = () => {
 
   return (
     <div className="page add-lesson-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="form-header">
         <div>
           <p className="eyebrow">New Content</p>
@@ -104,10 +99,6 @@ const AddLesson = () => {
           </p>
         </div>
       </div>
-
-      {toast && (
-        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
-      )}
 
       {showSuccessModal && (
         <div className="modal-backdrop">

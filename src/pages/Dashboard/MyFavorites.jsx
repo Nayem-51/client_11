@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
+import { toast, Toaster } from "react-hot-toast";
 import "../Pages.css";
 
 const MyFavorites = () => {
@@ -9,8 +10,6 @@ const MyFavorites = () => {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [toneFilter, setToneFilter] = useState("");
 
@@ -32,10 +31,9 @@ const MyFavorites = () => {
       );
 
       setFavorites(favoritesList);
-      setError("");
     } catch (err) {
       console.error("Failed to fetch favorites:", err);
-      setError("Failed to load your favorites. Please try again.");
+      toast.error("Failed to load your favorites. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -58,11 +56,10 @@ const MyFavorites = () => {
     try {
       await lessonsAPI.removeFavorite(lessonId);
       setFavorites(favorites.filter((l) => l._id !== lessonId));
-      setSuccess("Removed from favorites ✓");
-      setTimeout(() => setSuccess(""), 3000);
+      toast.success("Removed from favorites ✓");
     } catch (err) {
       console.error("Failed to remove favorite:", err);
-      setError("Failed to remove favorite. Please try again.");
+      toast.error("Failed to remove favorite. Please try again.");
     }
   };
 
@@ -76,6 +73,7 @@ const MyFavorites = () => {
 
   return (
     <div className="page dashboard-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="dashboard-header">
         <div>
           <p className="eyebrow">Saved lessons</p>
@@ -85,20 +83,6 @@ const MyFavorites = () => {
           Refresh
         </button>
       </div>
-
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && (
-        <div
-          className="alert"
-          style={{
-            background: "#ecfdf3",
-            color: "#166534",
-            border: "1px solid #bbf7d0",
-          }}
-        >
-          {success}
-        </div>
-      )}
 
       {favorites.length === 0 ? (
         <div className="empty-state">

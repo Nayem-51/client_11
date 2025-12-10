@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { authAPI } from "../api/endpoints";
 import { auth } from "../firebase/firebase.config";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { toast, Toaster } from "react-hot-toast";
 import "./Pages.css";
 
 const Register = () => {
@@ -14,20 +15,9 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
-  const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-  };
 
   const isValidPassword = (pwd) => {
     const hasUpper = /[A-Z]/.test(pwd);
@@ -38,17 +28,15 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setToast(null);
 
     if (formData.password !== formData.confirmPassword) {
-      showToast("Passwords do not match", "error");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (!isValidPassword(formData.password)) {
-      showToast(
-        "Password must have uppercase, lowercase, and be at least 6 characters",
-        "error"
+      toast.error(
+        "Password must have uppercase, lowercase, and be at least 6 characters"
       );
       return;
     }
@@ -64,17 +52,16 @@ const Register = () => {
       const { token, user } = response.data.data;
       localStorage.setItem("token", token);
       login(user);
-      showToast("Account created successfully", "success");
+      toast.success("Account created successfully");
       navigate("/dashboard");
     } catch (err) {
-      showToast(err.response?.data?.message || "Registration failed", "error");
+      toast.error(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleRegister = async () => {
-    setToast(null);
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
@@ -103,26 +90,21 @@ const Register = () => {
         userResponse.data?.data?.user || userResponse.data?.user;
 
       login(backendUser);
-      showToast("Signed up with Google", "success");
+      toast.success("Signed up with Google");
       navigate("/dashboard");
     } catch (err) {
       console.error("Google register error:", err);
 
       // Handle popup blocker
       if (err.code === "auth/popup-blocked") {
-        showToast(
-          "Popup was blocked. Please allow popups for this site.",
-          "error"
-        );
+        toast.error("Popup was blocked. Please allow popups for this site.");
       } else if (err.code === "auth/popup-closed-by-user") {
-        showToast("Sign-in cancelled", "error");
+        toast.error("Sign-in cancelled");
       } else if (err.code === "auth/cancelled-popup-request") {
-        // User clicked button multiple times, ignore
         return;
       } else {
-        showToast(
-          err.response?.data?.message || err.message || "Google signup failed",
-          "error"
+        toast.error(
+          err.response?.data?.message || err.message || "Google signup failed"
         );
       }
     } finally {
@@ -139,11 +121,9 @@ const Register = () => {
 
   return (
     <div className="page auth-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="form-container">
         <h2>Create Account</h2>
-        {toast && (
-          <div className={`toast toast-${toast.type}`}>{toast.message}</div>
-        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
