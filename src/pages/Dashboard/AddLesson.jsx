@@ -67,6 +67,7 @@ const AddLesson = () => {
         content: formData.content,
         isPublished: formData.privacy === "public",
         isPremium: formData.accessLevel === "premium",
+        emotionalTone: formData.emotionalTone,
         tags: [formData.category, formData.emotionalTone],
       };
 

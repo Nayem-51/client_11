@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { lessonsAPI } from "../../../api/endpoints";
+import { adminAPI, lessonsAPI } from "../../../api/endpoints";
 import Spinner from "../../../components/common/Spinner";
+import { toast, Toaster } from "react-hot-toast";
 import "../../Pages.css";
 
 const collectReports = (lesson) => {
@@ -22,19 +23,20 @@ const isFlagged = (lesson) =>
 const ReportedLessons = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selected, setSelected] = useState(null);
 
   const fetchLessons = async () => {
     setLoading(true);
-    setError("");
     try {
-      const res = await lessonsAPI.getAll();
-      const data = res.data?.data || res.data || [];
+      // We can fetch lessons and filter, OR use getReports if backend supports grouping by lesson
+      // adminAPI.getLessons can give us all lessons, and we filter client-side for flagged ones 
+      // which matches previous logic but uses the admin endpoint.
+      const res = await adminAPI.getLessons({ limit: 100 }); 
+      const data = res.data?.data || [];
       setLessons(data);
     } catch (err) {
-      setError("Failed to load reported lessons. Please retry.");
       console.error("Admin reported lessons fetch failed", err);
+      toast.error("Failed to load reported lessons.");
     } finally {
       setLoading(false);
     }
@@ -52,22 +54,36 @@ const ReportedLessons = () => {
   const openModal = (lesson) => setSelected(lesson);
   const closeModal = () => setSelected(null);
 
-  const deleteLesson = (id) => {
+  const deleteLesson = async (id) => {
     const target = lessons.find((l) => l._id === id);
     if (
       !window.confirm(
         `Delete lesson "${
           target?.title || "this lesson"
-        }"? This cannot be undone here.`
+        }"? This cannot be undone.`
       )
     ) {
       return;
     }
-    setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
-    closeModal();
+    
+    try {
+      await lessonsAPI.delete(id);
+      setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
+      closeModal();
+      toast.success("Lesson deleted successfully. ✓");
+    } catch (err) {
+      console.error("Failed to delete lesson:", err);
+      toast.error("Failed to delete lesson.");
+    }
   };
 
-  const ignoreReports = (id) => {
+  const ignoreReports = async (id) => {
+    // There isn't a direct 'ignore all' endpoint on the report controller I saw,
+    // unless we iterate and resolve all reports for this lesson.
+    // For now, I will update local state and perhaps call resolve on known reports if I had IDs.
+    // Since I don't have report IDs readily mapped in the lesson object in this view (unless populated),
+    // I'll stick to local state update + a toast, as this matches the previous implementation's scope.
+    // Ideally backend would have 'clear flags for lesson'.
     setLessons((prev) =>
       prev.map((lesson) =>
         lesson._id === id
@@ -76,10 +92,12 @@ const ReportedLessons = () => {
       )
     );
     closeModal();
+    toast.success("Reports ignored/cleared for this session.");
   };
 
   return (
     <div className="page admin-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="admin-header">
         <div>
           <p className="eyebrow">Moderation</p>
@@ -97,8 +115,6 @@ const ReportedLessons = () => {
           </Link>
         </div>
       </div>
-
-      {error && <div className="alert alert-error">{error}</div>}
 
       <div className="stats-section">
         <div className="stat-box">

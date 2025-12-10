@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { lessonsAPI } from "../../../api/endpoints";
+import { adminAPI, lessonsAPI } from "../../../api/endpoints";
 import Spinner from "../../../components/common/Spinner";
+import { toast, Toaster } from "react-hot-toast";
 import "../../Pages.css";
 
 const monthKeys = (count = 6) => {
@@ -38,19 +39,20 @@ const getContributorName = (lesson) => {
 const AdminPanel = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
 
   const fetchAdminData = async () => {
     setLoading(true);
-    setError("");
     try {
-      const lessonsResponse = await lessonsAPI.getAll();
-      const allLessons =
-        lessonsResponse.data?.data || lessonsResponse.data || [];
+      // Fetch all lessons for analytics
+      // We could use adminAPI.getStats but that only gives counts.
+      // To simulate the graphs client-side (as originally implemented), we still need the lessons list.
+      // So I will stick to fetching all lessons for the detailed analytics graphs.
+      const lessonsResponse = await adminAPI.getLessons({ limit: 500 }); // Fetch more for better stats
+      const allLessons = lessonsResponse.data?.data || [];
       setLessons(allLessons);
     } catch (err) {
-      setError("Failed to load admin analytics. Please retry.");
+      toast.error("Failed to load admin analytics. Please retry.");
       console.error("Failed to fetch admin data:", err);
     } finally {
       setLoading(false);
@@ -182,6 +184,7 @@ const AdminPanel = () => {
 
   return (
     <div className="page admin-page admin-panel-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="admin-header">
         <div>
           <p className="eyebrow">System Control</p>
@@ -215,8 +218,6 @@ const AdminPanel = () => {
         </div>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
-
       <div className="admin-tabs">
         <button
           className={`admin-tab ${activeTab === "overview" ? "active" : ""}`}
@@ -225,16 +226,10 @@ const AdminPanel = () => {
           Overview
         </button>
         <button
-          className={`admin-tab ${activeTab === "lessons" ? "active" : ""}`}
-          onClick={() => setActiveTab("lessons")}
+          className={`admin-tab ${activeTab === "growth" ? "active" : ""}`}
+          onClick={() => setActiveTab("growth")}
         >
-          Manage Lessons
-        </button>
-        <button
-          className={`admin-tab ${activeTab === "reports" ? "active" : ""}`}
-          onClick={() => setActiveTab("reports")}
-        >
-          Reports
+          Growth Analytics
         </button>
       </div>
 
@@ -260,54 +255,6 @@ const AdminPanel = () => {
               <p className="stat-label">Today&apos;s New Lessons</p>
               <p className="stat-value">{stats.todayNew}</p>
               <p className="muted">Created in the last 24h</p>
-            </div>
-          </div>
-
-          <div className="dashboard-grid">
-            <div className="dashboard-card">
-              <div className="section-header">
-                <div>
-                  <p className="eyebrow">Trend</p>
-                  <h3>Lesson Growth</h3>
-                </div>
-              </div>
-              <div className="chart-bars">
-                {growthData.lessonGrowth.map((item) => (
-                  <div key={item.label} className="chart-bar">
-                    <div className="chart-bar__label">{item.label}</div>
-                    <div className="chart-bar__track">
-                      <div
-                        className="chart-bar__fill"
-                        style={{ width: `${Math.min(item.value * 12, 100)}%` }}
-                      />
-                    </div>
-                    <div className="chart-bar__value">{item.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="dashboard-card">
-              <div className="section-header">
-                <div>
-                  <p className="eyebrow">Trend</p>
-                  <h3>User Growth</h3>
-                </div>
-              </div>
-              <div className="chart-bars">
-                {growthData.userGrowth.map((item) => (
-                  <div key={item.label} className="chart-bar">
-                    <div className="chart-bar__label">{item.label}</div>
-                    <div className="chart-bar__track">
-                      <div
-                        className="chart-bar__fill chart-bar__fill--secondary"
-                        style={{ width: `${Math.min(item.value * 20, 100)}%` }}
-                      />
-                    </div>
-                    <div className="chart-bar__value">{item.value}</div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
@@ -361,7 +308,10 @@ const AdminPanel = () => {
                           {lesson.accessLevel || "free"}
                         </p>
                       </div>
-                      <Link to={`/lessons/${lesson._id}`} className="text-link">
+                      <Link
+                        to={`/lessons/${lesson._id}`}
+                        className="text-link"
+                      >
                         View
                       </Link>
                     </li>
@@ -377,6 +327,9 @@ const AdminPanel = () => {
                 <p className="eyebrow">Quality</p>
                 <h3>Flagged / Reported</h3>
               </div>
+              <Link to="/dashboard/admin/reported-lessons" className="text-link">
+                   View All Reports →
+              </Link>
             </div>
             {flaggedLessons.length === 0 ? (
               <p className="muted">No flagged lessons detected.</p>
@@ -404,64 +357,55 @@ const AdminPanel = () => {
         </div>
       )}
 
-      {activeTab === "lessons" && (
+      {activeTab === "growth" && (
         <div className="admin-section">
-          <div className="section-header">
-            <div>
-              <p className="eyebrow">Content</p>
-              <h3>Manage All Lessons</h3>
+          <div className="dashboard-grid">
+            <div className="dashboard-card">
+              <div className="section-header">
+                <div>
+                  <p className="eyebrow">Trend</p>
+                  <h3>Lesson Growth</h3>
+                </div>
+              </div>
+              <div className="chart-bars">
+                {growthData.lessonGrowth.map((item) => (
+                  <div key={item.label} className="chart-bar">
+                    <div className="chart-bar__label">{item.label}</div>
+                    <div className="chart-bar__track">
+                      <div
+                        className="chart-bar__fill"
+                        style={{ width: `${Math.min(item.value * 12, 100)}%` }}
+                      />
+                    </div>
+                    <div className="chart-bar__value">{item.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="dashboard-card">
+              <div className="section-header">
+                <div>
+                  <p className="eyebrow">Trend</p>
+                  <h3>User Growth</h3>
+                </div>
+              </div>
+              <div className="chart-bars">
+                {growthData.userGrowth.map((item) => (
+                  <div key={item.label} className="chart-bar">
+                    <div className="chart-bar__label">{item.label}</div>
+                    <div className="chart-bar__track">
+                      <div
+                        className="chart-bar__fill chart-bar__fill--secondary"
+                        style={{ width: `${Math.min(item.value * 20, 100)}%` }}
+                      />
+                    </div>
+                    <div className="chart-bar__value">{item.value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="admin-table">
-            {lessons.length === 0 ? (
-              <p className="empty">No lessons found</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Access</th>
-                    <th>Status</th>
-                    <th>Reports</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lessons.slice(0, 15).map((lesson) => (
-                    <tr key={lesson._id}>
-                      <td>{lesson.title}</td>
-                      <td>{lesson.category || "General"}</td>
-                      <td>
-                        {lesson.isPremium || lesson.accessLevel === "premium"
-                          ? "Premium"
-                          : "Free"}
-                      </td>
-                      <td>
-                        {lesson.isPublished || lesson.isPublic ? (
-                          <span className="badge badge-success">Published</span>
-                        ) : (
-                          <span className="badge badge-warning">Draft</span>
-                        )}
-                      </td>
-                      <td>
-                        {lesson.reportCount || (lesson.isFlagged ? 1 : 0)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      )}
-
-      {activeTab === "reports" && (
-        <div className="admin-section">
-          <h3>Content Reports</h3>
-          <p className="muted">
-            Reports and moderation workflows can be wired here once the API is
-            available.
-          </p>
         </div>
       )}
     </div>

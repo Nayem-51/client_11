@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { lessonsAPI, userAPI } from "../../../api/endpoints";
+import { lessonsAPI, userAPI, adminAPI } from "../../../api/endpoints";
 import { useAuth } from "../../../hooks/useAuth";
 import Spinner from "../../../components/common/Spinner";
+import { toast, Toaster } from "react-hot-toast";
 import "../../Pages.css";
 
 const deriveVisibility = (lesson) => {
@@ -28,8 +29,6 @@ const AdminProfile = () => {
   const { user, refreshUser } = useAuth();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [form, setForm] = useState({ name: "", photoURL: "" });
   const [updating, setUpdating] = useState(false);
 
@@ -43,14 +42,13 @@ const AdminProfile = () => {
     const fetchLessons = async () => {
       if (!user) return;
       setLoading(true);
-      setError("");
       try {
-        const res = await lessonsAPI.getAll();
-        const data = res.data?.data || res.data || [];
+        const res = await adminAPI.getLessons();
+        const data = res.data?.data || [];
         setLessons(data);
       } catch (err) {
         console.error("Failed to load admin lessons", err);
-        setError("Failed to load platform lessons. Please retry.");
+        toast.error("Failed to load platform lessons.");
       } finally {
         setLoading(false);
       }
@@ -91,22 +89,20 @@ const AdminProfile = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
-      setError("Display name is required.");
+      toast.error("Display name is required.");
       return;
     }
     try {
       setUpdating(true);
-      setError("");
       await userAPI.updateProfile({
         name: form.name.trim(),
         photoURL: form.photoURL.trim(),
       });
       await refreshUser();
-      setSuccess("Profile updated successfully.");
-      setTimeout(() => setSuccess(""), 3000);
+      toast.success("Profile updated successfully. ✓");
     } catch (err) {
       console.error("Failed to update admin profile", err);
-      setError("Failed to update profile. Please try again.");
+      toast.error("Failed to update profile. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -125,6 +121,7 @@ const AdminProfile = () => {
       className="page admin-page"
       style={{ display: "flex", flexDirection: "column", gap: "20px" }}
     >
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="admin-header" style={{ alignItems: "center" }}>
         <div>
           <p className="eyebrow">Administrator</p>
@@ -140,20 +137,6 @@ const AdminProfile = () => {
           </Link>
         </div>
       </div>
-
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && (
-        <div
-          className="alert"
-          style={{
-            background: "#ecfdf3",
-            color: "#166534",
-            border: "1px solid #bbf7d0",
-          }}
-        >
-          {success}
-        </div>
-      )}
 
       <div
         className="dashboard-grid"

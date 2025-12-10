@@ -1968,3 +1968,156 @@ table.compact td {
     flex-wrap: wrap;
   }
 }
+
+/* --- Premium UI Polish & Responsiveness --- */
+
+/* Typography */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: #1e293b; /* Slate-800 for better contrast */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em; /* Modern tight tracking */
+  color: #0bd88d; /* slate-900 */
+}
+
+/* Navbar & Footer Consistency */
+.logo-text, .logo-name {
+  font-weight: 800;
+  font-size: 20px;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 8px;
+}
+
+.footer .logo-text {
+  font-size: 20px;
+  margin-left: 8px;
+  display: inline-block;
+}
+
+/* Social Icons (X Logo) */
+.social-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  display: block;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: translateY(-2px);
+}
+
+/* Buttons - Premium Feel */
+.btn {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Cards - Equal Height & Grid */
+.lessons-grid, .featured-grid, .contributors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  align-items: stretch; /* Ensures equal height */
+}
+
+.lesson-card, .featured-card, .contributor-card, .saved-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+/* Ensure content inside card pushes footer to bottom */
+.lesson-card p, .featured-card p {
+  flex-grow: 1; 
+}
+
+.lesson-footer, .saved-card__footer {
+  margin-top: auto;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* Inputs */
+input, select, textarea {
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #3b82f6;
+  outline: 3px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Responsive Adjusments */
+@media (max-width: 1024px) {
+  .page {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 0 16px;
+  }
+  
+  .lessons-grid, .featured-grid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+  
+  .section h2 {
+    font-size: 24px;
+  }
+  
+  .hero-slider {
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .dashboard-header .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr; /* Stack stats */
+  }
+}

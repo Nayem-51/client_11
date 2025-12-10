@@ -13,7 +13,7 @@ export const lessonsAPI = {
   create: (data) => apiClient.post("/lessons", data),
   update: (id, data) => apiClient.put(`/lessons/${id}`, data),
   delete: (id) => apiClient.delete(`/lessons/${id}`),
-  getPublic: () => apiClient.get("/lessons/public"),
+  getPublic: (params) => apiClient.get("/lessons/public", { params }),
   addFavorite: (id) => apiClient.post(`/lessons/${id}/favorite`),
   removeFavorite: (id) => apiClient.delete(`/lessons/${id}/favorite`),
   toggleFeature: (id) => apiClient.put(`/lessons/${id}/feature`),
@@ -23,6 +23,20 @@ export const userAPI = {
   getProfile: () => apiClient.get("/users/profile"),
   updateProfile: (data) => apiClient.put("/users/profile", data),
   getFavorites: () => apiClient.get("/users/favorites"),
+};
+
+export const adminAPI = {
+  getStats: () => apiClient.get("/admin/stats"),
+  getUsers: (params) => apiClient.get("/admin/users", { params }),
+  changeUserRole: (userId, role) =>
+    apiClient.put(`/admin/users/${userId}/role`, { role }),
+  deleteUser: (userId) => apiClient.put(`/admin/users/${userId}/deactivate`), // Using deactivate as delete
+  getLessons: (params) => apiClient.get("/admin/lessons", { params }),
+  toggleLessonPublish: (lessonId) =>
+    apiClient.put(`/admin/lessons/${lessonId}/publish`),
+  getReports: (params) => apiClient.get("/admin/reports", { params }),
+  resolveReport: (reportId, data) =>
+    apiClient.put(`/admin/reports/${reportId}/resolve`, data),
 };
 
 export const stripeAPI = {

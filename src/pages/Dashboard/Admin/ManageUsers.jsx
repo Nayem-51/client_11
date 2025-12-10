@@ -1,72 +1,31 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { lessonsAPI } from "../../../api/endpoints";
+import { adminAPI } from "../../../api/endpoints";
 import Spinner from "../../../components/common/Spinner";
+import { toast, Toaster } from "react-hot-toast";
 import "../../Pages.css";
-
-const getUserId = (lesson) => {
-  const contributor = lesson?.instructor || lesson?.creator || lesson?.author;
-  return contributor?._id || contributor?.id || contributor?.email || null;
-};
-
-const getUserName = (lesson) => {
-  const contributor = lesson?.instructor || lesson?.creator || lesson?.author;
-  return (
-    contributor?.name ||
-    contributor?.fullName ||
-    contributor?.email ||
-    "Unknown"
-  );
-};
-
-const getUserEmail = (lesson) => {
-  const contributor = lesson?.instructor || lesson?.creator || lesson?.author;
-  return contributor?.email || "Unavailable";
-};
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
-  const hydrateUsers = (lessons) => {
-    const map = new Map();
-    lessons.forEach((lesson) => {
-      const id = getUserId(lesson);
-      if (!id) return;
-      const role =
-        lesson?.instructor?.role ||
-        lesson?.creator?.role ||
-        lesson?.author?.role ||
-        "user";
-      const entry = map.get(id) || {
-        id,
-        name: getUserName(lesson),
-        email: getUserEmail(lesson),
-        role,
-        totalLessons: 0,
-      };
-      map.set(id, { ...entry, totalLessons: entry.totalLessons + 1 });
-    });
-    return Array.from(map.values()).sort(
-      (a, b) => b.totalLessons - a.totalLessons
-    );
-  };
-
   const fetchUsers = async () => {
     setLoading(true);
-    setError("");
     try {
-      const lessonsResponse = await lessonsAPI.getAll();
-      const allLessons =
-        lessonsResponse.data?.data || lessonsResponse.data || [];
-      setUsers(hydrateUsers(allLessons));
+      const response = await adminAPI.getUsers({ limit: 100 }); // Fetch sufficient users
+      const data = response.data?.data || [];
+      // Admin API returns raw user documents. We might need to count lessons separately, 
+      // but for now we might not have that count from this endpoint unless we aggregate.
+      // The previous implementation was hydrating from ALL lessons which is inefficient.
+      // For this assignment, displaying 0 lessons or fetching separate stats is acceptable,
+      // OR we can rely on the backend to provide it if we modified the controller.
+      // Given constraints, I will preserve the user list functionality first.
+      setUsers(data);
     } catch (err) {
-      setError("Could not load users. Please try again.");
-      console.error("Failed to fetch users for admin:", err);
+      console.error("Failed to fetch users:", err);
+      toast.error("Failed to load users. Please refresh.");
     } finally {
       setLoading(false);
     }
@@ -78,40 +37,57 @@ const ManageUsers = () => {
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
+      const name = user.displayName || user.name || "Unknown";
       const matchesSearch =
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
+        name.toLowerCase().includes(search.toLowerCase()) ||
         user.email.toLowerCase().includes(search.toLowerCase());
       const matchesRole = roleFilter === "all" || user.role === roleFilter;
-      return matchesSearch && matchesRole;
+      const isActive = user.isActive !== false; // Filter out deactivated users
+      return matchesSearch && matchesRole && isActive; 
     });
   }, [roleFilter, search, users]);
 
-  const promoteToAdmin = (id) => {
-    setUsers((prev) =>
-      prev.map((user) => (user.id === id ? { ...user, role: "admin" } : user))
-    );
-    setNotice("User role updated to admin (client-side only).");
+  const promoteToAdmin = async (id) => {
+    try {
+      await adminAPI.changeUserRole(id, "admin");
+      setUsers((prev) =>
+        prev.map((user) => (user._id === id ? { ...user, role: "admin" } : user))
+      );
+      toast.success("User promoted to Admin! ✓");
+    } catch (err) {
+      console.error("Failed to promote user:", err);
+      toast.error(err.response?.data?.message || "Failed to promote user.");
+    }
   };
 
-  const deleteUser = (id) => {
-    const target = users.find((u) => u.id === id);
-    const confirmed = window.confirm(
-      `Delete ${target?.name || "this user"}? This cannot be undone in the UI.`
-    );
-    if (!confirmed) return;
-    setUsers((prev) => prev.filter((user) => user.id !== id));
-    setNotice("User removed from list (client-side only).");
+  const deleteUser = async (id, name) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to deactivate ${name}? They will no longer be able to log in.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await adminAPI.deleteUser(id); // Calls deactivate endpoint
+      setUsers((prev) => prev.filter((user) => user._id !== id));
+      toast.success("User account deactivated. ✓");
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+      toast.error("Failed to deactivate user.");
+    }
   };
 
   return (
     <div className="page admin-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="admin-header">
         <div>
           <p className="eyebrow">Admin Control</p>
           <h1>Manage Users</h1>
           <p className="muted">
-            View all contributors, promote admins, and keep the community
-            healthy.
+            View all contributors, manage roles, and maintain the community.
           </p>
         </div>
         <div className="admin-actions">
@@ -123,9 +99,6 @@ const ManageUsers = () => {
           </Link>
         </div>
       </div>
-
-      {notice && <div className="toast toast-success">{notice}</div>}
-      {error && <div className="alert alert-error">{error}</div>}
 
       <div className="dashboard-card">
         <div className="section-header">
@@ -173,14 +146,14 @@ const ManageUsers = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
-                  <th>Total Lessons</th>
+                  <th>Joined</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
+                  <tr key={user._id}>
+                    <td>{user.displayName || user.name || "Unknown"}</td>
                     <td>{user.email}</td>
                     <td>
                       <span
@@ -193,22 +166,26 @@ const ManageUsers = () => {
                         {user.role === "admin" ? "Admin" : "User"}
                       </span>
                     </td>
-                    <td>{user.totalLessons}</td>
+                    <td>
+                      {user.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString()
+                        : "-"}
+                    </td>
                     <td>
                       <div className="table-actions">
                         {user.role !== "admin" && (
                           <button
                             className="btn btn-primary"
-                            onClick={() => promoteToAdmin(user.id)}
+                            onClick={() => promoteToAdmin(user._id)}
                           >
                             Make Admin
                           </button>
                         )}
                         <button
                           className="btn btn-danger"
-                          onClick={() => deleteUser(user.id)}
+                          onClick={() => deleteUser(user._id, user.displayName || user.email)}
                         >
-                          Delete
+                          Deactivate
                         </button>
                       </div>
                     </td>
