@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "profile",
+        path: "dashboard/profile",
         element: (
           <ProtectedRoute>
             <Profile />

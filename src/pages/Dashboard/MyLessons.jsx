@@ -369,12 +369,11 @@ const MyLessons = () => {
                     disabled={updating}
                   >
                     <option value="">Select category</option>
+                    <option value="Personal Growth">Personal Growth</option>
                     <option value="Career">Career</option>
                     <option value="Relationships">Relationships</option>
-                    <option value="Health">Health</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Personal Growth">Personal Growth</option>
-                    <option value="Spirituality">Spirituality</option>
+                    <option value="Mindset">Mindset</option>
+                    <option value="Mistakes Learned">Mistakes Learned</option>
                   </select>
                 </div>
 
@@ -391,10 +390,10 @@ const MyLessons = () => {
                     disabled={updating}
                   >
                     <option value="">Select tone</option>
-                    <option value="Inspirational">Inspirational</option>
                     <option value="Motivational">Motivational</option>
-                    <option value="Reflective">Reflective</option>
-                    <option value="Practical">Practical</option>
+                    <option value="Sad">Sad</option>
+                    <option value="Realization">Realization</option>
+                    <option value="Gratitude">Gratitude</option>
                   </select>
                 </div>
               </div>

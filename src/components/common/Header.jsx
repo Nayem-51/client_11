@@ -140,7 +140,7 @@ const Header = () => {
                   </div>
                   <div className="dropdown-divider"></div>
                   <Link
-                    to="/profile"
+                    to="/dashboard/profile"
                     className="dropdown-item"
                     onClick={() => setDropdownOpen(false)}
                   >

@@ -95,7 +95,7 @@ const AdminProfile = () => {
     try {
       setUpdating(true);
       await userAPI.updateProfile({
-        name: form.name.trim(),
+        displayName: form.name.trim(),
         photoURL: form.photoURL.trim(),
       });
       await refreshUser();

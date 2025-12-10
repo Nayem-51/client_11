@@ -318,7 +318,7 @@ const LessonDetails = () => {
               </p>
             </div>
           </div>
-          <Link to="/profile" className="btn btn-secondary">
+          <Link to="/friends-profile" className="btn btn-secondary">
             View all lessons by this author
           </Link>
         </section>

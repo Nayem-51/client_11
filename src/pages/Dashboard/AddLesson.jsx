@@ -190,9 +190,6 @@ const AddLesson = () => {
                 <option value="Relationships">Relationships</option>
                 <option value="Mindset">Mindset</option>
                 <option value="Mistakes Learned">Mistakes Learned</option>
-                <option value="Health">Health</option>
-                <option value="Finance">Finance</option>
-                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -208,9 +205,6 @@ const AddLesson = () => {
                 <option value="Sad">Sad</option>
                 <option value="Realization">Realization</option>
                 <option value="Gratitude">Gratitude</option>
-                <option value="Humorous">Humorous</option>
-                <option value="Inspirational">Inspirational</option>
-                <option value="Balanced">Balanced</option>
               </select>
             </div>
           </div>
@@ -255,9 +249,9 @@ const AddLesson = () => {
                 )}
               </select>
               {!user?.isPremium && formData.accessLevel === "free" && (
-                <p className="form-hint">
-                  💡 Upgrade to Premium to create exclusive paid lessons
-                </p>
+                  <p className="form-hint">
+                    Upgrade to Premium to create paid lessons
+                  </p>
               )}
             </div>
           </div>

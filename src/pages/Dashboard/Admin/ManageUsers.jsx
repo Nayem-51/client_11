@@ -146,6 +146,7 @@ const ManageUsers = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  <th>Lessons</th>
                   <th>Joined</th>
                   <th>Actions</th>
                 </tr>
@@ -165,6 +166,9 @@ const ManageUsers = () => {
                       >
                         {user.role === "admin" ? "Admin" : "User"}
                       </span>
+                    </td>
+                    <td>
+                       <span style={{ fontWeight: 600 }}>{user.lessonsCount || 0}</span>
                     </td>
                     <td>
                       {user.createdAt

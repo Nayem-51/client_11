@@ -56,7 +56,7 @@ const Sidebar = () => {
               <a href="/dashboard/my-lessons">My Lessons</a>
             </li>
             <li>
-              <a href="/dashboard/favorites">My Favorites</a>
+              <a href="/dashboard/my-favorites">My Favorites</a>
             </li>
             {user?.role === "admin" && (
               <li>

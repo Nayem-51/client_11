@@ -51,7 +51,25 @@ const ReportedLessons = () => {
     [lessons]
   );
 
-  const openModal = (lesson) => setSelected(lesson);
+  const [lessonReports, setLessonReports] = useState([]);
+  
+  const openModal = async (lesson) => {
+    setSelected(lesson);
+    // Fetch reports for this lesson
+    try {
+      const res = await adminAPI.getReports(); // Fetch all reports and filter, or use filter params if supported
+      // Filter client side for now as getReports endpoint handles basic filtering but strict lesson filter might not be impl in controller details (Step 47 had status filter only?)
+      // Controller (Step 47): if (status) filter.status = status;
+      // It does NOT filter by lessonId.
+      // So fetch all and filter.
+      const allReports = res.data?.data || [];
+      const relevant = allReports.filter(r => r.lesson?._id === lesson._id || r.lesson === lesson._id);
+      setLessonReports(relevant);
+    } catch(err) {
+      console.error("Failed to fetch reports", err);
+      setLessonReports([]);
+    }
+  };
   const closeModal = () => setSelected(null);
 
   const deleteLesson = async (id) => {
@@ -205,12 +223,12 @@ const ReportedLessons = () => {
                 gap: "10px",
               }}
             >
-              {collectReports(selected).length === 0 ? (
-                <p className="muted">Flagged without detailed reasons.</p>
+              {lessonReports.length === 0 ? (
+                <p className="muted">No detailed reports found.</p>
               ) : (
-                collectReports(selected).map((report, idx) => (
+                lessonReports.map((report, idx) => (
                   <div
-                    key={idx}
+                    key={report._id || idx}
                     style={{
                       border: "1px solid #e5e7eb",
                       borderRadius: "10px",
@@ -221,9 +239,9 @@ const ReportedLessons = () => {
                     <p style={{ margin: 0, fontWeight: 600 }}>
                       {report.reason || "Report"}
                     </p>
-                    {report.detail && (
+                    {report.description && (
                       <p className="muted" style={{ margin: "4px 0" }}>
-                        {report.detail}
+                        {report.description}
                       </p>
                     )}
                     <p
@@ -231,8 +249,7 @@ const ReportedLessons = () => {
                       style={{ margin: 0, fontSize: "12px" }}
                     >
                       Reporter:{" "}
-                      {report.reporterName || report.reporter || "Unknown"}
-                      {report.reporterEmail ? ` • ${report.reporterEmail}` : ""}
+                      {report.reportedBy?.displayName || report.reportedBy?.email || "Unknown"}
                     </p>
                   </div>
                 ))

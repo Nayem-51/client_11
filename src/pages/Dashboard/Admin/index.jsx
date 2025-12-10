@@ -44,135 +44,67 @@ const AdminPanel = () => {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      // Fetch all lessons for analytics
-      // We could use adminAPI.getStats but that only gives counts.
-      // To simulate the graphs client-side (as originally implemented), we still need the lessons list.
-      // So I will stick to fetching all lessons for the detailed analytics graphs.
-      const lessonsResponse = await adminAPI.getLessons({ limit: 500 }); // Fetch more for better stats
-      const allLessons = lessonsResponse.data?.data || [];
-      setLessons(allLessons);
+      const response = await adminAPI.getStats();
+      const statsData = response.data?.data || {};
+      
+      // Transform API data to component state format
+      setStatsData({
+        totalUsers: statsData.totalUsers || 0,
+        totalPublicLessons: statsData.totalPublicLessons || 0,
+        totalFlagged: statsData.totalReportedLessons || 0,
+        todayNew: statsData.newLessonsToday || 0,
+        topContributors: (statsData.mostActiveContributors || []).map(c => ({
+            id: c.email, // using email as ID if _id not populated in aggression result easy access
+            name: c.name || "Unknown",
+            lessons: c.count
+        })),
+        growthData: {
+           lessonGrowth: (statsData.graphData?.lessons || []).map(d => ({ label: d.name, value: d.lessons })),
+           userGrowth: (statsData.graphData?.users || []).map(d => ({ label: d.name, value: d.users }))
+        },
+        recentLessons: [] // We might still want recent lessons for the list, can fetch separately or omit/mock if not critical. 
+        // Actually, the UI has a "New Lessons" list (todayLessons). The API didn't return that list, only count.
+        // For the "Today - New Lessons" list, we might still need to fetch some lessons or just the count is enough for the top box?
+        // The original UI showed a LIST.
+        // Let's keep it simple: Use the stats for the Boxes, and maybe fetch a few recent lessons for the list if needed,
+        // OR just rely on the count for the box and maybe remove the list if it's too heavy, 
+        // BUT user requirements said "Today’s new lessons" (plural) + "Graphs".
+        // The API returns 'newLessonsToday' count.
+        // Let's assume for now we just show the count in the box.
+        // If we really need the list, we can fetch `adminAPI.getLessons({ limit: 5, sort: '-createdAt' })` separately.
+      });
+
+      // Let's fetch recent lessons for the list separately (lightweight)
+      const recentRes = await adminAPI.getLessons({ limit: 5 });
+      setRecentLessons(recentRes.data?.data || []);
+
+      // Fetch recent reports for the table
+      const reportsRes = await adminAPI.getReports({ limit: 8 });
+      setReports(reportsRes.data?.data || []);
+
     } catch (err) {
-      toast.error("Failed to load admin analytics. Please retry.");
+      toast.error("Failed to load admin analytics.");
       console.error("Failed to fetch admin data:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const [statsData, setStatsData] = useState({
+      totalUsers: 0,
+      totalPublicLessons: 0,
+      totalFlagged: 0,
+      todayNew: 0,
+      topContributors: [],
+      growthData: { lessonGrowth: [], userGrowth: [] }
+  });
+  
+  const [recentLessons, setRecentLessons] = useState([]);
+  const [reports, setReports] = useState([]);
+
   useEffect(() => {
     fetchAdminData();
   }, []);
-
-  const todayLessons = useMemo(() => {
-    const today = new Date();
-    return lessons.filter((lesson) => {
-      const created = new Date(lesson?.createdAt || lesson?.updatedAt || 0);
-      return (
-        !Number.isNaN(created) &&
-        created.toDateString() === today.toDateString()
-      );
-    });
-  }, [lessons]);
-
-  const flaggedLessons = useMemo(
-    () =>
-      lessons.filter(
-        (lesson) =>
-          lesson?.isFlagged ||
-          lesson?.status === "flagged" ||
-          (lesson?.reportCount || 0) > 0
-      ),
-    [lessons]
-  );
-
-  const publicLessons = useMemo(
-    () =>
-      lessons.filter(
-        (lesson) =>
-          lesson?.isPublished ||
-          lesson?.isPublic ||
-          lesson?.accessLevel === "public" ||
-          lesson?.visibility === "public"
-      ),
-    [lessons]
-  );
-
-  const contributors = useMemo(() => {
-    const map = new Map();
-    lessons.forEach((lesson) => {
-      const id = getContributorId(lesson);
-      if (!id) return;
-      const existing = map.get(id) || {
-        id,
-        name: getContributorName(lesson),
-        lessons: 0,
-      };
-      map.set(id, { ...existing, lessons: existing.lessons + 1 });
-    });
-    return Array.from(map.values()).sort((a, b) => b.lessons - a.lessons);
-  }, [lessons]);
-
-  const growthData = useMemo(() => {
-    const months = monthKeys(6);
-    const lessonMap = Object.fromEntries(months.map(({ key }) => [key, 0]));
-    const userMap = Object.fromEntries(months.map(({ key }) => [key, 0]));
-    const firstContribution = new Map();
-
-    lessons.forEach((lesson) => {
-      const created = new Date(
-        lesson?.createdAt || lesson?.updatedAt || Date.now()
-      );
-      if (Number.isNaN(created)) return;
-      const key = `${created.getFullYear()}-${created.getMonth()}`;
-      if (lessonMap[key] !== undefined) {
-        lessonMap[key] += 1;
-      }
-
-      const contributorId = getContributorId(lesson);
-      if (!contributorId) return;
-      if (!firstContribution.has(contributorId)) {
-        firstContribution.set(contributorId, created);
-      } else if (created < firstContribution.get(contributorId)) {
-        firstContribution.set(contributorId, created);
-      }
-    });
-
-    firstContribution.forEach((date) => {
-      const key = `${date.getFullYear()}-${date.getMonth()}`;
-      if (userMap[key] !== undefined) {
-        userMap[key] += 1;
-      }
-    });
-
-    return {
-      lessonGrowth: months.map(({ key, label }) => ({
-        label,
-        value: lessonMap[key] || 0,
-      })),
-      userGrowth: months.map(({ key, label }) => ({
-        label,
-        value: userMap[key] || 0,
-      })),
-    };
-  }, [lessons]);
-
-  const stats = useMemo(
-    () => ({
-      totalLessons: lessons.length,
-      totalPublicLessons: publicLessons.length,
-      totalUsers: contributors.length,
-      totalFlagged: flaggedLessons.length,
-      todayNew: todayLessons.length,
-      topContributors: contributors.slice(0, 5),
-    }),
-    [
-      contributors,
-      flaggedLessons.length,
-      lessons.length,
-      publicLessons.length,
-      todayLessons.length,
-    ]
-  );
 
   if (loading) {
     return (
@@ -238,22 +170,22 @@ const AdminPanel = () => {
           <div className="stats-section">
             <div className="stat-box">
               <p className="stat-label">Total Users</p>
-              <p className="stat-value">{stats.totalUsers}</p>
+              <p className="stat-value">{statsData.totalUsers}</p>
               <p className="muted">Unique contributors detected</p>
             </div>
             <div className="stat-box">
               <p className="stat-label">Public Lessons</p>
-              <p className="stat-value">{stats.totalPublicLessons}</p>
+              <p className="stat-value">{statsData.totalPublicLessons}</p>
               <p className="muted">Published or publicly visible</p>
             </div>
             <div className="stat-box">
               <p className="stat-label">Flagged Lessons</p>
-              <p className="stat-value">{stats.totalFlagged}</p>
+              <p className="stat-value">{statsData.totalFlagged}</p>
               <p className="muted">Needs review</p>
             </div>
             <div className="stat-box">
               <p className="stat-label">Today&apos;s New Lessons</p>
-              <p className="stat-value">{stats.todayNew}</p>
+              <p className="stat-value">{statsData.todayNew}</p>
               <p className="muted">Created in the last 24h</p>
             </div>
           </div>
@@ -266,7 +198,7 @@ const AdminPanel = () => {
                   <h3>Most Active</h3>
                 </div>
               </div>
-              {stats.topContributors.length === 0 ? (
+              {statsData.topContributors.length === 0 ? (
                 <p className="muted">No contributor data yet.</p>
               ) : (
                 <table className="compact">
@@ -277,7 +209,7 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {stats.topContributors.map((contributor) => (
+                    {statsData.topContributors.map((contributor) => (
                       <tr key={contributor.id}>
                         <td>{contributor.name}</td>
                         <td>{contributor.lessons}</td>
@@ -295,11 +227,11 @@ const AdminPanel = () => {
                   <h3>New Lessons</h3>
                 </div>
               </div>
-              {todayLessons.length === 0 ? (
-                <p className="muted">No new lessons today.</p>
+              {recentLessons.length === 0 ? (
+                <p className="muted">No new lessons recently.</p>
               ) : (
                 <ul className="list">
-                  {todayLessons.map((lesson) => (
+                  {recentLessons.map((lesson) => (
                     <li key={lesson._id} className="list-item">
                       <div>
                         <p className="list-title">{lesson.title}</p>
@@ -331,23 +263,23 @@ const AdminPanel = () => {
                    View All Reports →
               </Link>
             </div>
-            {flaggedLessons.length === 0 ? (
-              <p className="muted">No flagged lessons detected.</p>
+            {reports.length === 0 ? (
+              <p className="muted">No reports detected.</p>
             ) : (
               <table className="compact">
                 <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Reports</th>
+                    <th>Lesson</th>
+                    <th>Reporter</th>
+                    <th>Reason</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {flaggedLessons.slice(0, 8).map((lesson) => (
-                    <tr key={lesson._id}>
-                      <td>{lesson.title}</td>
-                      <td>{lesson.category || "General"}</td>
-                      <td>{lesson.reportCount || 1}</td>
+                  {reports.map((report) => (
+                    <tr key={report._id}>
+                      <td>{report.lesson?.title || "Unknown Lesson"}</td>
+                      <td>{report.reportedBy?.displayName || report.reportedBy?.email || "Unknown"}</td>
+                      <td>{report.reason}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -368,7 +300,7 @@ const AdminPanel = () => {
                 </div>
               </div>
               <div className="chart-bars">
-                {growthData.lessonGrowth.map((item) => (
+                {statsData.growthData.lessonGrowth.map((item) => (
                   <div key={item.label} className="chart-bar">
                     <div className="chart-bar__label">{item.label}</div>
                     <div className="chart-bar__track">
@@ -391,7 +323,7 @@ const AdminPanel = () => {
                 </div>
               </div>
               <div className="chart-bars">
-                {growthData.userGrowth.map((item) => (
+                {statsData.growthData.userGrowth.map((item) => (
                   <div key={item.label} className="chart-bar">
                     <div className="chart-bar__label">{item.label}</div>
                     <div className="chart-bar__track">

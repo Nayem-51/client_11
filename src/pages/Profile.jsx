@@ -54,11 +54,17 @@ const Profile = () => {
   const lessonsCreatedCount = lessons.length;
   const lessonsSavedCount = user?.savedLessons?.length || 0;
 
+  const [imageError, setImageError] = useState(false);
+
   const avatar = useMemo(() => {
     if (form.photoURL) return form.photoURL;
     if (user?.photoURL) return user.photoURL;
     return "";
   }, [form.photoURL, user?.photoURL]);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [avatar]);
 
   const initials = (user?.displayName || user?.name || user?.email || "U")
     .slice(0, 2)
@@ -143,14 +149,12 @@ const Profile = () => {
                 border: "1px solid #e5e7eb",
               }}
             >
-              {avatar ? (
+              {avatar && !imageError ? (
                 <img
                   src={avatar}
                   alt={user.displayName || user.name || "User avatar"}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                  }}
+                  onError={() => setImageError(true)}
                 />
               ) : (
                 <span style={{ fontWeight: 700, color: "#4338ca" }}>
