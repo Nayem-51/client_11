@@ -29,7 +29,7 @@ const ReportedLessons = () => {
   const fetchLessons = async () => {
     setLoading(true);
     try {
-      const res = await adminAPI.getLessons({ limit: 100 }); 
+      const res = await adminAPI.getReportedLessons({ limit: 100 });
       const data = res.data?.data || [];
       setLessons(data);
     } catch (err) {
@@ -52,17 +52,19 @@ const ReportedLessons = () => {
   const openModal = async (lesson) => {
     setSelected(lesson);
     try {
-      const res = await adminAPI.getReports(); 
+      const res = await adminAPI.getReports();
       const allReports = res.data?.data || [];
       // Filter reports for this lesson
-      const relevant = allReports.filter(r => r.lesson?._id === lesson._id || r.lesson === lesson._id);
+      const relevant = allReports.filter(
+        (r) => r.lesson?._id === lesson._id || r.lesson === lesson._id
+      );
       setLessonReports(relevant);
-    } catch(err) {
+    } catch (err) {
       console.error("Failed to fetch reports", err);
       setLessonReports([]);
     }
   };
-  
+
   const closeModal = () => setSelected(null);
 
   const deleteLesson = async (id) => {
@@ -76,7 +78,7 @@ const ReportedLessons = () => {
     ) {
       return;
     }
-    
+
     try {
       await lessonsAPI.delete(id);
       setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
@@ -90,20 +92,20 @@ const ReportedLessons = () => {
 
   const ignoreReports = async (id) => {
     try {
-        // Clear flags on standard update endpoint
-        await lessonsAPI.update(id, { isFlagged: false, reportCount: 0 });
-        
-        setLessons((prev) =>
+      // Clear flags on standard update endpoint
+      await lessonsAPI.update(id, { isFlagged: false, reportCount: 0 });
+
+      setLessons((prev) =>
         prev.map((lesson) =>
-            lesson._id === id
+          lesson._id === id
             ? { ...lesson, isFlagged: false, reportCount: 0, reports: [] }
             : lesson
         )
-        );
-        if (selected?._id === id) closeModal();
-        toast.success("Reports ignored/cleared.");
+      );
+      if (selected?._id === id) closeModal();
+      toast.success("Reports ignored/cleared.");
     } catch (err) {
-        toast.error("Failed to ignore reports");
+      toast.error("Failed to ignore reports");
     }
   };
 
@@ -215,12 +217,14 @@ const ReportedLessons = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
-                maxHeight: '300px',
-                overflowY: 'auto'
+                maxHeight: "300px",
+                overflowY: "auto",
               }}
             >
               {lessonReports.length === 0 ? (
-                <p className="muted">No detailed reports found (Counts only).</p>
+                <p className="muted">
+                  No detailed reports found (Counts only).
+                </p>
               ) : (
                 lessonReports.map((report, idx) => (
                   <div
@@ -245,7 +249,9 @@ const ReportedLessons = () => {
                       style={{ margin: "5px 0 0 0", fontSize: "12px" }}
                     >
                       Reporter:{" "}
-                      {report.reportedBy?.displayName || report.reportedBy?.email || "Unknown"}
+                      {report.reportedBy?.displayName ||
+                        report.reportedBy?.email ||
+                        "Unknown"}
                     </p>
                   </div>
                 ))

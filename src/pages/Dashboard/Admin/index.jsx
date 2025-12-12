@@ -40,48 +40,40 @@ const AdminPanel = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [statsData, setStatsData] = useState({
+    totalUsers: 0,
+    totalPublicLessons: 0,
+    totalFlagged: 0,
+    todayNew: 0,
+    topContributors: [],
+    growthData: { lessonGrowth: [], userGrowth: [] }
+  });
+  const [recentLessons, setRecentLessons] = useState([]);
+  const [reports, setReports] = useState([]);
 
   const fetchAdminData = async () => {
     setLoading(true);
     try {
       const response = await adminAPI.getStats();
-      const statsData = response.data?.data || {};
+      const apiData = response.data?.data || {};
       
-      // Transform API data to component state format
       setStatsData({
-        totalUsers: statsData.totalUsers || 0,
-        totalPublicLessons: statsData.totalPublicLessons || 0,
-        totalFlagged: statsData.totalReportedLessons || 0,
-        todayNew: statsData.newLessonsToday || 0,
-        topContributors: (statsData.mostActiveContributors || []).map(c => ({
-            id: c.email, // using email as ID if _id not populated in aggression result easy access
-            name: c.name || "Unknown",
-            lessons: c.count
+        totalUsers: apiData.totalUsers || 0,
+        totalPublicLessons: apiData.publishedLessons || 0,
+        totalFlagged: apiData.flaggedLessons || 0,
+        todayNew: apiData.recentLessons?.length || 0,
+        topContributors: (apiData.topContributors || []).map(c => ({
+          id: c._id,
+          name: c.displayName || "Unknown",
+          lessons: c.lessonCount
         })),
         growthData: {
-           lessonGrowth: (statsData.graphData?.lessons || []).map(d => ({ label: d.name, value: d.lessons })),
-           userGrowth: (statsData.graphData?.users || []).map(d => ({ label: d.name, value: d.users }))
-        },
-        recentLessons: [] // We might still want recent lessons for the list, can fetch separately or omit/mock if not critical. 
-        // Actually, the UI has a "New Lessons" list (todayLessons). The API didn't return that list, only count.
-        // For the "Today - New Lessons" list, we might still need to fetch some lessons or just the count is enough for the top box?
-        // The original UI showed a LIST.
-        // Let's keep it simple: Use the stats for the Boxes, and maybe fetch a few recent lessons for the list if needed,
-        // OR just rely on the count for the box and maybe remove the list if it's too heavy, 
-        // BUT user requirements said "Today’s new lessons" (plural) + "Graphs".
-        // The API returns 'newLessonsToday' count.
-        // Let's assume for now we just show the count in the box.
-        // If we really need the list, we can fetch `adminAPI.getLessons({ limit: 5, sort: '-createdAt' })` separately.
+          lessonGrowth: [],
+          userGrowth: []
+        }
       });
 
-      // Let's fetch recent lessons for the list separately (lightweight)
-      const recentRes = await adminAPI.getLessons({ limit: 5 });
-      setRecentLessons(recentRes.data?.data || []);
-
-      // Fetch recent reports for the table
-      const reportsRes = await adminAPI.getReports({ limit: 8 });
-      setReports(reportsRes.data?.data || []);
-
+      setRecentLessons(apiData.recentLessons || []);
     } catch (err) {
       toast.error("Failed to load admin analytics.");
       console.error("Failed to fetch admin data:", err);
@@ -89,18 +81,6 @@ const AdminPanel = () => {
       setLoading(false);
     }
   };
-
-  const [statsData, setStatsData] = useState({
-      totalUsers: 0,
-      totalPublicLessons: 0,
-      totalFlagged: 0,
-      todayNew: 0,
-      topContributors: [],
-      growthData: { lessonGrowth: [], userGrowth: [] }
-  });
-  
-  const [recentLessons, setRecentLessons] = useState([]);
-  const [reports, setReports] = useState([]);
 
   useEffect(() => {
     fetchAdminData();
@@ -184,7 +164,7 @@ const AdminPanel = () => {
               <p className="muted">Needs review</p>
             </div>
             <div className="stat-box">
-              <p className="stat-label">Today&apos;s New Lessons</p>
+              <p className="stat-label">Today's New Lessons</p>
               <p className="stat-value">{statsData.todayNew}</p>
               <p className="muted">Created in the last 24h</p>
             </div>
@@ -236,8 +216,7 @@ const AdminPanel = () => {
                       <div>
                         <p className="list-title">{lesson.title}</p>
                         <p className="muted">
-                          {lesson.category || "General"} •{" "}
-                          {lesson.accessLevel || "free"}
+                          {lesson.category || "General"} • {lesson.accessLevel || "free"}
                         </p>
                       </div>
                       <Link
@@ -260,31 +239,10 @@ const AdminPanel = () => {
                 <h3>Flagged / Reported</h3>
               </div>
               <Link to="/dashboard/admin/reported-lessons" className="text-link">
-                   View All Reports →
+                View All Reports →
               </Link>
             </div>
-            {reports.length === 0 ? (
-              <p className="muted">No reports detected.</p>
-            ) : (
-              <table className="compact">
-                <thead>
-                  <tr>
-                    <th>Lesson</th>
-                    <th>Reporter</th>
-                    <th>Reason</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reports.map((report) => (
-                    <tr key={report._id}>
-                      <td>{report.lesson?.title || "Unknown Lesson"}</td>
-                      <td>{report.reportedBy?.displayName || report.reportedBy?.email || "Unknown"}</td>
-                      <td>{report.reason}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+            <p className="muted">View detailed reports in the Reported Lessons section.</p>
           </div>
         </div>
       )}
@@ -300,18 +258,22 @@ const AdminPanel = () => {
                 </div>
               </div>
               <div className="chart-bars">
-                {statsData.growthData.lessonGrowth.map((item) => (
-                  <div key={item.label} className="chart-bar">
-                    <div className="chart-bar__label">{item.label}</div>
-                    <div className="chart-bar__track">
-                      <div
-                        className="chart-bar__fill"
-                        style={{ width: `${Math.min(item.value * 12, 100)}%` }}
-                      />
+                {statsData.growthData.lessonGrowth.length === 0 ? (
+                  <p className="muted">No growth data yet.</p>
+                ) : (
+                  statsData.growthData.lessonGrowth.map((item) => (
+                    <div key={item.label} className="chart-bar">
+                      <div className="chart-bar__label">{item.label}</div>
+                      <div className="chart-bar__track">
+                        <div
+                          className="chart-bar__fill"
+                          style={{ width: `${Math.min(item.value * 12, 100)}%` }}
+                        />
+                      </div>
+                      <div className="chart-bar__value">{item.value}</div>
                     </div>
-                    <div className="chart-bar__value">{item.value}</div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
@@ -323,18 +285,22 @@ const AdminPanel = () => {
                 </div>
               </div>
               <div className="chart-bars">
-                {statsData.growthData.userGrowth.map((item) => (
-                  <div key={item.label} className="chart-bar">
-                    <div className="chart-bar__label">{item.label}</div>
-                    <div className="chart-bar__track">
-                      <div
-                        className="chart-bar__fill chart-bar__fill--secondary"
-                        style={{ width: `${Math.min(item.value * 20, 100)}%` }}
-                      />
+                {statsData.growthData.userGrowth.length === 0 ? (
+                  <p className="muted">No growth data yet.</p>
+                ) : (
+                  statsData.growthData.userGrowth.map((item) => (
+                    <div key={item.label} className="chart-bar">
+                      <div className="chart-bar__label">{item.label}</div>
+                      <div className="chart-bar__track">
+                        <div
+                          className="chart-bar__fill chart-bar__fill--secondary"
+                          style={{ width: `${Math.min(item.value * 20, 100)}%` }}
+                        />
+                      </div>
+                      <div className="chart-bar__value">{item.value}</div>
                     </div>
-                    <div className="chart-bar__value">{item.value}</div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>

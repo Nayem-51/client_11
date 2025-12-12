@@ -33,6 +33,14 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "dashboard/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "lessons",
         element: <PublicLessons />,
       },
@@ -97,7 +105,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "dashboard/favorites",
+        path: "dashboard/my-favorites",
         element: (
           <ProtectedRoute>
             <MyFavorites />

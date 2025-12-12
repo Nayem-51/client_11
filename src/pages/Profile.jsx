@@ -6,8 +6,10 @@ import "./Pages.css";
 
 const Profile = () => {
   const { user, refreshUser } = useAuth();
-  const [lessons, setLessons] = useState([]);
+  const [lessons, setLessons] = useState([]); // public lessons created by user
   const [loading, setLoading] = useState(true);
+  const [savedCount, setSavedCount] = useState(0);
+  const [createdCount, setCreatedCount] = useState(0);
   const [form, setForm] = useState({
     displayName: "",
     photoURL: "",
@@ -29,17 +31,35 @@ const Profile = () => {
         setLoading(true);
         const response = await lessonsAPI.getAll();
         const allLessons = response.data?.data || response.data || [];
+        const uid = String(user?._id || user?.uid || "");
 
+        // Total created by this user (public + private)
+        const totalCreated = allLessons.filter(
+          (l) =>
+            String(l.instructor?._id || l.creator?._id) === String(user?._id)
+        ).length;
+
+        // Public lessons created by this user for grid display
         const userLessons = allLessons
           .filter(
             (l) =>
-              (l.instructor?._id === user?._id ||
-                l.creator?._id === user?._id) &&
+              String(l.instructor?._id || l.creator?._id) === String(user?._id)
+          )
+          .filter(
+            (l) =>
+              l.isPublished ||
+              l.isPublic ||
               (l.visibility || "public") === "public"
           )
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const favCount = allLessons.reduce((acc, l) => {
+          const favs = l.favorites || l.favoritedBy || [];
+          return acc + (favs.some((f) => String(f) === uid) ? 1 : 0);
+        }, 0);
 
         setLessons(userLessons);
+        setCreatedCount(totalCreated);
+        setSavedCount(favCount);
       } catch (err) {
         console.error("Failed to fetch profile lessons:", err);
         toast.error("Failed to load your lessons.");
@@ -51,8 +71,8 @@ const Profile = () => {
     fetchLessons();
   }, [user]);
 
-  const lessonsCreatedCount = lessons.length;
-  const lessonsSavedCount = user?.savedLessons?.length || 0;
+  const lessonsCreatedCount = createdCount;
+  const lessonsSavedCount = savedCount;
 
   const [imageError, setImageError] = useState(false);
 
@@ -153,6 +173,8 @@ const Profile = () => {
                 <img
                   src={avatar}
                   alt={user.displayName || user.name || "User avatar"}
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   onError={() => setImageError(true)}
                 />

@@ -32,8 +32,13 @@ export const adminAPI = {
     apiClient.put(`/admin/users/${userId}/role`, { role }),
   deleteUser: (userId) => apiClient.put(`/admin/users/${userId}/deactivate`), // Using deactivate as delete
   getLessons: (params) => apiClient.get("/admin/lessons", { params }),
-  toggleLessonPublish: (lessonId) =>
-    apiClient.put(`/admin/lessons/${lessonId}/publish`),
+  toggleLessonFeature: (lessonId) =>
+    apiClient.put(`/admin/lessons/${lessonId}/feature`),
+  deleteLesson: (lessonId) => apiClient.delete(`/admin/lessons/${lessonId}`),
+  markAsReviewed: (lessonId) =>
+    apiClient.put(`/admin/lessons/${lessonId}/review`),
+  getReportedLessons: (params) =>
+    apiClient.get("/admin/reported-lessons", { params }),
   getReports: (params) => apiClient.get("/admin/reports", { params }),
   resolveReport: (reportId, data) =>
     apiClient.put(`/admin/reports/${reportId}/resolve`, data),

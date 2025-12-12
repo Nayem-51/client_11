@@ -24,11 +24,15 @@ const MyFavorites = () => {
       const allLessons = response.data?.data || response.data || [];
 
       // Filter lessons that are in user's favorites
-      const favoritesList = allLessons.filter(
-        (lesson) =>
-          lesson.favorites?.includes(user?._id) ||
-          user?.savedLessons?.includes(lesson._id)
-      );
+      const uid = String(user?._id || user?.uid || "");
+      const favoritesList = allLessons.filter((lesson) => {
+        const favs = lesson.favorites || lesson.favoritedBy || [];
+        const inFavs = favs.some((f) => String(f) === uid);
+        const inUserSaved = (user?.savedLessons || []).some(
+          (lid) => String(lid) === String(lesson._id)
+        );
+        return inFavs || inUserSaved;
+      });
 
       setFavorites(favoritesList);
     } catch (err) {
@@ -138,7 +142,6 @@ const MyFavorites = () => {
             </div>
           </div>
 
-
           <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
@@ -176,19 +179,53 @@ const MyFavorites = () => {
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div className="creator-avatar" style={{ width: "32px", height: "32px", fontSize: "12px" }}>
-                          {lesson.instructor?.photoURL || lesson.creator?.photoURL ? (
-                            <img 
-                              src={lesson.instructor?.photoURL || lesson.creator?.photoURL} 
-                              alt={lesson.instructor?.displayName || lesson.creator?.name || "Creator"} 
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <div
+                          className="creator-avatar"
+                          style={{
+                            width: "32px",
+                            height: "32px",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {lesson.instructor?.photoURL ||
+                          lesson.creator?.photoURL ? (
+                            <img
+                              src={
+                                lesson.instructor?.photoURL ||
+                                lesson.creator?.photoURL
+                              }
+                              alt={
+                                lesson.instructor?.displayName ||
+                                lesson.creator?.name ||
+                                "Creator"
+                              }
+                              referrerPolicy="no-referrer"
+                              crossOrigin="anonymous"
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                                e.currentTarget.parentElement.textContent =
+                                  (lesson.instructor?.displayName ||
+                                    lesson.creator?.name ||
+                                    "U")[0];
+                              }}
                             />
                           ) : (
-                            (lesson.instructor?.displayName || lesson.creator?.name || "U")[0]
+                            (lesson.instructor?.displayName ||
+                              lesson.creator?.name ||
+                              "U")[0]
                           )}
                         </div>
                         <span style={{ fontSize: "13px" }}>
-                          {lesson.instructor?.displayName || lesson.creator?.name || "Creator"}
+                          {lesson.instructor?.displayName ||
+                            lesson.creator?.name ||
+                            "Creator"}
                         </span>
                       </div>
                     </td>
@@ -210,7 +247,9 @@ const MyFavorites = () => {
                       </span>
                     </td>
                     <td>
-                      {lesson.createdAt ? new Date(lesson.createdAt).toLocaleDateString() : "-"}
+                      {lesson.createdAt
+                        ? new Date(lesson.createdAt).toLocaleDateString()
+                        : "-"}
                     </td>
                     <td>
                       <div className="table-actions">

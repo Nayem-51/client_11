@@ -28,6 +28,8 @@ const Sidebar = () => {
                 src={user.photoURL}
                 alt={user.displayName || user.name || "User"}
                 className="avatar"
+                referrerPolicy="no-referrer"
+                crossOrigin="anonymous"
                 onError={(e) => {
                   e.target.style.display = "none";
                   e.target.nextSibling.style.display = "flex";
@@ -45,8 +47,13 @@ const Sidebar = () => {
           )}
           <h3>{user?.displayName || user?.name}</h3>
           <p>{user?.email}</p>
-          <span className={`badge ${user?.role === 'admin' ? 'badge-success' : 'badge-neutral'}`} style={{marginTop: '4px'}}>
-            {user?.role === 'admin' ? 'Admin' : 'Student'}
+          <span
+            className={`badge ${
+              user?.role === "admin" ? "badge-success" : "badge-neutral"
+            }`}
+            style={{ marginTop: "4px" }}
+          >
+            {user?.role === "admin" ? "Admin" : "Student"}
           </span>
         </div>
 
@@ -54,35 +61,59 @@ const Sidebar = () => {
           {/* ADMIN DASHBOARD - Exclusive View */}
           {user?.role === "admin" ? (
             <div className="nav-section">
-              <h4 className="nav-header" style={{ color: '#4338ca' }}>Admin Dashboard</h4>
+              <h4 className="nav-header" style={{ color: "#4338ca" }}>
+                Admin Dashboard
+              </h4>
               <ul>
                 <li>
-                  <Link to="/dashboard/admin" className={isActive("/dashboard/admin") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/admin"
+                    className={isActive("/dashboard/admin") ? "active" : ""}
+                  >
                     Admin Overview
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/admin/manage-users" className={isActive("/dashboard/admin/manage-users") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/admin/manage-users"
+                    className={
+                      isActive("/dashboard/admin/manage-users") ? "active" : ""
+                    }
+                  >
                     Manage Users
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/admin/manage-lessons" className={isActive("/dashboard/admin/manage-lessons") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/admin/manage-lessons"
+                    className={
+                      isActive("/dashboard/admin/manage-lessons")
+                        ? "active"
+                        : ""
+                    }
+                  >
                     Manage Lessons
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/admin/reported-lessons" className={isActive("/dashboard/admin/reported-lessons") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/admin/reported-lessons"
+                    className={
+                      isActive("/dashboard/admin/reported-lessons")
+                        ? "active"
+                        : ""
+                    }
+                  >
                     Reported Lessons
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/admin/manage-categories" className={isActive("/dashboard/admin/manage-categories") ? "active" : ""}>
-                    Manage Categories
-                  </Link>
-                </li>
-                 <li>
-                  <Link to="/dashboard/admin/profile" className={isActive("/dashboard/admin/profile") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/admin/profile"
+                    className={
+                      isActive("/dashboard/admin/profile") ? "active" : ""
+                    }
+                  >
                     Admin Profile
                   </Link>
                 </li>
@@ -94,27 +125,48 @@ const Sidebar = () => {
               <h4 className="nav-header">User Dashboard</h4>
               <ul>
                 <li>
-                  <Link to="/dashboard" className={isActive("/dashboard") ? "active" : ""}>
+                  <Link
+                    to="/dashboard"
+                    className={isActive("/dashboard") ? "active" : ""}
+                  >
                     My Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/add-lesson" className={isActive("/dashboard/add-lesson") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/add-lesson"
+                    className={
+                      isActive("/dashboard/add-lesson") ? "active" : ""
+                    }
+                  >
                     Add Lesson
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/my-lessons" className={isActive("/dashboard/my-lessons") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/my-lessons"
+                    className={
+                      isActive("/dashboard/my-lessons") ? "active" : ""
+                    }
+                  >
                     My Lessons
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/my-favorites" className={isActive("/dashboard/my-favorites") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/my-favorites"
+                    className={
+                      isActive("/dashboard/my-favorites") ? "active" : ""
+                    }
+                  >
                     My Favorites
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/profile" className={isActive("/dashboard/profile") ? "active" : ""}>
+                  <Link
+                    to="/dashboard/profile"
+                    className={isActive("/dashboard/profile") ? "active" : ""}
+                  >
                     My Profile
                   </Link>
                 </li>

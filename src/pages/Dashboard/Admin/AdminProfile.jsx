@@ -31,6 +31,7 @@ const AdminProfile = () => {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", photoURL: "" });
   const [updating, setUpdating] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -79,10 +80,11 @@ const AdminProfile = () => {
   );
 
   const avatar = useMemo(() => {
+    if (avatarError) return "";
     if (form.photoURL) return form.photoURL;
     if (user?.photoURL) return user.photoURL;
     return "";
-  }, [form.photoURL, user?.photoURL]);
+  }, [avatarError, form.photoURL, user?.photoURL]);
 
   const initials = (user?.name || user?.email || "A").slice(0, 2).toUpperCase();
 
@@ -160,6 +162,9 @@ const AdminProfile = () => {
                 <img
                   src={avatar}
                   alt={user.name || "Admin avatar"}
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
+                  onError={() => setAvatarError(true)}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (

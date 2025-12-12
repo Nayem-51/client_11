@@ -57,7 +57,7 @@ const LessonDetails = () => {
         setLikesCount(normalized?.likesCount ?? likesArray.length);
         setIsLiked(likesArray?.some((likeId) => likeId === userId));
         const favs = normalized?.favorites || normalized?.favoritedBy || [];
-        setIsFavorite(favs?.some((favId) => favId === userId));
+        setIsFavorite(favs?.some((favId) => String(favId) === String(userId)));
         setComments(normalized?.comments || []);
       } catch (err) {
         setError(err.message || "Failed to load lesson");
@@ -100,6 +100,15 @@ const LessonDetails = () => {
     try {
       await lessonsAPI.addFavorite(id);
       setIsFavorite(true);
+      setLesson((prev) =>
+        prev
+          ? {
+              ...prev,
+              favorites: [...(prev.favorites || []), userId],
+              favoritesCount: (prev.favoritesCount || 0) + 1,
+            }
+          : prev
+      );
     } catch (err) {
       console.error("Failed to add favorite:", err);
     }
@@ -113,6 +122,17 @@ const LessonDetails = () => {
     try {
       await lessonsAPI.removeFavorite(id);
       setIsFavorite(false);
+      setLesson((prev) =>
+        prev
+          ? {
+              ...prev,
+              favorites: (prev.favorites || []).filter(
+                (fid) => String(fid) !== String(userId)
+              ),
+              favoritesCount: Math.max((prev.favoritesCount || 0) - 1, 0),
+            }
+          : prev
+      );
     } catch (err) {
       console.error("Failed to remove favorite:", err);
     }

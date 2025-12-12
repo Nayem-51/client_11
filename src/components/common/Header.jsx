@@ -42,6 +42,8 @@ const Header = () => {
           src={user.photoURL}
           alt={user.displayName || user.name || "User"}
           className="avatar-img"
+          referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
           onError={(e) => {
             e.target.style.display = "none";
             e.target.nextSibling.style.display = "flex";
@@ -89,18 +91,17 @@ const Header = () => {
                   </Link>
                 </>
               )}
-              
-              {!user?.role?.includes("admin") && ( // Hide pricing for admins or keep it? Requirement implies admins don't pay but maybe for consistency. Let's hide unrelated user stuff if strict separation requested. But user might want to see pricing page. Text says "Admin navbar... follows admin dashboard". I'll keep Pricing for regular users, maybe hide for Admin if they are superusers. Let's stick to the request "Change the admin navbar so that... it follows the admin dashboard".
-               user?.isPremium ? (
-                <span className="nav-badge" aria-label="Premium user">
-                  Premium ⭐
-                </span>
-              ) : (
-                <Link to="/pricing" className="nav-link">
-                  Pricing/Upgrade
-                </Link>
-              )
-              )}
+
+              {!user?.role?.includes("admin") && // Hide pricing for admins or keep it? Requirement implies admins don't pay but maybe for consistency. Let's hide unrelated user stuff if strict separation requested. But user might want to see pricing page. Text says "Admin navbar... follows admin dashboard". I'll keep Pricing for regular users, maybe hide for Admin if they are superusers. Let's stick to the request "Change the admin navbar so that... it follows the admin dashboard".
+                (user?.isPremium ? (
+                  <span className="nav-badge" aria-label="Premium user">
+                    Premium ⭐
+                  </span>
+                ) : (
+                  <Link to="/pricing" className="nav-link">
+                    Pricing/Upgrade
+                  </Link>
+                ))}
             </>
           )}
         </nav>
@@ -124,6 +125,8 @@ const Header = () => {
                       src={user.photoURL}
                       alt={user.displayName || user.name || "User"}
                       className="avatar-img"
+                      referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
                       onError={(e) => {
                         e.target.style.display = "none";
                         e.target.nextSibling.style.display = "flex";
@@ -158,7 +161,9 @@ const Header = () => {
                     Profile
                   </Link>
                   <Link
-                    to={user?.role === "admin" ? "/dashboard/admin" : "/dashboard"}
+                    to={
+                      user?.role === "admin" ? "/dashboard/admin" : "/dashboard"
+                    }
                     className="dropdown-item"
                     onClick={() => setDropdownOpen(false)}
                   >
