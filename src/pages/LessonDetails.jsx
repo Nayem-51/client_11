@@ -8,7 +8,11 @@ import "./Pages.css";
 const normalizeLesson = (payload) => {
   if (!payload) return null;
   // If API returns { success: true, data: {...} }, extract data
-  if (payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data)) {
+  if (
+    payload.data &&
+    typeof payload.data === "object" &&
+    !Array.isArray(payload.data)
+  ) {
     return payload.data;
   }
   // Some APIs nest lesson under lesson key
