@@ -24,7 +24,9 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await authAPI.getCurrentUser();
-      const currentUser = response.data?.user || response.data || null;
+      // backend returns { success: true, data: { user: {...} } }
+      // axios response.data is the body.
+      const currentUser = response.data?.data?.user || response.data?.user || response.data || null;
 
       if (currentUser) {
         setUser(currentUser);

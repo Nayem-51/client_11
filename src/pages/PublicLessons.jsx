@@ -212,7 +212,7 @@ const PublicLessons = () => {
                       {isLocked ? (
                         <Link to="/pricing" className="btn btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }}>Unlock</Link>
                       ) : (
-                        <Link to={`/lessons/${lesson._id}`} className="btn btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }}>Read</Link>
+                        <Link to={`/lessons/${lesson._id}`} className="btn btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }}>See Details</Link>
                       )}
                    </div>
                  </div>

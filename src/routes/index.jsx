@@ -21,7 +21,6 @@ import AdminProfile from "../pages/Dashboard/Admin/AdminProfile";
 import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
 import PaymentCancel from "../pages/PaymentCancel";
-import PaymentSuccess from "../pages/PaymentSuccess";
 import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
@@ -58,7 +57,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "dashboard/profile",
+        path: "profile",
         element: (
           <ProtectedRoute>
             <Profile />
@@ -144,10 +143,6 @@ const router = createBrowserRouter([
             <ReportedLessons />
           </AdminRoute>
         ),
-      },
-      {
-        path: "payment/success",
-        element: <PaymentSuccess />,
       },
       {
         path: "payment/cancel",

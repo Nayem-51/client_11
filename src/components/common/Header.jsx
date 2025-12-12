@@ -75,13 +75,23 @@ const Header = () => {
 
           {isAuthenticated && (
             <>
-              <Link to="/dashboard/add-lesson" className="nav-link">
-                Add Lesson
-              </Link>
-              <Link to="/dashboard/my-lessons" className="nav-link">
-                My Lessons
-              </Link>
-              {user?.isPremium ? (
+              {user?.role === "admin" ? (
+                <Link to="/dashboard/admin" className="nav-link">
+                  Admin Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link to="/dashboard/add-lesson" className="nav-link">
+                    Add Lesson
+                  </Link>
+                  <Link to="/dashboard/my-lessons" className="nav-link">
+                    My Lessons
+                  </Link>
+                </>
+              )}
+              
+              {!user?.role?.includes("admin") && ( // Hide pricing for admins or keep it? Requirement implies admins don't pay but maybe for consistency. Let's hide unrelated user stuff if strict separation requested. But user might want to see pricing page. Text says "Admin navbar... follows admin dashboard". I'll keep Pricing for regular users, maybe hide for Admin if they are superusers. Let's stick to the request "Change the admin navbar so that... it follows the admin dashboard".
+               user?.isPremium ? (
                 <span className="nav-badge" aria-label="Premium user">
                   Premium ⭐
                 </span>
@@ -89,6 +99,7 @@ const Header = () => {
                 <Link to="/pricing" className="nav-link">
                   Pricing/Upgrade
                 </Link>
+              )
               )}
             </>
           )}
@@ -147,7 +158,7 @@ const Header = () => {
                     Profile
                   </Link>
                   <Link
-                    to="/dashboard"
+                    to={user?.role === "admin" ? "/dashboard/admin" : "/dashboard"}
                     className="dropdown-item"
                     onClick={() => setDropdownOpen(false)}
                   >

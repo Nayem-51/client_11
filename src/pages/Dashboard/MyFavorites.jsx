@@ -138,6 +138,7 @@ const MyFavorites = () => {
             </div>
           </div>
 
+
           <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
@@ -145,10 +146,9 @@ const MyFavorites = () => {
                   <th>Title</th>
                   <th>Category</th>
                   <th>Tone</th>
+                  <th>Creator</th>
                   <th>Access</th>
-                  <th>Visibility</th>
-                  <th>Reactions</th>
-                  <th>Saves</th>
+                  <th>Created</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -176,6 +176,23 @@ const MyFavorites = () => {
                       </span>
                     </td>
                     <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div className="creator-avatar" style={{ width: "32px", height: "32px", fontSize: "12px" }}>
+                          {lesson.instructor?.photoURL || lesson.creator?.photoURL ? (
+                            <img 
+                              src={lesson.instructor?.photoURL || lesson.creator?.photoURL} 
+                              alt={lesson.instructor?.displayName || lesson.creator?.name || "Creator"} 
+                            />
+                          ) : (
+                            (lesson.instructor?.displayName || lesson.creator?.name || "U")[0]
+                          )}
+                        </div>
+                        <span style={{ fontSize: "13px" }}>
+                          {lesson.instructor?.displayName || lesson.creator?.name || "Creator"}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
                       <span
                         className="badge"
                         style={{
@@ -193,33 +210,7 @@ const MyFavorites = () => {
                       </span>
                     </td>
                     <td>
-                      <span
-                        className="badge"
-                        style={{
-                          background:
-                            lesson.visibility === "public"
-                              ? "#ecfdf3"
-                              : "#fee2e2",
-                          color:
-                            lesson.visibility === "public"
-                              ? "#15803d"
-                              : "#991b1b",
-                        }}
-                      >
-                        {lesson.visibility === "public" ? "Public" : "Private"}
-                      </span>
-                    </td>
-                    <td>
-                      <strong>{lesson.likes?.length || 0}</strong>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                        reactions
-                      </div>
-                    </td>
-                    <td>
-                      <strong>{lesson.favorites?.length || 0}</strong>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                        saves
-                      </div>
+                      {lesson.createdAt ? new Date(lesson.createdAt).toLocaleDateString() : "-"}
                     </td>
                     <td>
                       <div className="table-actions">
@@ -228,7 +219,7 @@ const MyFavorites = () => {
                           className="btn btn-secondary"
                           style={{ padding: "6px 10px", fontSize: "12px" }}
                         >
-                          Details
+                          See Details
                         </button>
                         <button
                           onClick={() => handleRemoveFavorite(lesson._id)}

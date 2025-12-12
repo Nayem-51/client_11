@@ -22,8 +22,12 @@ const Login = () => {
       const { token, user } = response.data.data;
       localStorage.setItem("token", token);
       login(user);
-      toast.success("Logged in successfully");
-      navigate("/dashboard");
+      // Navigate immediately without toast
+      if (user?.role === "admin") {
+        navigate("/dashboard/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     } finally {
@@ -60,8 +64,12 @@ const Login = () => {
         userResponse.data?.data?.user || userResponse.data?.user;
 
       login(backendUser);
-      toast.success("Logged in with Google");
-      navigate("/dashboard");
+      // Navigate immediately without showing toast since user will see the dashboard
+      if (backendUser?.role === "admin") {
+        navigate("/dashboard/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error("Google login error:", err);
 

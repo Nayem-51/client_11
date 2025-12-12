@@ -39,6 +39,12 @@ export const adminAPI = {
     apiClient.put(`/admin/reports/${reportId}/resolve`, data),
 };
 
+export const categoriesAPI = {
+  getAll: () => apiClient.get("/categories"),
+  create: (data) => apiClient.post("/categories", data),
+  delete: (id) => apiClient.delete(`/categories/${id}`),
+};
+
 export const stripeAPI = {
   createCheckoutSession: (payload) =>
     apiClient.post("/stripe/create-checkout-session", payload),

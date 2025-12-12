@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Lottie from "lottie-react";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
-import successAnimation from "../../assets/animations/success.json";
-import { toast, Toaster } from "react-hot-toast";
 import "../Pages.css";
 
 const AddLesson = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -24,6 +21,11 @@ const AddLesson = () => {
     content: "",
   });
 
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -34,20 +36,21 @@ const AddLesson = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setToast(null);
 
     // Validation
     if (!formData.title.trim()) {
-      toast.error("Please enter a lesson title");
+      showToast("Please enter a lesson title", "error");
       return;
     }
 
     if (!formData.description.trim()) {
-      toast.error("Please enter a lesson description");
+      showToast("Please enter a lesson description", "error");
       return;
     }
 
     if (!user?.isPremium && formData.accessLevel === "premium") {
-      toast.error("Only premium users can create premium lessons");
+      showToast("Only premium users can create premium lessons", "error");
       return;
     }
 
@@ -67,21 +70,19 @@ const AddLesson = () => {
         content: formData.content,
         isPublished: formData.privacy === "public",
         isPremium: formData.accessLevel === "premium",
-        emotionalTone: formData.emotionalTone,
         tags: [formData.category, formData.emotionalTone],
       };
 
       await lessonsAPI.create(payload);
-      setShowSuccessModal(true);
-      
+      showToast("Lesson created successfully!", "success");
+
       setTimeout(() => {
-        setShowSuccessModal(false);
         navigate("/dashboard/my-lessons");
-        toast.success("Lesson created successfully!");
-      }, 3000);
+      }, 2000);
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to create lesson"
+      showToast(
+        err.response?.data?.message || "Failed to create lesson",
+        "error"
       );
     } finally {
       setLoading(false);
@@ -90,7 +91,6 @@ const AddLesson = () => {
 
   return (
     <div className="page add-lesson-page">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="form-header">
         <div>
           <p className="eyebrow">New Content</p>
@@ -101,16 +101,8 @@ const AddLesson = () => {
         </div>
       </div>
 
-      {showSuccessModal && (
-        <div className="modal-backdrop">
-          <div className="modal modal-center">
-            <div style={{ width: 200, margin: "0 auto" }}>
-              <Lottie animationData={successAnimation} loop={false} />
-            </div>
-            <h3 style={{ textAlign: "center" }}>Lesson Created!</h3>
-            <p style={{ textAlign: "center" }}>Redirecting you to your lessons...</p>
-          </div>
-        </div>
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
       )}
 
       <form onSubmit={handleSubmit} className="lesson-form">
@@ -190,6 +182,9 @@ const AddLesson = () => {
                 <option value="Relationships">Relationships</option>
                 <option value="Mindset">Mindset</option>
                 <option value="Mistakes Learned">Mistakes Learned</option>
+                <option value="Health">Health</option>
+                <option value="Finance">Finance</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -205,6 +200,9 @@ const AddLesson = () => {
                 <option value="Sad">Sad</option>
                 <option value="Realization">Realization</option>
                 <option value="Gratitude">Gratitude</option>
+                <option value="Humorous">Humorous</option>
+                <option value="Inspirational">Inspirational</option>
+                <option value="Balanced">Balanced</option>
               </select>
             </div>
           </div>
@@ -249,9 +247,9 @@ const AddLesson = () => {
                 )}
               </select>
               {!user?.isPremium && formData.accessLevel === "free" && (
-                  <p className="form-hint">
-                    Upgrade to Premium to create paid lessons
-                  </p>
+                <p className="form-hint">
+                  💡 Upgrade to Premium to create exclusive paid lessons
+                </p>
               )}
             </div>
           </div>

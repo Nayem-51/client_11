@@ -24,13 +24,11 @@ const ReportedLessons = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
+  const [lessonReports, setLessonReports] = useState([]);
 
   const fetchLessons = async () => {
     setLoading(true);
     try {
-      // We can fetch lessons and filter, OR use getReports if backend supports grouping by lesson
-      // adminAPI.getLessons can give us all lessons, and we filter client-side for flagged ones 
-      // which matches previous logic but uses the admin endpoint.
       const res = await adminAPI.getLessons({ limit: 100 }); 
       const data = res.data?.data || [];
       setLessons(data);
@@ -51,18 +49,12 @@ const ReportedLessons = () => {
     [lessons]
   );
 
-  const [lessonReports, setLessonReports] = useState([]);
-  
   const openModal = async (lesson) => {
     setSelected(lesson);
-    // Fetch reports for this lesson
     try {
-      const res = await adminAPI.getReports(); // Fetch all reports and filter, or use filter params if supported
-      // Filter client side for now as getReports endpoint handles basic filtering but strict lesson filter might not be impl in controller details (Step 47 had status filter only?)
-      // Controller (Step 47): if (status) filter.status = status;
-      // It does NOT filter by lessonId.
-      // So fetch all and filter.
+      const res = await adminAPI.getReports(); 
       const allReports = res.data?.data || [];
+      // Filter reports for this lesson
       const relevant = allReports.filter(r => r.lesson?._id === lesson._id || r.lesson === lesson._id);
       setLessonReports(relevant);
     } catch(err) {
@@ -70,6 +62,7 @@ const ReportedLessons = () => {
       setLessonReports([]);
     }
   };
+  
   const closeModal = () => setSelected(null);
 
   const deleteLesson = async (id) => {
@@ -87,7 +80,7 @@ const ReportedLessons = () => {
     try {
       await lessonsAPI.delete(id);
       setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
-      closeModal();
+      if (selected?._id === id) closeModal();
       toast.success("Lesson deleted successfully. ✓");
     } catch (err) {
       console.error("Failed to delete lesson:", err);
@@ -96,21 +89,22 @@ const ReportedLessons = () => {
   };
 
   const ignoreReports = async (id) => {
-    // There isn't a direct 'ignore all' endpoint on the report controller I saw,
-    // unless we iterate and resolve all reports for this lesson.
-    // For now, I will update local state and perhaps call resolve on known reports if I had IDs.
-    // Since I don't have report IDs readily mapped in the lesson object in this view (unless populated),
-    // I'll stick to local state update + a toast, as this matches the previous implementation's scope.
-    // Ideally backend would have 'clear flags for lesson'.
-    setLessons((prev) =>
-      prev.map((lesson) =>
-        lesson._id === id
-          ? { ...lesson, isFlagged: false, reportCount: 0, reports: [] }
-          : lesson
-      )
-    );
-    closeModal();
-    toast.success("Reports ignored/cleared for this session.");
+    try {
+        // Clear flags on standard update endpoint
+        await lessonsAPI.update(id, { isFlagged: false, reportCount: 0 });
+        
+        setLessons((prev) =>
+        prev.map((lesson) =>
+            lesson._id === id
+            ? { ...lesson, isFlagged: false, reportCount: 0, reports: [] }
+            : lesson
+        )
+        );
+        if (selected?._id === id) closeModal();
+        toast.success("Reports ignored/cleared.");
+    } catch (err) {
+        toast.error("Failed to ignore reports");
+    }
   };
 
   return (
@@ -221,10 +215,12 @@ const ReportedLessons = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
+                maxHeight: '300px',
+                overflowY: 'auto'
               }}
             >
               {lessonReports.length === 0 ? (
-                <p className="muted">No detailed reports found.</p>
+                <p className="muted">No detailed reports found (Counts only).</p>
               ) : (
                 lessonReports.map((report, idx) => (
                   <div
@@ -246,7 +242,7 @@ const ReportedLessons = () => {
                     )}
                     <p
                       className="muted"
-                      style={{ margin: 0, fontSize: "12px" }}
+                      style={{ margin: "5px 0 0 0", fontSize: "12px" }}
                     >
                       Reporter:{" "}
                       {report.reportedBy?.displayName || report.reportedBy?.email || "Unknown"}

@@ -163,12 +163,37 @@ const Dashboard = () => {
                 <p className="lesson-desc">
                   {lesson.description?.slice(0, 100) || "No description"}
                 </p>
+                
+                {/* Emotional Tone and Created Date */}
+                <div className="lesson-meta-line">
+                  <span className="tone">{lesson.emotionalTone || "Balanced"}</span>
+                  <span className="muted">
+                    {lesson.createdAt ? new Date(lesson.createdAt).toLocaleDateString() : "-"}
+                  </span>
+                </div>
+                
                 <div className="lesson-footer">
+                  {/* Creator Info */}
+                  <div className="lesson-author">
+                    <div className="creator-avatar">
+                      {lesson.instructor?.photoURL || lesson.creator?.photoURL ? (
+                        <img 
+                          src={lesson.instructor?.photoURL || lesson.creator?.photoURL} 
+                          alt={lesson.instructor?.displayName || lesson.creator?.name || "Creator"} 
+                        />
+                      ) : (
+                        (lesson.instructor?.displayName || lesson.creator?.name || "U")[0]
+                      )}
+                    </div>
+                    <span>{lesson.instructor?.displayName || lesson.creator?.name || "Creator"}</span>
+                  </div>
+                  
                   <Link
                     to={`/lessons/${lesson._id}`}
-                    className="btn btn-secondary btn-block"
+                    className="btn btn-secondary"
+                    style={{ fontSize: "12px", padding: "6px 12px" }}
                   >
-                    View Details
+                    See Details
                   </Link>
                 </div>
               </div>

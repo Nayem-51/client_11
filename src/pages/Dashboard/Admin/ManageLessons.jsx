@@ -6,14 +6,15 @@ import { toast, Toaster } from "react-hot-toast";
 import "../../Pages.css";
 
 const deriveVisibility = (lesson) => {
-  if (lesson?.accessLevel === "premium" || lesson?.isPremium) return "Premium";
-  if (
-    lesson?.isPublic ||
-    lesson?.isPublished ||
-    lesson?.visibility === "public"
-  )
-    return "Public";
-  return "Private";
+  // Logic: 
+  // 1. If not published -> Draft
+  // 2. If premium access -> Premium
+  // 3. If visibility private -> Private
+  // 4. Else -> Public
+  if (lesson.isPublished === false) return "Draft";
+  if (lesson.accessLevel === "premium") return "Premium";
+  if (lesson.visibility === "private") return "Private";
+  return "Public";
 };
 
 const isFlagged = (lesson) =>
@@ -52,13 +53,14 @@ const ManageLessons = () => {
 
   const stats = useMemo(() => {
     const publicLessons = lessons.filter(
-      (l) => l.isPublic || l.isPublished || l.visibility === "public"
+      (l) => l.isPublished && (l.visibility === "public")
     ).length;
     const privateLessons = lessons.filter(
-      (l) => !l.isPublic && !l.isPublished
+      (l) => l.isPublished && (l.visibility === "private")
     ).length;
+    const draftLessons = lessons.filter(l => l.isPublished === false).length;
     const flaggedLessons = lessons.filter((l) => isFlagged(l)).length;
-    return { publicLessons, privateLessons, flaggedLessons };
+    return { publicLessons, privateLessons, draftLessons, flaggedLessons };
   }, [lessons]);
 
   const categories = useMemo(() => {
@@ -72,15 +74,19 @@ const ManageLessons = () => {
       const titleMatch = lesson.title
         ?.toLowerCase()
         .includes(search.toLowerCase());
+      
       const categoryMatch =
         categoryFilter === "all" || lesson.category === categoryFilter;
+      
       const visibility = deriveVisibility(lesson);
       const visibilityMatch =
         visibilityFilter === "all" ||
-        visibility.toLowerCase() === visibilityFilter;
+        visibility.toLowerCase() === visibilityFilter.toLowerCase();
+      
       const flaggedMatch =
         flaggedFilter === "all" ||
         (flaggedFilter === "flagged" ? isFlagged(lesson) : !isFlagged(lesson));
+      
       return titleMatch && categoryMatch && visibilityMatch && flaggedMatch;
     });
   }, [categoryFilter, flaggedFilter, lessons, search, visibilityFilter]);
@@ -124,23 +130,22 @@ const ManageLessons = () => {
     }
   };
 
-  const markReviewed = (id) => {
-    // Ideally this would be an API call, but we don't have a specific 'mark reviewed' endpoint 
-    // unless we use resolveReport which targets reports, not lessons directly.
-    // For now, client-side update is acceptable as a visual indicator if backend doesn't support it strictly.
-    // Or we could implement a 'reviewed' flag update if needed.
-    // Given the constraints, I'll assume client-side is fine or we'd need a backend update.
-    // But wait, the requirements say "Mark content as reviewed". 
-    // I can simulate it or if there were an endpoint.
-    // Actually, resolving reports effectively marks it reviewed.
-    setLessons((prev) =>
-      prev.map((lesson) =>
-        lesson._id === id
-          ? { ...lesson, isReviewed: true, isFlagged: false, reportCount: 0 }
-          : lesson
-      )
-    );
-    toast.success("Lesson marked as reviewed (local).");
+  const markReviewed = async (id) => {
+    try {
+        // Use standard update endpoint since current user is admin
+        await lessonsAPI.update(id, { isReviewed: true, isFlagged: false, reportCount: 0 });
+        
+        setLessons((prev) =>
+        prev.map((lesson) =>
+            lesson._id === id
+            ? { ...lesson, isReviewed: true, isFlagged: false, reportCount: 0 }
+            : lesson
+        )
+        );
+        toast.success("Lesson marked as reviewed.");
+    } catch (err) {
+        toast.error("Failed to mark as reviewed");
+    }
   };
 
   return (
@@ -166,15 +171,19 @@ const ManageLessons = () => {
 
       <div className="stats-section">
         <div className="stat-box">
-          <p className="stat-label">Public Lessons</p>
+          <p className="stat-label">Public</p>
           <p className="stat-value">{stats.publicLessons}</p>
         </div>
         <div className="stat-box">
-          <p className="stat-label">Private / Draft</p>
+          <p className="stat-label">Private</p>
           <p className="stat-value">{stats.privateLessons}</p>
         </div>
+         <div className="stat-box">
+          <p className="stat-label">Drafts</p>
+          <p className="stat-value">{stats.draftLessons}</p>
+        </div>
         <div className="stat-box">
-          <p className="stat-label">Flagged Content</p>
+          <p className="stat-label">Flagged</p>
           <p className="stat-value">{stats.flaggedLessons}</p>
         </div>
       </div>
@@ -192,8 +201,8 @@ const ManageLessons = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             />
@@ -201,8 +210,8 @@ const ManageLessons = () => {
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             >
@@ -217,8 +226,8 @@ const ManageLessons = () => {
               value={visibilityFilter}
               onChange={(e) => setVisibilityFilter(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             >
@@ -226,13 +235,14 @@ const ManageLessons = () => {
               <option value="public">Public</option>
               <option value="private">Private</option>
               <option value="premium">Premium</option>
+              <option value="draft">Draft</option>
             </select>
             <select
               value={flaggedFilter}
               onChange={(e) => setFlaggedFilter(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             >
@@ -266,7 +276,14 @@ const ManageLessons = () => {
                   <tr key={lesson._id}>
                     <td>{lesson.title}</td>
                     <td>{lesson.category || "General"}</td>
-                    <td>{deriveVisibility(lesson)}</td>
+                    <td>
+                         <span className={`badge ${
+                             lesson.isPublished === false ? 'badge-neutral' : 
+                             lesson.visibility === 'public' ? 'badge-success' : 'badge-warning'
+                         }`}>
+                             {deriveVisibility(lesson)}
+                         </span>
+                    </td>
                     <td>
                       {isFlagged(lesson) ? (
                         <span className="badge badge-danger">
@@ -297,18 +314,22 @@ const ManageLessons = () => {
                         <button
                           className="btn btn-primary"
                           onClick={() => toggleFeatured(lesson._id)}
+                          style={{padding: '4px 8px'}}
                         >
                           {lesson.isFeatured ? "Unfeature" : "Feature"}
                         </button>
                         <button
                           className="btn"
                           onClick={() => markReviewed(lesson._id)}
+                          style={{padding: '4px 8px'}}
+                          disabled={lesson.isReviewed}
                         >
-                          Mark Reviewed
+                          {lesson.isReviewed ? "Reviewed" : "Review"}
                         </button>
                         <button
                           className="btn btn-danger"
                           onClick={() => handleDelete(lesson._id)}
+                          style={{padding: '4px 8px'}}
                         >
                           Delete
                         </button>

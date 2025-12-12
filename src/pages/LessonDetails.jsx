@@ -7,7 +7,11 @@ import "./Pages.css";
 
 const normalizeLesson = (payload) => {
   if (!payload) return null;
-  // Some APIs nest lesson under data or lesson key
+  // If API returns { success: true, data: {...} }, extract data
+  if (payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data)) {
+    return payload.data;
+  }
+  // Some APIs nest lesson under lesson key
   if (payload.lesson) return payload.lesson;
   return payload;
 };
@@ -28,8 +32,7 @@ const LessonDetails = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
-  const [reportReason, setReportReason] = useState("inappropriate");
-  const [reportDescription, setReportDescription] = useState("");
+  const [reportReason, setReportReason] = useState("Inappropriate Content");
   const [similarLessons, setSimilarLessons] = useState([]);
 
   const randomViews = useMemo(() => Math.floor(Math.random() * 10000), []);
@@ -135,7 +138,6 @@ const LessonDetails = () => {
     try {
       await apiClient.post(`/lessons/${id}/report`, {
         reason: reportReason,
-        description: reportDescription
       });
       alert("Report submitted. Thank you.");
       setReportOpen(false);
@@ -318,7 +320,7 @@ const LessonDetails = () => {
               </p>
             </div>
           </div>
-          <Link to="/friends-profile" className="btn btn-secondary">
+          <Link to="/profile" className="btn btn-secondary">
             View all lessons by this author
           </Link>
         </section>
@@ -485,42 +487,28 @@ const LessonDetails = () => {
         <div className="modal-backdrop">
           <div className="modal">
             <h3>Report Lesson</h3>
-            <div className="report-form">
-              <label>Reason</label>
-              <select
-                value={reportReason}
-                onChange={(e) => setReportReason(e.target.value)}
+            <p>Select a reason</p>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+            >
+              <option>Inappropriate Content</option>
+              <option>Hate Speech or Harassment</option>
+              <option>Misleading or False Information</option>
+              <option>Spam or Promotional Content</option>
+              <option>Sensitive or Disturbing Content</option>
+              <option>Other</option>
+            </select>
+            <div className="modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setReportOpen(false)}
               >
-                <option value="inappropriate">Inappropriate Content</option>
-                <option value="offensive">Hate Speech or Harassment</option>
-                <option value="spam">Spam or Promotional Content</option>
-                <option value="copyright">Copyright Violation</option>
-                <option value="other">Other</option>
-              </select>
-              
-              <label>Description (Required)</label>
-              <textarea
-                placeholder="Please provide more details..."
-                value={reportDescription}
-                onChange={(e) => setReportDescription(e.target.value)}
-                className="report-desc-input"
-              />
-              
-              <div className="modal-actions">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setReportOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="btn btn-primary" 
-                  onClick={handleReport}
-                  disabled={!reportDescription.trim()}
-                >
-                  Submit Report
-                </button>
-              </div>
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={handleReport}>
+                Submit Report
+              </button>
             </div>
           </div>
         </div>

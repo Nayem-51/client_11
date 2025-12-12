@@ -14,14 +14,8 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await adminAPI.getUsers({ limit: 100 }); // Fetch sufficient users
+      const response = await adminAPI.getUsers({ limit: 100 });
       const data = response.data?.data || [];
-      // Admin API returns raw user documents. We might need to count lessons separately, 
-      // but for now we might not have that count from this endpoint unless we aggregate.
-      // The previous implementation was hydrating from ALL lessons which is inefficient.
-      // For this assignment, displaying 0 lessons or fetching separate stats is acceptable,
-      // OR we can rely on the backend to provide it if we modified the controller.
-      // Given constraints, I will preserve the user list functionality first.
       setUsers(data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -42,35 +36,35 @@ const ManageUsers = () => {
         name.toLowerCase().includes(search.toLowerCase()) ||
         user.email.toLowerCase().includes(search.toLowerCase());
       const matchesRole = roleFilter === "all" || user.role === roleFilter;
-      const isActive = user.isActive !== false; // Filter out deactivated users
-      return matchesSearch && matchesRole && isActive; 
+      const isActive = user.isActive !== false;
+      return matchesSearch && matchesRole && isActive;
     });
   }, [roleFilter, search, users]);
 
-  const promoteToAdmin = async (id) => {
+  const changeUserRole = async (id, newRole) => {
     try {
-      await adminAPI.changeUserRole(id, "admin");
+      await adminAPI.changeUserRole(id, newRole);
       setUsers((prev) =>
-        prev.map((user) => (user._id === id ? { ...user, role: "admin" } : user))
+        prev.map((user) => (user._id === id ? { ...user, role: newRole } : user))
       );
-      toast.success("User promoted to Admin! ✓");
+      toast.success(`User role updated to ${newRole}! ✓`);
     } catch (err) {
-      console.error("Failed to promote user:", err);
-      toast.error(err.response?.data?.message || "Failed to promote user.");
+      console.error("Failed to update user role:", err);
+      toast.error(err.response?.data?.message || "Failed to update role.");
     }
   };
 
   const deleteUser = async (id, name) => {
     if (
       !window.confirm(
-        `Are you sure you want to deactivate ${name}? They will no longer be able to log in.`
+        `Are you sure you want to deactivate ${name}?`
       )
     ) {
       return;
     }
 
     try {
-      await adminAPI.deleteUser(id); // Calls deactivate endpoint
+      await adminAPI.deleteUser(id);
       setUsers((prev) => prev.filter((user) => user._id !== id));
       toast.success("User account deactivated. ✓");
     } catch (err) {
@@ -113,8 +107,8 @@ const ManageUsers = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             />
@@ -122,13 +116,14 @@ const ManageUsers = () => {
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
               style={{
-                padding: "10px",
-                borderRadius: "8px",
+                padding: "8px",
+                borderRadius: "6px",
                 border: "1px solid #e5e7eb",
               }}
             >
               <option value="all">All roles</option>
               <option value="admin">Admins</option>
+              <option value="instructor">Moderators/Instructors</option>
               <option value="user">Users</option>
             </select>
           </div>
@@ -161,10 +156,12 @@ const ManageUsers = () => {
                         className={`badge ${
                           user.role === "admin"
                             ? "badge-success"
+                            : user.role === "instructor"
+                            ? "badge-info"
                             : "badge-warning"
                         }`}
                       >
-                        {user.role === "admin" ? "Admin" : "User"}
+                        {user.role}
                       </span>
                     </td>
                     <td>
@@ -177,16 +174,20 @@ const ManageUsers = () => {
                     </td>
                     <td>
                       <div className="table-actions">
-                        {user.role !== "admin" && (
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => promoteToAdmin(user._id)}
-                          >
-                            Make Admin
-                          </button>
-                        )}
+                        <select
+                           value={user.role}
+                           onChange={(e) => changeUserRole(user._id, e.target.value)}
+                           className="badge"
+                           style={{ border: '1px solid #ddd', background: 'white', color: '#333' }}
+                        >
+                            <option value="user">User</option>
+                            <option value="instructor">Moderator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        
                         <button
                           className="btn btn-danger"
+                          style={{padding: '4px 8px', fontSize: '12px'}}
                           onClick={() => deleteUser(user._id, user.displayName || user.email)}
                         >
                           Deactivate

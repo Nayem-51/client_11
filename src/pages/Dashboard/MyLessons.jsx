@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
-import { toast, Toaster } from "react-hot-toast";
 import "../Pages.css";
 
 const MyLessons = () => {
@@ -10,6 +9,8 @@ const MyLessons = () => {
   const navigate = useNavigate();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editModal, setEditModal] = useState(null);
   const [editForm, setEditForm] = useState({
@@ -39,9 +40,10 @@ const MyLessons = () => {
       );
 
       setLessons(userLessons);
+      setError("");
     } catch (err) {
       console.error("Failed to fetch lessons:", err);
-      toast.error("Failed to load your lessons. Please try again.");
+      setError("Failed to load your lessons. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,7 @@ const MyLessons = () => {
 
   const handleUpdate = async (lessonId) => {
     if (!editForm.title.trim() || !editForm.description.trim()) {
-      toast.error("Title and description are required");
+      setError("Title and description are required");
       return;
     }
 
@@ -75,11 +77,12 @@ const MyLessons = () => {
         lessons.map((l) => (l._id === lessonId ? { ...l, ...editForm } : l))
       );
 
-      toast.success("Lesson updated successfully! ✓");
+      setSuccess("Lesson updated successfully! ✓");
       setEditModal(null);
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Failed to update lesson:", err);
-      toast.error("Failed to update lesson. Please try again.");
+      setError("Failed to update lesson. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -90,10 +93,11 @@ const MyLessons = () => {
       await lessonsAPI.delete(lessonId);
       setLessons(lessons.filter((l) => l._id !== lessonId));
       setDeleteConfirm(null);
-      toast.success("Lesson deleted successfully! ✓");
+      setSuccess("Lesson deleted successfully! ✓");
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Failed to delete lesson:", err);
-      toast.error("Failed to delete lesson. Please try again.");
+      setError("Failed to delete lesson. Please try again.");
     }
   };
 
@@ -109,15 +113,16 @@ const MyLessons = () => {
           l._id === lesson._id ? { ...l, visibility: newVisibility } : l
         )
       );
-      toast.success(`Lesson is now ${newVisibility}! ✓`);
+      setSuccess(`Lesson is now ${newVisibility}! ✓`);
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      toast.error("Failed to update visibility.");
+      setError("Failed to update visibility.");
     }
   };
 
   const handleToggleAccessLevel = async (lesson) => {
     if (!user?.isPremium && lesson.accessLevel === "free") {
-      toast.error(
+      setError(
         "You need an active Premium subscription to set premium access level."
       );
       return;
@@ -135,9 +140,10 @@ const MyLessons = () => {
           l._id === lesson._id ? { ...l, accessLevel: newAccessLevel } : l
         )
       );
-      toast.success(`Access level changed to ${newAccessLevel}! ✓`);
+      setSuccess(`Access level changed to ${newAccessLevel}! ✓`);
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      toast.error("Failed to update access level.");
+      setError("Failed to update access level.");
     }
   };
 
@@ -151,7 +157,6 @@ const MyLessons = () => {
 
   return (
     <div className="page dashboard-page">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="dashboard-header">
         <h1>My Lessons</h1>
         <button
@@ -161,6 +166,20 @@ const MyLessons = () => {
           + Create New Lesson
         </button>
       </div>
+
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && (
+        <div
+          className="alert"
+          style={{
+            background: "#ecfdf3",
+            color: "#166534",
+            border: "1px solid #bbf7d0",
+          }}
+        >
+          {success}
+        </div>
+      )}
 
       {lessons.length === 0 ? (
         <div className="empty-state">
@@ -369,11 +388,12 @@ const MyLessons = () => {
                     disabled={updating}
                   >
                     <option value="">Select category</option>
-                    <option value="Personal Growth">Personal Growth</option>
                     <option value="Career">Career</option>
                     <option value="Relationships">Relationships</option>
-                    <option value="Mindset">Mindset</option>
-                    <option value="Mistakes Learned">Mistakes Learned</option>
+                    <option value="Health">Health</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Personal Growth">Personal Growth</option>
+                    <option value="Spirituality">Spirituality</option>
                   </select>
                 </div>
 
@@ -390,10 +410,10 @@ const MyLessons = () => {
                     disabled={updating}
                   >
                     <option value="">Select tone</option>
+                    <option value="Inspirational">Inspirational</option>
                     <option value="Motivational">Motivational</option>
-                    <option value="Sad">Sad</option>
-                    <option value="Realization">Realization</option>
-                    <option value="Gratitude">Gratitude</option>
+                    <option value="Reflective">Reflective</option>
+                    <option value="Practical">Practical</option>
                   </select>
                 </div>
               </div>

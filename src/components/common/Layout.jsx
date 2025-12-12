@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import { Toaster } from "react-hot-toast";
 import "./Layout.css";
 
 const Layout = () => {
@@ -15,6 +16,7 @@ const Layout = () => {
 
   return (
     <div className="layout">
+      <Toaster position="top-center" reverseOrder={false} />
       <Header />
       <div className="layout-container">
         <Sidebar />
