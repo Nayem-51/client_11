@@ -105,7 +105,7 @@ const Dashboard = () => {
             <h3>Activity Overview</h3>
           </div>
         </div>
-        <div style={{ height: 300, width: "100%", background: "#fff", padding: "20px", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
+        <div style={{ height: 300, minHeight: 300, width: "100%", background: "#fff", padding: "20px", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={stats.chartData || []}

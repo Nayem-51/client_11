@@ -77,12 +77,12 @@ const Pricing = () => {
     setSuccessMessage("");
 
     try {
+      if (!user?._id) {
+        throw new Error("Please log in to upgrade to premium.");
+      }
+
       const { data } = await stripeAPI.createCheckoutSession({
-        price: 1500,
-        currency: "bdt",
-        mode: "payment",
-        successUrl: `${window.location.origin}/payment/success`,
-        cancelUrl: `${window.location.origin}/payment/cancel`,
+        userId: user._id,
       });
 
       const redirectUrl = data?.url || data?.sessionUrl || data?.checkoutUrl;
@@ -93,7 +93,10 @@ const Pricing = () => {
       window.location.href = redirectUrl;
     } catch (err) {
       const message =
-        err?.response?.data?.message || err?.message || "Payment failed.";
+        err?.response?.data?.error || 
+        err?.response?.data?.message || 
+        err?.message || 
+        "Payment failed.";
       setError(message);
     } finally {
       setLoading(false);
