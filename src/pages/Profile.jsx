@@ -174,12 +174,11 @@ const Profile = () => {
                   src={avatar}
                   alt={user.displayName || user.name || "User avatar"}
                   referrerPolicy="no-referrer"
-                  crossOrigin="anonymous"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca" }}>
+                <span style={{ fontWeight: 700, color: "#4338ca", fontSize: "24px" }}>
                   {initials}
                 </span>
               )}

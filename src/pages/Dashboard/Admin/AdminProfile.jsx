@@ -163,12 +163,11 @@ const AdminProfile = () => {
                   src={avatar}
                   alt={user.name || "Admin avatar"}
                   referrerPolicy="no-referrer"
-                  crossOrigin="anonymous"
                   onError={() => setAvatarError(true)}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca" }}>
+                <span style={{ fontWeight: 700, color: "#4338ca", fontSize: "24px" }}>
                   {initials}
                 </span>
               )}

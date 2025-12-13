@@ -29,7 +29,6 @@ const Sidebar = () => {
                 alt={user.displayName || user.name || "User"}
                 className="avatar"
                 referrerPolicy="no-referrer"
-                crossOrigin="anonymous"
                 onError={(e) => {
                   e.target.style.display = "none";
                   e.target.nextSibling.style.display = "flex";

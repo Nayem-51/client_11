@@ -104,7 +104,7 @@ const ManageLessons = () => {
     }
     
     try {
-      await lessonsAPI.delete(id);
+      await adminAPI.deleteLesson(id);
       setLessons((prev) => prev.filter((lesson) => lesson._id !== id));
       toast.success("Lesson deleted successfully. ✓");
     } catch (err) {
@@ -115,7 +115,7 @@ const ManageLessons = () => {
 
   const toggleFeatured = async (id) => {
     try {
-      await lessonsAPI.toggleFeature(id);
+      await adminAPI.toggleLessonFeature(id);
       setLessons((prev) =>
         prev.map((lesson) =>
           lesson._id === id
@@ -132,8 +132,7 @@ const ManageLessons = () => {
 
   const markReviewed = async (id) => {
     try {
-        // Use standard update endpoint since current user is admin
-        await lessonsAPI.update(id, { isReviewed: true, isFlagged: false, reportCount: 0 });
+        await adminAPI.markAsReviewed(id);
         
         setLessons((prev) =>
         prev.map((lesson) =>
@@ -144,6 +143,7 @@ const ManageLessons = () => {
         );
         toast.success("Lesson marked as reviewed.");
     } catch (err) {
+        console.error("Failed to mark as reviewed:", err);
         toast.error("Failed to mark as reviewed");
     }
   };
