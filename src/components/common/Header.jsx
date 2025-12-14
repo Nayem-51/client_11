@@ -8,6 +8,15 @@ const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Debug: log when user changes (especially isPremium)
+  useEffect(() => {
+    if (user?.isPremium) {
+      console.log("✅ Header: User is Premium -", user.email);
+    } else if (user) {
+      console.log("ℹ️ Header: User is Free -", user.email);
+    }
+  }, [user?.isPremium, user?.email]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };

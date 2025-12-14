@@ -81,24 +81,40 @@ const Pricing = () => {
         throw new Error("Please log in to upgrade to premium.");
       }
 
-      const { data } = await stripeAPI.createCheckoutSession({
+      console.log("Creating checkout session for user:", user._id);
+
+      const response = await stripeAPI.createCheckoutSession({
         userId: user._id,
       });
 
-      const redirectUrl = data?.url || data?.sessionUrl || data?.checkoutUrl;
+      console.log("Checkout session response:", response);
+
+      // Handle various response formats
+      const redirectUrl =
+        response?.data?.url ||
+        response?.url ||
+        response?.data?.sessionUrl ||
+        response?.data?.checkoutUrl;
+
       if (!redirectUrl) {
-        throw new Error("Checkout session missing redirect URL.");
+        console.error("No redirect URL found in response:", response);
+        throw new Error("Failed to create payment session. Please try again.");
       }
 
-      window.location.href = redirectUrl;
+      console.log("Redirecting to Stripe checkout:", redirectUrl);
+
+      // Redirect to Stripe checkout
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 500);
     } catch (err) {
+      console.error("Checkout error:", err);
       const message =
-        err?.response?.data?.error || 
-        err?.response?.data?.message || 
-        err?.message || 
-        "Payment failed.";
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Unable to create payment session. Please try again.";
       setError(message);
-    } finally {
       setLoading(false);
     }
   };

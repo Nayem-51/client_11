@@ -26,12 +26,22 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.getCurrentUser();
       // backend returns { success: true, data: { user: {...} } }
       // axios response.data is the body.
-      const currentUser = response.data?.data?.user || response.data?.user || response.data || null;
+      const currentUser =
+        response.data?.data?.user ||
+        response.data?.user ||
+        response.data ||
+        null;
 
       if (currentUser) {
+        console.log(
+          "✓ User synced from API - isPremium:",
+          currentUser.isPremium
+        );
         setUser(currentUser);
         setIsAuthenticated(true);
         localStorage.setItem("user", JSON.stringify(currentUser));
+      } else {
+        console.warn("No user data received from API");
       }
     } catch (error) {
       console.error(
