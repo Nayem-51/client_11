@@ -68,6 +68,7 @@ const AddLesson = () => {
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800",
         duration: 30,
         content: formData.content,
+        emotionalTone: formData.emotionalTone,
         isPublished: formData.privacy === "public",
         isPremium: formData.accessLevel === "premium",
         tags: [formData.category, formData.emotionalTone],

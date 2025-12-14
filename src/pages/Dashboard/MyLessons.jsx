@@ -18,8 +18,8 @@ const MyLessons = () => {
     description: "",
     category: "",
     emotionalTone: "",
-    visibility: "public",
-    accessLevel: "free",
+    isPublished: true,
+    isPremium: false,
     featuredImage: "",
   });
   const [updating, setUpdating] = useState(false);
@@ -55,9 +55,9 @@ const MyLessons = () => {
       description: lesson.description,
       category: lesson.category || "",
       emotionalTone: lesson.emotionalTone || "",
-      visibility: lesson.visibility || "public",
-      accessLevel: lesson.accessLevel || "free",
-      featuredImage: lesson.featuredImage || "",
+      isPublished: lesson.isPublished !== undefined ? lesson.isPublished : true,
+      isPremium: lesson.isPremium || false,
+      featuredImage: lesson.image || "",
     });
     setEditModal(lesson._id);
   };
@@ -102,18 +102,17 @@ const MyLessons = () => {
   };
 
   const handleToggleVisibility = async (lesson) => {
-    const newVisibility = lesson.visibility === "public" ? "private" : "public";
+    const newIsPublished = !lesson.isPublished;
     try {
       await lessonsAPI.update(lesson._id, {
-        ...lesson,
-        visibility: newVisibility,
+        isPublished: newIsPublished,
       });
       setLessons(
         lessons.map((l) =>
-          l._id === lesson._id ? { ...l, visibility: newVisibility } : l
+          l._id === lesson._id ? { ...l, isPublished: newIsPublished } : l
         )
       );
-      setSuccess(`Lesson is now ${newVisibility}! ✓`);
+      setSuccess(`Lesson is now ${newIsPublished ? "Public" : "Private"}! ✓`);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError("Failed to update visibility.");
@@ -121,26 +120,26 @@ const MyLessons = () => {
   };
 
   const handleToggleAccessLevel = async (lesson) => {
-    if (!user?.isPremium && lesson.accessLevel === "free") {
+    if (!user?.isPremium && !lesson.isPremium) {
       setError(
         "You need an active Premium subscription to set premium access level."
       );
       return;
     }
 
-    const newAccessLevel =
-      lesson.accessLevel === "premium" ? "free" : "premium";
+    const newIsPremium = !lesson.isPremium;
     try {
       await lessonsAPI.update(lesson._id, {
-        ...lesson,
-        accessLevel: newAccessLevel,
+        isPremium: newIsPremium,
       });
       setLessons(
         lessons.map((l) =>
-          l._id === lesson._id ? { ...l, accessLevel: newAccessLevel } : l
+          l._id === lesson._id ? { ...l, isPremium: newIsPremium } : l
         )
       );
-      setSuccess(`Access level changed to ${newAccessLevel}! ✓`);
+      setSuccess(
+        `Access level changed to ${newIsPremium ? "Premium" : "Free"}! ✓`
+      );
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError("Failed to update access level.");
@@ -231,20 +230,16 @@ const MyLessons = () => {
                         onClick={() => handleToggleVisibility(lesson)}
                         className="badge"
                         style={{
-                          background:
-                            lesson.visibility === "public"
-                              ? "#ecfdf3"
-                              : "#fee2e2",
-                          color:
-                            lesson.visibility === "public"
-                              ? "#15803d"
-                              : "#991b1b",
+                          background: lesson.isPublished
+                            ? "#ecfdf3"
+                            : "#fee2e2",
+                          color: lesson.isPublished ? "#15803d" : "#991b1b",
                           cursor: "pointer",
                           border: "none",
                           padding: "6px 12px",
                         }}
                       >
-                        {lesson.visibility === "public" ? "Public" : "Private"}
+                        {lesson.isPublished ? "Public" : "Private"}
                       </button>
                     </td>
                     <td>
@@ -252,29 +247,21 @@ const MyLessons = () => {
                         onClick={() => handleToggleAccessLevel(lesson)}
                         className="badge"
                         style={{
-                          background:
-                            lesson.accessLevel === "premium"
-                              ? "#fef3c7"
-                              : "#dbeafe",
-                          color:
-                            lesson.accessLevel === "premium"
-                              ? "#b45309"
-                              : "#1e40af",
+                          background: lesson.isPremium ? "#fef3c7" : "#dbeafe",
+                          color: lesson.isPremium ? "#b45309" : "#1e40af",
                           cursor: user?.isPremium ? "pointer" : "not-allowed",
                           opacity: user?.isPremium ? 1 : 0.6,
                           border: "none",
                           padding: "6px 12px",
                         }}
-                        disabled={
-                          !user?.isPremium && lesson.accessLevel === "free"
-                        }
+                        disabled={!user?.isPremium && !lesson.isPremium}
                         title={
                           !user?.isPremium
                             ? "Premium subscription required"
                             : "Click to toggle"
                         }
                       >
-                        {lesson.accessLevel === "premium" ? "Premium" : "Free"}
+                        {lesson.isPremium ? "Premium" : "Free"}
                       </button>
                     </td>
                     <td>
@@ -428,9 +415,12 @@ const MyLessons = () => {
                 <div className="form-group">
                   <label>Visibility</label>
                   <select
-                    value={editForm.visibility}
+                    value={editForm.isPublished ? "public" : "private"}
                     onChange={(e) =>
-                      setEditForm({ ...editForm, visibility: e.target.value })
+                      setEditForm({
+                        ...editForm,
+                        isPublished: e.target.value === "public",
+                      })
                     }
                     disabled={updating}
                   >
@@ -442,9 +432,12 @@ const MyLessons = () => {
                 <div className="form-group">
                   <label>Access Level</label>
                   <select
-                    value={editForm.accessLevel}
+                    value={editForm.isPremium ? "premium" : "free"}
                     onChange={(e) =>
-                      setEditForm({ ...editForm, accessLevel: e.target.value })
+                      setEditForm({
+                        ...editForm,
+                        isPremium: e.target.value === "premium",
+                      })
                     }
                     disabled={updating || !user?.isPremium}
                     title={
@@ -454,7 +447,7 @@ const MyLessons = () => {
                     <option value="free">Free</option>
                     <option value="premium">Premium</option>
                   </select>
-                  {!user?.isPremium && editForm.accessLevel === "premium" && (
+                  {!user?.isPremium && editForm.isPremium && (
                     <p
                       style={{
                         fontSize: "12px",

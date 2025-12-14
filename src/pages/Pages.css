@@ -595,6 +595,11 @@
 .lesson-card--locked .lesson-desc,
 .lesson-card--locked .creator-row,
 .lesson-card--locked .lesson-meta-line,
+.lesson-card--locked .lesson-card__top,
+.lesson-card--locked .lesson-footer,
+.lesson-card--locked .lesson-author,
+.lesson-card--locked .tone,
+.lesson-card--locked p,
 .lesson-card--locked h3 {
   filter: blur(2px);
   user-select: none;
@@ -610,6 +615,24 @@
   );
   border-radius: 12px;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.lesson-lock-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.lesson-lock-icon {
+  font-size: 18px;
 }
 
 .tone {
@@ -2004,13 +2027,19 @@ body {
   color: #1e293b; /* Slate-800 for better contrast */
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   letter-spacing: -0.02em; /* Modern tight tracking */
   color: #0bd88d; /* slate-900 */
 }
 
 /* Navbar & Footer Consistency */
-.logo-text, .logo-name {
+.logo-text,
+.logo-name {
   font-weight: 800;
   font-size: 20px;
   background: linear-gradient(135deg, #2563eb, #4f46e5);
@@ -2063,7 +2092,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn:active {
@@ -2071,14 +2101,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Cards - Equal Height & Grid */
-.lessons-grid, .featured-grid, .contributors-grid {
+.lessons-grid,
+.featured-grid,
+.contributors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
   align-items: stretch; /* Ensures equal height */
 }
 
-.lesson-card, .featured-card, .contributor-card, .saved-card {
+.lesson-card,
+.featured-card,
+.contributor-card,
+.saved-card {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -2088,22 +2123,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Ensure content inside card pushes footer to bottom */
-.lesson-card p, .featured-card p {
-  flex-grow: 1; 
+.lesson-card p,
+.featured-card p {
+  flex-grow: 1;
 }
 
-.lesson-footer, .saved-card__footer {
+.lesson-footer,
+.saved-card__footer {
   margin-top: auto;
   border-top: 1px solid #f1f5f9;
 }
 
 /* Inputs */
-input, select, textarea {
+input,
+select,
+textarea {
   border: 1px solid #cbd5e1;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: #3b82f6;
   outline: 3px solid rgba(59, 130, 246, 0.1);
 }
@@ -2119,29 +2160,30 @@ input:focus, select:focus, textarea:focus {
   .page {
     padding: 0 16px;
   }
-  
-  .lessons-grid, .featured-grid {
+
+  .lessons-grid,
+  .featured-grid {
     grid-template-columns: 1fr; /* Single column on mobile */
   }
-  
+
   .section h2 {
     font-size: 24px;
   }
-  
+
   .hero-slider {
     padding: 20px;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .dashboard-header .btn {
     width: 100%;
     text-align: center;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr; /* Stack stats */
   }

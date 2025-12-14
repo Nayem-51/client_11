@@ -49,41 +49,23 @@ const PublicLessons = () => {
       const params = {
         page,
         limit: 9, // 9 per page for grid
+        category: category === "all" ? undefined : category,
         emotionalTone: tone === "all" ? undefined : tone,
-        sort: sort === "newest" ? "-createdAt" : sort === "saved" ? "-favoritesCount" : "-createdAt",
+        sort:
+          sort === "newest"
+            ? "-createdAt"
+            : sort === "saved"
+            ? "-favoritesCount"
+            : "-createdAt",
         search: search.trim() || undefined,
       };
 
       const response = await lessonsAPI.getPublic(params);
-      
-      // Client-side search if API doesn't support text search (as typical in basic mongoose find without text index)
-      // BUT if we paginate, client side search is bad. 
-      // User requested "Search by title/keyword". Protocol: I should implement backend search.
-      // But for now, if backend doesn't have regex search, I will implement client-side filtering on the fetched page? NO.
-      // Given constraints, I will do strict pagination. If search is needed, I should ideally add it to controller.
-      // But I can't easily add text index search to controller without verifying indexes. 
-      // I'll assume for now I'll just filter valid data. 
-      // Actually, I should update the component to just display what we get, 
-      // and maybe ask backend to support 'search'? limiting scope: 
-      // The user already asked "Search by title/keyword". 
-      // I will assume the controller 'getAllLessons' I saw earlier DID NOT handle 'search' query. 
-      // I will add client-side filtering logic for the *fetched* page for now, 
-      // OR better, since I can edit controller, I should add title search to controller!
-      // I will stick to server-side filtering for category/sort, and client-side for title? 
-      // No, let's stick to what's robust. I'll Fetch. 
-      
+
       // DATA NORMALIZATION
       const data = response.data?.data || [];
       const pagination = response.data?.pagination || {};
-      
-      // If we implemented search in backend we'd use it. 
-      // For this task, I'll filter client side if the list is small? 
-      // No, pagination breaks client side search.
-      // I will skip search implementation in backend for now to avoid complexity unless explicitly failed.
-      // But user ASKED for it. 
-      // Let's implement client-side filtering on the *rendered* list for Search? No that's misleading. 
-      // Okay, I'll assume standard fitlers work.
-      
+
       setLessons(data);
       setTotalPages(pagination.pages || 1);
       setTotalLessons(pagination.total || 0);
@@ -96,14 +78,14 @@ const PublicLessons = () => {
   };
 
   useEffect(() => {
-    fetchLessons();
-    // eslint-disable-next-line
-  }, [page, category, tone, sort]); // Search is not here, handled via button or debounce? 
-  // Wait, if search is required, I need to add it to backend OR fetch all. 
-  // Let's rely on client side filtering of the *current page* results? No.
-  // I will add a search input but currently it won't filter backend unless I update backend.
-  // I will update backend to support 'search' query for title regex!
-  
+    setLoading(true);
+    const timer = setTimeout(() => {
+      fetchLessons();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [page, category, tone, sort, search]);
+
   // Handlers
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -120,131 +102,250 @@ const PublicLessons = () => {
           <p className="eyebrow">Discover</p>
           <h1>Community Lessons</h1>
           <p className="section-subtitle">
-             {totalLessons} lessons available for you to learn from.
+            {totalLessons} lessons available for you to learn from.
           </p>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="filters-bar" style={{ 
-        display: "flex", 
-        gap: "12px", 
-        flexWrap: "wrap", 
-        marginBottom: "24px",
-        padding: "16px",
-        background: "white",
-        borderRadius: "12px",
-        border: "1px solid #e5e7eb"
-      }}>
+      <div
+        className="filters-bar"
+        style={{
+          display: "flex",
+          gap: "12px",
+          flexWrap: "wrap",
+          marginBottom: "24px",
+          padding: "16px",
+          background: "white",
+          borderRadius: "12px",
+          border: "1px solid #e5e7eb",
+        }}
+      >
         <div className="filter-group" style={{ flex: "1 1 200px" }}>
-           <input 
-             type="text" 
-             placeholder="Search title..." 
-             value={search}
-             onChange={(e) => setSearch(e.target.value)}
-             style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
-           />
+          <input
+            type="text"
+            placeholder="Search title..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
+          />
         </div>
-        
-        <select 
-          value={category} 
-          onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-          style={{ padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+
+        <select
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(1);
+          }}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #e5e7eb",
+          }}
         >
           <option value="all">All Categories</option>
-          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
 
-        <select 
-          value={tone} 
-          onChange={(e) => { setTone(e.target.value); setPage(1); }}
-           style={{ padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+        <select
+          value={tone}
+          onChange={(e) => {
+            setTone(e.target.value);
+            setPage(1);
+          }}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #e5e7eb",
+          }}
         >
           <option value="all">All Tones</option>
-          {TONES.map(t => <option key={t} value={t}>{t}</option>)}
+          {TONES.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
         </select>
 
-        <select 
-          value={sort} 
-          onChange={(e) => { setSort(e.target.value); setPage(1); }}
-           style={{ padding: "10px", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+        <select
+          value={sort}
+          onChange={(e) => {
+            setSort(e.target.value);
+            setPage(1);
+          }}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #e5e7eb",
+          }}
         >
-           <option value="newest">Newest First</option>
-           <option value="saved">Most Saved</option>
+          <option value="newest">Newest First</option>
+          <option value="saved">Most Saved</option>
         </select>
       </div>
 
       {loading ? (
-        <div style={{ minHeight: "300px", display: "grid", placeItems: "center" }}>
-           <Spinner label="Finding lessons..." />
+        <div
+          style={{ minHeight: "300px", display: "grid", placeItems: "center" }}
+        >
+          <Spinner label="Finding lessons..." />
         </div>
       ) : (
         <>
           <div className="lessons-grid">
             {lessons.map((lesson) => {
-               // ... existing card logic ...
-               const isPremiumLesson = (lesson.accessLevel === "premium" || lesson.isPremium);
-               const isLocked = isPremiumLesson && !isPremiumUser;
-               const creatorName = lesson.instructor?.displayName || lesson.instructor?.name || "Instructor";
-               const creatorPhoto = lesson.instructor?.photoURL;
-               
-               return (
-                 <div key={lesson._id} className={`lesson-card ${isLocked ? "lesson-card--locked" : ""}`}>
-                   <div className="lesson-card__top">
-                      <span className="pill">{lesson.category}</span>
-                      {isPremiumLesson && <span className="pill pill-accent">Premium</span>}
-                   </div>
-                   <h3>{lesson.title}</h3>
-                   <p>{lesson.description?.substring(0, 100)}...</p>
-                   
-                   <div className="lesson-meta-line">
-                      <span>{lesson.emotionalTone || "Balanced"}</span>
-                      <span>{new Date(lesson.createdAt).toLocaleDateString()}</span>
-                   </div>
-                   
-                   <div className="lesson-footer">
-                      <div className="lesson-author">
-                         <div className="creator-avatar">
-                           {creatorPhoto ? <img src={creatorPhoto} alt={creatorName} /> : creatorName[0]}
-                         </div>
-                         <span>{creatorName}</span>
+              const isPremiumLesson =
+                lesson.isPremium || lesson.accessLevel === "premium";
+              const isLocked = isPremiumLesson && !isPremiumUser;
+              const creatorName =
+                lesson.instructor?.displayName ||
+                lesson.instructor?.name ||
+                "Instructor";
+              const creatorPhoto = lesson.instructor?.photoURL;
+              const accessLabel = isPremiumLesson ? "Premium" : "Free";
+              const createdDate = lesson.createdAt
+                ? new Date(lesson.createdAt).toLocaleDateString()
+                : "";
+              const preview = lesson.description
+                ? `${lesson.description.substring(0, 100)}${
+                    lesson.description.length > 100 ? "..." : ""
+                  }`
+                : "";
+
+              return (
+                <div
+                  key={lesson._id}
+                  className={`lesson-card lesson-card--public ${
+                    isLocked ? "lesson-card--locked" : ""
+                  }`}
+                >
+                  {isLocked && (
+                    <div className="lesson-lock-overlay">
+                      <div className="lesson-lock-message">
+                        <span className="lesson-lock-icon" aria-hidden="true">
+                          🔒
+                        </span>
+                        <span>Premium Lesson – Upgrade to view</span>
                       </div>
-                      {isLocked ? (
-                        <Link to="/pricing" className="btn btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }}>Unlock</Link>
-                      ) : (
-                        <Link to={`/lessons/${lesson._id}`} className="btn btn-secondary" style={{ fontSize: "12px", padding: "6px 12px" }}>See Details</Link>
-                      )}
-                   </div>
-                 </div>
-               );
+                    </div>
+                  )}
+
+                  <div className="lesson-card__top">
+                    <span className="pill">{lesson.category || "Lesson"}</span>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        className="pill"
+                        style={{
+                          background: isPremiumLesson ? "#fef3c7" : "#ecfdf3",
+                          color: isPremiumLesson ? "#b45309" : "#15803d",
+                        }}
+                      >
+                        {accessLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3>{lesson.title}</h3>
+                  <p className="lesson-desc">{preview}</p>
+
+                  <div className="lesson-meta-line">
+                    <span className="tone">
+                      {lesson.emotionalTone || "Balanced"}
+                    </span>
+                    <span>{createdDate}</span>
+                  </div>
+
+                  <div className="lesson-footer">
+                    <div className="lesson-author creator-row">
+                      <div className="creator-avatar">
+                        {creatorPhoto ? (
+                          <img src={creatorPhoto} alt={creatorName} />
+                        ) : (
+                          creatorName[0]
+                        )}
+                      </div>
+                      <span>{creatorName}</span>
+                    </div>
+                    {isLocked ? (
+                      <Link
+                        to="/pricing"
+                        className="btn btn-secondary"
+                        style={{ fontSize: "12px", padding: "6px 12px" }}
+                      >
+                        Unlock
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/lessons/${lesson._id}`}
+                        className="btn btn-secondary"
+                        style={{ fontSize: "12px", padding: "6px 12px" }}
+                      >
+                        See Details
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              );
             })}
           </div>
 
           {lessons.length === 0 && (
-             <div className="empty-state">
-               <p>No lessons match your search criteria.</p>
-             </div>
+            <div className="empty-state">
+              <p>No lessons match your search criteria.</p>
+            </div>
           )}
 
           {/* Pagination Controls */}
-          <div className="pagination" style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "40px" }}>
-             <button 
-               className="btn btn-secondary" 
-               disabled={page === 1}
-               onClick={() => handlePageChange(page - 1)}
-             >
-               Previous
-             </button>
-             <span style={{ display: "flex", alignItems: "center", fontWeight: "600" }}>
-                Page {page} of {totalPages}
-             </span>
-             <button 
-               className="btn btn-secondary" 
-               disabled={page === totalPages}
-               onClick={() => handlePageChange(page + 1)}
-             >
-               Next
-             </button>
+          <div
+            className="pagination"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "10px",
+              marginTop: "40px",
+            }}
+          >
+            <button
+              className="btn btn-secondary"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              Previous
+            </button>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                fontWeight: "600",
+              }}
+            >
+              Page {page} of {totalPages}
+            </span>
+            <button
+              className="btn btn-secondary"
+              disabled={page === totalPages}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              Next
+            </button>
           </div>
         </>
       )}
