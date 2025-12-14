@@ -56,15 +56,22 @@ const Pricing = () => {
 
   const isPremium = !!user?.isPremium;
 
+  // Refresh user data on mount and when search params change
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);
 
+  // Refresh again when returning from payment
   useEffect(() => {
-    if (searchParams.get("status") === "success") {
+    const status = searchParams.get("status");
+    if (status === "success") {
       setSuccessMessage("Payment completed. Your premium plan is active.");
+      // Force refresh after successful payment
+      setTimeout(() => {
+        refreshUser();
+      }, 1000);
     }
-  }, [searchParams]);
+  }, [searchParams, refreshUser]);
 
   const priceDisplay = useMemo(
     () => ({ amount: "৳1500", label: "Lifetime access" }),

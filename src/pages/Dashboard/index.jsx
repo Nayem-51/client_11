@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import "../Pages.css";
 
 const Dashboard = () => {
@@ -32,16 +40,16 @@ const Dashboard = () => {
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
           d.setDate(d.getDate() - i);
-          const dateStr = d.toLocaleDateString('en-US', { weekday: 'short' });
-          
-          const dayStart = new Date(d.setHours(0,0,0,0));
-          const dayEnd = new Date(d.setHours(23,59,59,999));
-          
-          const count = userLessons.filter(l => {
-             const created = new Date(l.createdAt);
-             return created >= dayStart && created <= dayEnd;
+          const dateStr = d.toLocaleDateString("en-US", { weekday: "short" });
+
+          const dayStart = new Date(d.setHours(0, 0, 0, 0));
+          const dayEnd = new Date(d.setHours(23, 59, 59, 999));
+
+          const count = userLessons.filter((l) => {
+            const created = new Date(l.createdAt);
+            return created >= dayStart && created <= dayEnd;
           }).length;
-          
+
           chartData.push({ name: dateStr, lessons: count });
         }
 
@@ -49,7 +57,7 @@ const Dashboard = () => {
           totalLessons: userLessons.length,
           totalSaved: user?.savedLessons?.length || 0,
           recentLessons: userLessons.slice(0, 5),
-          chartData
+          chartData,
         });
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
@@ -105,19 +113,55 @@ const Dashboard = () => {
             <h3>Activity Overview</h3>
           </div>
         </div>
-        <div style={{ height: 300, minHeight: 300, width: "100%", background: "#fff", padding: "20px", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
-          <ResponsiveContainer width="100%" height="100%">
+        <div
+          style={{
+            height: 300,
+            minHeight: 300,
+            width: "100%",
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart
               data={stats.chartData || []}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} allowDecimals={false} />
-              <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#e5e7eb"
               />
-              <Line type="monotone" dataKey="lessons" stroke="#4338ca" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Lessons" />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: "8px",
+                  border: "none",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="lessons"
+                stroke="#4338ca"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+                name="Lessons"
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -163,31 +207,49 @@ const Dashboard = () => {
                 <p className="lesson-desc">
                   {lesson.description?.slice(0, 100) || "No description"}
                 </p>
-                
+
                 {/* Emotional Tone and Created Date */}
                 <div className="lesson-meta-line">
-                  <span className="tone">{lesson.emotionalTone || "Balanced"}</span>
+                  <span className="tone">
+                    {lesson.emotionalTone || "Balanced"}
+                  </span>
                   <span className="muted">
-                    {lesson.createdAt ? new Date(lesson.createdAt).toLocaleDateString() : "-"}
+                    {lesson.createdAt
+                      ? new Date(lesson.createdAt).toLocaleDateString()
+                      : "-"}
                   </span>
                 </div>
-                
+
                 <div className="lesson-footer">
                   {/* Creator Info */}
                   <div className="lesson-author">
                     <div className="creator-avatar">
-                      {lesson.instructor?.photoURL || lesson.creator?.photoURL ? (
-                        <img 
-                          src={lesson.instructor?.photoURL || lesson.creator?.photoURL} 
-                          alt={lesson.instructor?.displayName || lesson.creator?.name || "Creator"} 
+                      {lesson.instructor?.photoURL ||
+                      lesson.creator?.photoURL ? (
+                        <img
+                          src={
+                            lesson.instructor?.photoURL ||
+                            lesson.creator?.photoURL
+                          }
+                          alt={
+                            lesson.instructor?.displayName ||
+                            lesson.creator?.name ||
+                            "Creator"
+                          }
                         />
                       ) : (
-                        (lesson.instructor?.displayName || lesson.creator?.name || "U")[0]
+                        (lesson.instructor?.displayName ||
+                          lesson.creator?.name ||
+                          "U")[0]
                       )}
                     </div>
-                    <span>{lesson.instructor?.displayName || lesson.creator?.name || "Creator"}</span>
+                    <span>
+                      {lesson.instructor?.displayName ||
+                        lesson.creator?.name ||
+                        "Creator"}
+                    </span>
                   </div>
-                  
+
                   <Link
                     to={`/lessons/${lesson._id}`}
                     className="btn btn-secondary"

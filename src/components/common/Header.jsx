@@ -4,9 +4,16 @@ import { useAuth } from "../../hooks/useAuth";
 import "./Header.css";
 
 const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, refreshUser } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Refresh user data on mount and periodically to sync premium status
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshUser();
+    }
+  }, [isAuthenticated, refreshUser]);
 
   // Debug: log when user changes (especially isPremium)
   useEffect(() => {

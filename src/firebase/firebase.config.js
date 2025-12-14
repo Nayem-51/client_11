@@ -27,3 +27,10 @@ isSupported().then((supported) => {
 });
 
 export const auth = getAuth(app);
+
+// Note: Cross-Origin-Opener-Policy warnings from Firebase Auth popups are expected
+// in development. These warnings don't affect functionality and can be safely ignored.
+// For production, consider using redirect flow instead of popup if COOP headers are set.
+
+// Configure auth to work with Cross-Origin-Opener-Policy
+auth.settings.appVerificationDisabledForTesting = false;

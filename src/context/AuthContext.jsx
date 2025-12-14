@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }) => {
       if (currentUser) {
         console.log(
           "✓ User synced from API - isPremium:",
-          currentUser.isPremium
+          currentUser.isPremium,
+          "- Email:",
+          currentUser.email
         );
         setUser(currentUser);
         setIsAuthenticated(true);
@@ -48,7 +50,10 @@ export const AuthProvider = ({ children }) => {
         "Failed to sync user from backend:",
         error?.message || error
       );
-      logout();
+      // Don't logout on refresh errors, just log them
+      if (error?.response?.status === 401) {
+        logout();
+      }
     } finally {
       setLoading(false);
     }

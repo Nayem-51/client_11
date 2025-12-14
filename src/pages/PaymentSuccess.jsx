@@ -23,11 +23,21 @@ const PaymentSuccess = () => {
           isPremium: user?.isPremium,
         });
 
-        // Refresh user profile from database
-        await refreshUser();
+        // Multiple refresh attempts to ensure webhook has processed
+        for (let i = 0; i < 3; i++) {
+          await refreshUser();
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Small delay to ensure state has updated
-        await new Promise((resolve) => setTimeout(resolve, 300));
+          // Check localStorage for updated user
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser?.isPremium) {
+              console.log("✅ Premium status confirmed!");
+              break;
+            }
+          }
+        }
 
         if (isMounted) {
           setSyncing(false);
@@ -41,10 +51,10 @@ const PaymentSuccess = () => {
       }
     };
 
-    // Wait 1.5 seconds for webhook to process, then sync
+    // Wait 2 seconds for webhook to process, then sync
     const timer = setTimeout(() => {
       syncPremiumStatus();
-    }, 1500);
+    }, 2000);
 
     return () => {
       isMounted = false;

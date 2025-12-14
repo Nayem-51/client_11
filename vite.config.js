@@ -12,4 +12,12 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ["@stripe/stripe-js"],
+  },
+  build: {
+    rollupOptions: {
+      external: ["@stripe/stripe-js"],
+    },
+  },
 });

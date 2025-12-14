@@ -24,150 +24,157 @@ import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentCancel from "../pages/PaymentCancel";
 import NotFound from "../pages/NotFound";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          index: true,
+          element: <Home />,
+        },
+        {
+          path: "dashboard/profile",
+          element: (
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "lessons",
+          element: <PublicLessons />,
+        },
+        {
+          path: "lessons/:id",
+          element: <LessonDetails />,
+        },
+        {
+          path: "login",
+          element: (
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          ),
+        },
+        {
+          path: "register",
+          element: (
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          ),
+        },
+        {
+          path: "profile",
+          element: (
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "pricing",
+          element: (
+            <ProtectedRoute>
+              <Pricing />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "dashboard",
+          element: (
+            <ProtectedRoute>
+              <DashboardIndex />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "dashboard/add-lesson",
+          element: (
+            <ProtectedRoute>
+              <AddLesson />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "dashboard/my-lessons",
+          element: (
+            <ProtectedRoute>
+              <MyLessons />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "dashboard/my-favorites",
+          element: (
+            <ProtectedRoute>
+              <MyFavorites />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "dashboard/admin",
+          element: (
+            <AdminRoute>
+              <AdminPanel />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "dashboard/admin/manage-lessons",
+          element: (
+            <AdminRoute>
+              <ManageLessons />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "dashboard/admin/profile",
+          element: (
+            <AdminRoute>
+              <AdminProfile />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "dashboard/admin/manage-users",
+          element: (
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "dashboard/admin/reported-lessons",
+          element: (
+            <AdminRoute>
+              <ReportedLessons />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "payment/success",
+          element: <PaymentSuccess />,
+        },
+        {
+          path: "payment/cancel",
+          element: <PaymentCancel />,
+        },
+      ],
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ],
   {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "dashboard/profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "lessons",
-        element: <PublicLessons />,
-      },
-      {
-        path: "lessons/:id",
-        element: <LessonDetails />,
-      },
-      {
-        path: "login",
-        element: (
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        ),
-      },
-      {
-        path: "register",
-        element: (
-          <PublicRoute>
-            <Register />
-          </PublicRoute>
-        ),
-      },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "pricing",
-        element: (
-          <ProtectedRoute>
-            <Pricing />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "dashboard",
-        element: (
-          <ProtectedRoute>
-            <DashboardIndex />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "dashboard/add-lesson",
-        element: (
-          <ProtectedRoute>
-            <AddLesson />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "dashboard/my-lessons",
-        element: (
-          <ProtectedRoute>
-            <MyLessons />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "dashboard/my-favorites",
-        element: (
-          <ProtectedRoute>
-            <MyFavorites />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "dashboard/admin",
-        element: (
-          <AdminRoute>
-            <AdminPanel />
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "dashboard/admin/manage-lessons",
-        element: (
-          <AdminRoute>
-            <ManageLessons />
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "dashboard/admin/profile",
-        element: (
-          <AdminRoute>
-            <AdminProfile />
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "dashboard/admin/manage-users",
-        element: (
-          <AdminRoute>
-            <ManageUsers />
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "dashboard/admin/reported-lessons",
-        element: (
-          <AdminRoute>
-            <ReportedLessons />
-          </AdminRoute>
-        ),
-      },
-      {
-        path: "payment/success",
-        element: <PaymentSuccess />,
-      },
-      {
-        path: "payment/cancel",
-        element: <PaymentCancel />,
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
-]);
+    future: {
+      v7_startTransition: true,
+    },
+  }
+);
 
 export const Router = () => {
   return <RouterProvider router={router} />;
