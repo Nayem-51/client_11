@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
 import { lessonsAPI } from "../../api/endpoints";
 import { useAuth } from "../../hooks/useAuth";
+import successAnimation from "../../assets/animations/success.json";
 import "../Pages.css";
 
 const AddLesson = () => {
@@ -9,6 +11,7 @@ const AddLesson = () => {
   const { user } = useAuth();
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showSuccessAnim, setShowSuccessAnim] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -76,6 +79,9 @@ const AddLesson = () => {
 
       await lessonsAPI.create(payload);
       showToast("Lesson created successfully!", "success");
+      setShowSuccessAnim(true);
+
+      setTimeout(() => setShowSuccessAnim(false), 1800);
 
       setTimeout(() => {
         navigate("/dashboard/my-lessons");
@@ -104,6 +110,18 @@ const AddLesson = () => {
 
       {toast && (
         <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
+
+      {showSuccessAnim && (
+        <div
+          style={{
+            maxWidth: "220px",
+            margin: "12px auto",
+          }}
+          aria-label="Lesson created"
+        >
+          <Lottie animationData={successAnimation} loop={false} />
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className="lesson-form">
