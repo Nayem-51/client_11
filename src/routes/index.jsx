@@ -20,6 +20,7 @@ import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import AdminProfile from "../pages/Dashboard/Admin/AdminProfile";
 import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
+import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentCancel from "../pages/PaymentCancel";
 import NotFound from "../pages/NotFound";
 
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
             <ReportedLessons />
           </AdminRoute>
         ),
+      },
+      {
+        path: "payment/success",
+        element: <PaymentSuccess />,
       },
       {
         path: "payment/cancel",
