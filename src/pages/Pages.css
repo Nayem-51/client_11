@@ -2154,6 +2154,19 @@ textarea:focus {
   .page {
     padding: 0 24px;
   }
+
+  .hero-slider {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .hero-slider__aside {
+    order: -1;
+  }
+
+  .comparison-table {
+    overflow-x: auto;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2174,9 +2187,18 @@ textarea:focus {
     padding: 20px;
   }
 
+  .hero-slide h1 {
+    font-size: 24px;
+  }
+
+  .hero-slide p {
+    font-size: 14px;
+  }
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
   }
 
   .dashboard-header .btn {
@@ -2186,5 +2208,166 @@ textarea:focus {
 
   .stats-grid {
     grid-template-columns: 1fr; /* Stack stats */
+  }
+
+  .stats-section {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pricing-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .plan-card {
+    margin-top: 0;
+  }
+
+  .comparison-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .comparison-row > div:first-child {
+    font-weight: 600;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0 12px;
+  }
+
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+  }
+
+  .lesson-card,
+  .featured-card {
+    padding: 16px;
+  }
+
+  .mini-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  .saved-card {
+    padding: 12px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    margin: 40px 0;
+  }
+
+  .section h2 {
+    font-size: 20px;
+  }
+
+  .hero-slider__content {
+    min-height: 200px;
+  }
+
+  .hero-slide {
+    padding: 20px;
+  }
+
+  .lesson-card h3,
+  .featured-card h3 {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .stat-box {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .dashboard-section {
+    padding: 16px;
+  }
+
+  .admin-table {
+    font-size: 12px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 6px;
+  }
+
+  .pill {
+    font-size: 10px;
+    padding: 4px 8px;
   }
 }

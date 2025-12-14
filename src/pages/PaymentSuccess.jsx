@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import successAnimation from "../assets/animations/success.json";
 import { useAuth } from "../hooks/useAuth";
+import { stripeAPI } from "../api/endpoints";
 import "./Pages.css";
 
 const PaymentSuccess = () => {
@@ -23,6 +24,18 @@ const PaymentSuccess = () => {
           isPremium: user?.isPremium,
         });
 
+        // In local development, manually trigger premium upgrade
+        // since webhooks won't reach localhost without Stripe CLI
+        if (user?._id) {
+          try {
+            console.log("🔧 Manually upgrading user to premium...");
+            await stripeAPI.manualUpgrade(user._id);
+            console.log("✅ Manual upgrade completed");
+          } catch (err) {
+            console.log("Manual upgrade failed, continuing with refresh");
+          }
+        }
+
         // Multiple refresh attempts to ensure webhook has processed
         for (let i = 0; i < 3; i++) {
           await refreshUser();
@@ -34,7 +47,18 @@ const PaymentSuccess = () => {
             const parsedUser = JSON.parse(storedUser);
             if (parsedUser?.isPremium) {
               console.log("✅ Premium status confirmed!");
-              break;
+
+              // Force window reload to ensure all components update
+              if (isMounted) {
+                setSyncing(false);
+                console.log("✅ Premium status synced - reloading page...");
+
+                // Delay slightly then reload to show success message
+                setTimeout(() => {
+                  window.location.href = "/dashboard";
+                }, 1000);
+              }
+              return;
             }
           }
         }

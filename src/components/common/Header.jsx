@@ -6,6 +6,7 @@ import "./Header.css";
 const Header = () => {
   const { isAuthenticated, user, logout, refreshUser } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Refresh user data on mount and periodically to sync premium status
@@ -13,6 +14,21 @@ const Header = () => {
     if (isAuthenticated) {
       refreshUser();
     }
+  }, [isAuthenticated, refreshUser]);
+
+  // Refresh when user returns to tab (after payment completion)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isAuthenticated) {
+        console.log("Tab became visible - refreshing user data...");
+        refreshUser();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [isAuthenticated, refreshUser]);
 
   // Debug: log when user changes (especially isPremium)
@@ -31,7 +47,15 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     setDropdownOpen(false);
+    setMobileMenuOpen(false);
   };
+
+  // Close mobile menu on route change or outside click
+  useEffect(() => {
+    const closeMenu = () => setMobileMenuOpen(false);
+    window.addEventListener("resize", closeMenu);
+    return () => window.removeEventListener("resize", closeMenu);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -83,38 +107,70 @@ const Header = () => {
           <span className="logo-text">Lessons</span>
         </Link>
 
-        <nav className="navbar">
-          <Link to="/" className="nav-link">
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? "✕" : "☰"}
+        </button>
+
+        <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
+          <Link
+            to="/"
+            className="nav-link"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             Home
           </Link>
-          <Link to="/lessons" className="nav-link">
+          <Link
+            to="/lessons"
+            className="nav-link"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             Public Lessons
           </Link>
 
           {isAuthenticated && (
             <>
               {user?.role === "admin" ? (
-                <Link to="/dashboard/admin" className="nav-link">
+                <Link
+                  to="/dashboard/admin"
+                  className="nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Admin Dashboard
                 </Link>
               ) : (
                 <>
-                  <Link to="/dashboard/add-lesson" className="nav-link">
+                  <Link
+                    to="/dashboard/add-lesson"
+                    className="nav-link"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Add Lesson
                   </Link>
-                  <Link to="/dashboard/my-lessons" className="nav-link">
+                  <Link
+                    to="/dashboard/my-lessons"
+                    className="nav-link"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     My Lessons
                   </Link>
                 </>
               )}
 
-              {!user?.role?.includes("admin") && // Hide pricing for admins or keep it? Requirement implies admins don't pay but maybe for consistency. Let's hide unrelated user stuff if strict separation requested. But user might want to see pricing page. Text says "Admin navbar... follows admin dashboard". I'll keep Pricing for regular users, maybe hide for Admin if they are superusers. Let's stick to the request "Change the admin navbar so that... it follows the admin dashboard".
+              {!user?.role?.includes("admin") &&
                 (user?.isPremium ? (
                   <span className="nav-badge" aria-label="Premium user">
                     Premium ⭐
                   </span>
                 ) : (
-                  <Link to="/pricing" className="nav-link">
+                  <Link
+                    to="/pricing"
+                    className="nav-link"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Pricing/Upgrade
                   </Link>
                 ))}
@@ -125,10 +181,18 @@ const Header = () => {
         <div className="header-right">
           {!isAuthenticated ? (
             <div className="auth-buttons">
-              <Link to="/login" className="btn btn-login">
+              <Link
+                to="/login"
+                className="btn btn-login"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Login
               </Link>
-              <Link to="/register" className="btn btn-signup">
+              <Link
+                to="/register"
+                className="btn btn-signup"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Sign Up
               </Link>
             </div>

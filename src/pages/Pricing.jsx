@@ -56,10 +56,11 @@ const Pricing = () => {
 
   const isPremium = !!user?.isPremium;
 
-  // Refresh user data on mount and when search params change
+  // Immediate refresh on mount to get latest premium status
   useEffect(() => {
+    console.log("Pricing page mounted - refreshing user...");
     refreshUser();
-  }, [refreshUser]);
+  }, []);
 
   // Refresh again when returning from payment
   useEffect(() => {

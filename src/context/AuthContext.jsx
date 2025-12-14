@@ -39,9 +39,11 @@ export const AuthProvider = ({ children }) => {
           "- Email:",
           currentUser.email
         );
-        setUser(currentUser);
+        // Create a new object to force re-render
+        const updatedUser = { ...currentUser };
+        setUser(updatedUser);
         setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(currentUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
         console.warn("No user data received from API");
       }

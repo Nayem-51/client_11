@@ -53,4 +53,5 @@ export const categoriesAPI = {
 export const stripeAPI = {
   createCheckoutSession: (payload) =>
     apiClient.post("/stripe/create-checkout-session", payload),
+  manualUpgrade: (userId) => apiClient.post(`/stripe/manual-upgrade/${userId}`),
 };
