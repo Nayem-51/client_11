@@ -340,12 +340,4 @@
   background: #fee2e2;
 }
 
-@media (max-width: 768px) {
-  .header-container {
-    padding: 0 16px;
-  }
 
-  .navbar {
-    display: none;
-  }
-}

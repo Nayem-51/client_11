@@ -23,7 +23,7 @@
   --bg-white: #ffffff;
   --border-color: #e2e8f0;
   --text-primary: #0f172a;
-  --text-secondary: #334155;
+  --text-secondary: #ea6d0e;
   --text-tertiary: #64748b;
   --text-muted: #94a3b8;
 }
@@ -125,7 +125,7 @@ select {
   --bg-white: #111827;
   --border-color: #374151;
   --text-primary: #f9fafb;
-  --text-secondary: #e5e7eb;
+  --text-secondary: #ea6d0e;
   --text-tertiary: #d1d5db;
 }
 

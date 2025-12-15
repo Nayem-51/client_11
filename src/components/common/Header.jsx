@@ -104,7 +104,7 @@ const Header = () => {
       <div className="header-container">
         <Link to="/" className="logo">
           <span className="logo-icon">📚</span>
-          <span className="logo-text">Lessons</span>
+          <span className="logo-text">Digital Life Lessons</span>
         </Link>
 
         <button

@@ -63,6 +63,8 @@ const deriveTopContributors = (lessons) => {
         lessons: 0,
         highlights: lesson.category || "Life Lesson",
       };
+    } else if (!acc[instructor].avatar && lesson.instructor?.photoURL) {
+      acc[instructor].avatar = lesson.instructor.photoURL;
     }
 
     acc[instructor].lessons += 1;

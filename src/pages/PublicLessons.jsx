@@ -48,7 +48,7 @@ const PublicLessons = () => {
     try {
       const params = {
         page,
-        limit: 9, // 9 per page for grid
+        limit: 6, // 6 per page for grid
         category: category === "all" ? undefined : category,
         emotionalTone: tone === "all" ? undefined : tone,
         sort:

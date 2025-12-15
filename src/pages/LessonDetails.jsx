@@ -37,7 +37,9 @@ const LessonDetails = () => {
   const [commentText, setCommentText] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState("Inappropriate Content");
-  const [similarLessons, setSimilarLessons] = useState([]);
+  // const [reportReason, setReportReason] = useState("Inappropriate Content");
+  const [similarCategoryLessons, setSimilarCategoryLessons] = useState([]);
+  const [similarToneLessons, setSimilarToneLessons] = useState([]);
 
   const randomViews = useMemo(() => Math.floor(Math.random() * 10000), []);
 
@@ -71,25 +73,35 @@ const LessonDetails = () => {
 
   useEffect(() => {
     const fetchSimilar = async () => {
+      if (!lesson) return;
+
       try {
-        const response = await lessonsAPI.getAll();
-        const items = response.data?.data || response.data || [];
-        const filtered = items
-          .filter((item) => item._id !== id)
-          .filter((item) =>
-            lesson?.category
-              ? item.category === lesson.category ||
-                item.emotionalTone === lesson.emotionalTone
-              : item.emotionalTone === lesson?.emotionalTone
-          )
-          .slice(0, 6);
-        setSimilarLessons(filtered);
+        const [catRes, toneRes] = await Promise.all([
+          lessonsAPI.getPublic({
+            category: lesson.category,
+            limit: 7, // fetch 7 to ensure we have 6 after filtering current
+          }),
+          lessonsAPI.getPublic({
+            emotionalTone: lesson.emotionalTone,
+            limit: 7,
+          }),
+        ]);
+
+        const catItems = catRes.data?.data || [];
+        const toneItems = toneRes.data?.data || [];
+
+        setSimilarCategoryLessons(
+          catItems.filter((item) => item._id !== id).slice(0, 6)
+        );
+        setSimilarToneLessons(
+          toneItems.filter((item) => item._id !== id).slice(0, 6)
+        );
       } catch (_err) {
         // silently ignore similar fetch issues
       }
     };
 
-    if (lesson) fetchSimilar();
+    fetchSimilar();
   }, [lesson, id]);
 
   const handleAddFavorite = async () => {
@@ -443,12 +455,12 @@ const LessonDetails = () => {
         <section className="similar-section">
           <div className="section-header">
             <div>
-              <p className="eyebrow">Similar Lessons</p>
-              <h3>Recommended for you</h3>
+              <p className="eyebrow">Discover More</p>
+              <h3>More on {lesson.category}</h3>
             </div>
           </div>
           <div className="lessons-grid">
-            {similarLessons.map((item) => {
+            {similarCategoryLessons.map((item) => {
               const lessonId = item._id || item.id;
               const locked =
                 item.accessLevel?.toLowerCase?.() === "premium" &&
@@ -498,8 +510,72 @@ const LessonDetails = () => {
                 </div>
               );
             })}
-            {similarLessons.length === 0 && (
-              <p className="muted">No related lessons found.</p>
+            {similarCategoryLessons.length === 0 && (
+              <p className="muted">No related lessons found in this category.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="similar-section">
+          <div className="section-header">
+            <div>
+              <p className="eyebrow">Vibe Check</p>
+              <h3>Similar Tone ({lesson.emotionalTone || "Balanced"})</h3>
+            </div>
+          </div>
+          <div className="lessons-grid">
+            {similarToneLessons.map((item) => {
+              const lessonId = item._id || item.id;
+              const locked =
+                item.accessLevel?.toLowerCase?.() === "premium" &&
+                !user?.isPremium;
+              return (
+                <div
+                  key={lessonId}
+                  className={`lesson-card lesson-card--public ${
+                    locked ? "lesson-card--locked" : ""
+                  }`}
+                >
+                  <div className="lesson-card__top">
+                    <span className="pill">{item.category || "Life"}</span>
+                    <span
+                      className={`pill ${
+                        item.accessLevel?.toLowerCase?.() === "premium"
+                          ? "pill-accent"
+                          : ""
+                      }`}
+                    >
+                      {item.accessLevel || "Public"}
+                    </span>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p className="lesson-desc">
+                    {item.description?.slice(0, 120) || "No description"}
+                  </p>
+                  <div className="lesson-meta-line">
+                    <span className="tone">
+                      Tone: {item.emotionalTone || "Balanced"}
+                    </span>
+                    <span className="date">
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString()
+                        : ""}
+                    </span>
+                  </div>
+                  <div className="lesson-footer">
+                    <Link
+                      to={`/lessons/${lessonId}`}
+                      className="btn btn-secondary btn-block"
+                    >
+                      {locked ? "🔒 Premium" : "See Details"}
+                    </Link>
+                  </div>
+                  {locked && <div className="lesson-lock-overlay" />}
+                </div>
+              );
+            })}
+            {similarToneLessons.length === 0 && (
+              <p className="muted">No related lessons found with this tone.</p>
             )}
           </div>
         </section>

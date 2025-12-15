@@ -41,6 +41,12 @@ const AddLesson = () => {
     e.preventDefault();
     setToast(null);
 
+    // Require authentication before creating a lesson
+    if (!user) {
+      showToast("Please login to create a lesson", "error");
+      return;
+    }
+
     // Validation
     if (!formData.title.trim()) {
       showToast("Please enter a lesson title", "error");

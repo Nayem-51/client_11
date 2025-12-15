@@ -12,7 +12,7 @@ const Footer = () => {
           <div className="footer-section">
             <div className="footer-logo">
               <span className="logo-icon">📚</span>
-              <span className="logo-text">Lessons</span>
+              <span className="logo-text">Digital Life Lessons</span>
             </div>
             <p className="footer-description">
               A platform for sharing and learning valuable lessons from experts
