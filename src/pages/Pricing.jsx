@@ -2,6 +2,51 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { stripeAPI } from "../api/endpoints";
 import { handleStripeCheckout } from "../utils/stripe";
+import { useAuth } from "../hooks/useAuth";
+import "./Pages.css";
+
+const FEATURE_ROWS = [
+  {
+    label: "Access to lessons",
+    free: "Public lessons",
+    premium: "All lessons + premium exclusives",
+  },
+  {
+    label: "Create premium lessons",
+    free: "Limited drafts",
+    premium: "Publish premium & free lessons",
+  },
+  {
+    label: "Favorites and saves",
+    free: "Save up to 20",
+    premium: "Unlimited saves",
+  },
+  {
+    label: "Ad-free experience",
+    free: "Standard",
+    premium: "100% ad-free",
+  },
+  {
+    label: "Priority listing",
+    free: "Normal",
+    premium: "Priority placement in discover",
+  },
+  {
+    label: "Support",
+    free: "Community support",
+    premium: "Priority support",
+  },
+  {
+    label: "Weekly curator picks",
+    free: "Email summary",
+    premium: "Personalized picks + reminders",
+  },
+  {
+    label: "Pricing",
+    free: "Free forever",
+    premium: "৳1500 one-time (lifetime)",
+  },
+];
 
 const Pricing = () => {
   const { user, refreshUser } = useAuth();

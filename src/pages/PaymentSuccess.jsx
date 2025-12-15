@@ -12,17 +12,34 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const [percent, setPercent] = useState(0);
   const [syncing, setSyncing] = useState(true);
+  const [hasSynced, setHasSynced] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
     const syncPremiumStatus = async () => {
+      if (hasSynced) return; // prevent duplicate runs
       try {
         console.log("🔄 Starting premium status sync...");
         console.log("Current user before refresh:", {
           email: user?.email,
           isPremium: user?.isPremium,
         });
+
+        // 1) If Stripe returned a session_id, verify its payment status
+        const sessionId = searchParams.get("session_id");
+        if (sessionId) {
+          try {
+            console.log("🔎 Verifying Stripe session:", sessionId);
+            const { data } = await stripeAPI.verifySession(sessionId);
+            console.log("✅ Session verification:", data);
+          } catch (e) {
+            console.warn(
+              "Session verification failed (continuing):",
+              e?.message
+            );
+          }
+        }
 
         // In local development, manually trigger premium upgrade
         // since webhooks won't reach localhost without Stripe CLI
@@ -51,6 +68,7 @@ const PaymentSuccess = () => {
               // Force window reload to ensure all components update
               if (isMounted) {
                 setSyncing(false);
+                setHasSynced(true);
                 console.log("✅ Premium status synced - reloading page...");
 
                 // Delay slightly then reload to show success message
@@ -65,6 +83,7 @@ const PaymentSuccess = () => {
 
         if (isMounted) {
           setSyncing(false);
+          setHasSynced(true);
           console.log("✅ Premium status synced and component updated");
         }
       } catch (error) {
@@ -84,7 +103,7 @@ const PaymentSuccess = () => {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [refreshUser]);
+  }, [refreshUser, user?._id, searchParams, hasSynced]);
 
   useEffect(() => {
     if (!syncing) {
