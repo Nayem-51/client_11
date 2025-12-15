@@ -4,22 +4,28 @@ import "./Pages.css";
 
 const PaymentCancel = () => {
   return (
-    <div className="page">
-      <section className="guarantee-card" style={{ marginTop: 32 }}>
-        <h2>Payment canceled</h2>
+    <div className="page payment-page">
+      <div className="payment-card cancel-card">
+        <div className="icon-wrapper cancel-icon">
+          <span>✕</span>
+        </div>
+        <h1>Payment Canceled</h1>
         <p>
-          Your Stripe checkout was canceled or failed. You have not been
-          charged. You can try again anytime to upgrade to Premium.
+          Your payment was canceled or did not complete. No charges were made to
+          your card.
         </p>
-        <div className="cta-buttons" style={{ justifyContent: "flex-start" }}>
+        <div className="action-buttons">
           <Link to="/pricing" className="btn btn-primary">
-            Go back to Pricing
+            Try Again
           </Link>
           <Link to="/dashboard" className="btn btn-secondary">
-            Return to Dashboard
+            Go to Dashboard
           </Link>
         </div>
-      </section>
+        <p className="help-text">
+          If you continue to experience issues, please contact support.
+        </p>
+      </div>
     </div>
   );
 };

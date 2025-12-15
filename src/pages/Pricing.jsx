@@ -1,51 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { stripeAPI } from "../api/endpoints";
-import { useAuth } from "../hooks/useAuth";
-import "./Pages.css";
-
-const FEATURE_ROWS = [
-  {
-    label: "Access to lessons",
-    free: "Public lessons",
-    premium: "All lessons + premium exclusives",
-  },
-  {
-    label: "Create premium lessons",
-    free: "Limited drafts",
-    premium: "Publish premium & free lessons",
-  },
-  {
-    label: "Favorites and saves",
-    free: "Save up to 20",
-    premium: "Unlimited saves",
-  },
-  {
-    label: "Ad-free experience",
-    free: "Standard",
-    premium: "100% ad-free",
-  },
-  {
-    label: "Priority listing",
-    free: "Normal",
-    premium: "Priority placement in discover",
-  },
-  {
-    label: "Support",
-    free: "Community support",
-    premium: "Priority support",
-  },
-  {
-    label: "Weekly curator picks",
-    free: "Email summary",
-    premium: "Personalized picks + reminders",
-  },
-  {
-    label: "Pricing",
-    free: "Free forever",
-    premium: "৳1500 one-time (lifetime)",
-  },
-];
+import { handleStripeCheckout } from "../utils/stripe";
 
 const Pricing = () => {
   const { user, refreshUser } = useAuth();
@@ -89,32 +45,10 @@ const Pricing = () => {
         throw new Error("Please log in to upgrade to premium.");
       }
 
-      console.log("Creating checkout session for user:", user._id);
+      console.log("Initing checkout for user:", user._id);
+      
+      await handleStripeCheckout(user._id);
 
-      const response = await stripeAPI.createCheckoutSession({
-        userId: user._id,
-      });
-
-      console.log("Checkout session response:", response);
-
-      // Handle various response formats
-      const redirectUrl =
-        response?.data?.url ||
-        response?.url ||
-        response?.data?.sessionUrl ||
-        response?.data?.checkoutUrl;
-
-      if (!redirectUrl) {
-        console.error("No redirect URL found in response:", response);
-        throw new Error("Failed to create payment session. Please try again.");
-      }
-
-      console.log("Redirecting to Stripe checkout:", redirectUrl);
-
-      // Redirect to Stripe checkout
-      setTimeout(() => {
-        window.location.href = redirectUrl;
-      }, 500);
     } catch (err) {
       console.error("Checkout error:", err);
       const message =
