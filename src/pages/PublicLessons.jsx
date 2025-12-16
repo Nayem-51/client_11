@@ -277,7 +277,15 @@ const PublicLessons = () => {
                     <div className="lesson-author creator-row">
                       <div className="creator-avatar">
                         {creatorPhoto ? (
-                          <img src={creatorPhoto} alt={creatorName} />
+                          <img
+                            src={creatorPhoto}
+                            alt={creatorName}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.parentElement.innerText = creatorName[0];
+                            }}
+                          />
                         ) : (
                           creatorName[0]
                         )}

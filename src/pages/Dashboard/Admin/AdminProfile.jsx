@@ -119,81 +119,60 @@ const AdminProfile = () => {
   }
 
   return (
-    <div
-      className="page admin-page"
-      style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-    >
+    <div className="page admin-page flex-col gap-6">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="admin-header" style={{ alignItems: "center" }}>
+      
+      {/* Header */}
+      <div className="admin-header">
         <div>
-          <p className="eyebrow">Administrator</p>
+          <span className="eyebrow">Administrator</span>
           <h1>Admin Profile</h1>
-          <p className="muted">
+          <p className="text-muted mb-0">
             Manage your admin identity and keep your details current.
           </p>
         </div>
-        <div className="admin-actions">
-          <span className="badge badge-success">Admin</span>
+        <div className="flex gap-4 items-center">
+          <span className="badge badge-success">Admin Role</span>
           <Link to="/dashboard/admin" className="btn btn-secondary">
             Back to Dashboard
           </Link>
         </div>
       </div>
 
-      <div
-        className="dashboard-grid"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}
-      >
-        <div className="dashboard-card" style={{ gap: "16px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <div
-              style={{
-                width: 76,
-                height: 76,
-                borderRadius: "50%",
-                background: "#eef2ff",
-                display: "grid",
-                placeItems: "center",
-                overflow: "hidden",
-                border: "1px solid #e5e7eb",
-              }}
-            >
+      <div className="dashboard-grid">
+        {/* Identity Card */}
+        <div className="dashboard-card gap-6">
+          <div className="flex items-center gap-4">
+            <div className="creator-avatar" style={{ width: 80, height: 80, fontSize: '1.5rem' }}>
               {avatar ? (
                 <img
                   src={avatar}
-                  alt={user.name || "Admin avatar"}
+                  alt={user.name}
                   referrerPolicy="no-referrer"
                   onError={() => setAvatarError(true)}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca", fontSize: "24px" }}>
-                  {initials}
-                </span>
+                initials
               )}
             </div>
             <div>
-              <h2 style={{ margin: "0 0 4px 0" }}>{user.name || "Admin"}</h2>
-              <p className="muted" style={{ margin: 0 }}>
-                {user.email}
-              </p>
+              <h2 className="text-xl mb-1">{user.name || "Admin"}</h2>
+              <p className="text-muted m-0">{user.email}</p>
             </div>
           </div>
 
-          <div
-            className="stats-grid"
-            style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
-          >
+          <div className="grid grid-cols-2 gap-4" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="stat-box">
-              <p className="stat-box__label">Public lessons</p>
+              <p className="stat-box__label">Public</p>
               <p className="stat-box__value">{stats.publicLessons}</p>
             </div>
             <div className="stat-box">
-              <p className="stat-box__label">Flagged content</p>
+              <p className="stat-box__label">Flagged</p>
               <p className="stat-box__value">{stats.flaggedLessons}</p>
             </div>
             <div className="stat-box">
-              <p className="stat-box__label">Private/draft</p>
+              <p className="stat-box__label">Private</p>
               <p className="stat-box__value">{stats.privateLessons}</p>
             </div>
             <div className="stat-box">
@@ -203,14 +182,14 @@ const AdminProfile = () => {
           </div>
         </div>
 
+        {/* Update Profile Form */}
         <div className="dashboard-card">
-          <div className="section-header">
-            <div>
-              <p className="eyebrow">Profile</p>
-              <h3>Update Details</h3>
-            </div>
+          <div className="mb-4">
+            <span className="eyebrow">Profile settings</span>
+            <h3>Update Details</h3>
           </div>
-          <form onSubmit={handleUpdateProfile} className="profile-form">
+          
+          <form onSubmit={handleUpdateProfile} className="flex-col gap-4">
             <div className="form-group">
               <label>Display Name</label>
               <input
@@ -232,49 +211,49 @@ const AdminProfile = () => {
               />
             </div>
             <div className="form-group">
-              <label>Email</label>
-              <input type="email" value={user.email} disabled />
-              <p className="form-group__hint">
-                Email cannot be edited for security.
+              <label>Email Address</label>
+              <input type="email" value={user.email} disabled className="bg-subtle cursor-not-allowed opacity-75" />
+              <p className="text-sm text-muted mt-2">
+                Email cannot be edited for security reasons.
               </p>
             </div>
-            <div
-              className="form-actions"
-              style={{ justifyContent: "flex-start" }}
-            >
+            
+            <div className="mt-2">
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={updating}
               >
-                {updating ? "Saving..." : "Save Changes"}
+                {updating ? "Saving Changes..." : "Save Changes"}
               </button>
             </div>
           </form>
         </div>
       </div>
 
+      {/* Activity Section */}
       <div className="dashboard-card">
-        <div className="section-header">
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
           <div>
-            <p className="eyebrow">Activity</p>
+            <span className="eyebrow">Recent Activity</span>
             <h3>Moderation Snapshot</h3>
           </div>
-          <div className="admin-actions">
+          <div className="flex gap-2">
             <Link
               to="/dashboard/admin/manage-lessons"
-              className="btn btn-secondary"
+              className="btn btn-secondary text-sm"
             >
               Manage Lessons
             </Link>
             <Link
               to="/dashboard/admin/reported-lessons"
-              className="btn btn-secondary"
+              className="btn btn-secondary text-sm"
             >
-              Reported Lessons
+              Reported
             </Link>
           </div>
         </div>
+        
         {loading ? (
           <Spinner label="Loading moderation data..." />
         ) : (
@@ -282,18 +261,28 @@ const AdminProfile = () => {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Visibility</th>
-                  <th>Flags</th>
-                  <th>Created</th>
+                  <th>Lesson Title</th>
+                  <th>Status</th>
+                  <th>Reports</th>
+                  <th>Date Added</th>
                 </tr>
               </thead>
               <tbody>
                 {recentLessons.map((lesson) => (
                   <tr key={lesson._id}>
-                    <td>{lesson.title}</td>
-                    <td>{deriveVisibility(lesson)}</td>
-                    <td>{isFlagged(lesson) ? lesson.reportCount || 1 : 0}</td>
+                    <td className="font-bold">{lesson.title}</td>
+                    <td>
+                      <span className={`badge ${isFlagged(lesson) ? 'badge-danger' : 'badge-success'}`}>
+                         {deriveVisibility(lesson)}
+                      </span>
+                    </td>
+                    <td>
+                      {isFlagged(lesson) ? (
+                         <span className="text-danger font-bold">{lesson.reportCount || 1} Reports</span>
+                      ) : (
+                        <span className="text-muted">-</span>
+                      )}
+                    </td>
                     <td>
                       {lesson.createdAt
                         ? new Date(lesson.createdAt).toLocaleDateString()
@@ -301,6 +290,13 @@ const AdminProfile = () => {
                     </td>
                   </tr>
                 ))}
+                {recentLessons.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="text-center p-6 text-muted">
+                      No recent activity found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

@@ -1,12 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import "./Sidebar.css";
 
 const Sidebar = () => {
   const { isAuthenticated, user } = useAuth();
-  const location = useLocation();
-
+  
   if (!isAuthenticated) {
     return null;
   }
@@ -15,8 +14,6 @@ const Sidebar = () => {
     const name = user?.displayName || user?.name || user?.email || "U";
     return name.slice(0, 2).toUpperCase();
   };
-
-  const isActive = (path) => location.pathname === path;
 
   return (
     <aside className="sidebar">
@@ -65,56 +62,29 @@ const Sidebar = () => {
               </h4>
               <ul>
                 <li>
-                  <Link
-                    to="/dashboard/admin"
-                    className={isActive("/dashboard/admin") ? "active" : ""}
-                  >
+                  <NavLink to="/dashboard/admin" end>
                     Admin Overview
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/admin/manage-users"
-                    className={
-                      isActive("/dashboard/admin/manage-users") ? "active" : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/admin/manage-users">
                     Manage Users
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/admin/manage-lessons"
-                    className={
-                      isActive("/dashboard/admin/manage-lessons")
-                        ? "active"
-                        : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/admin/manage-lessons">
                     Manage Lessons
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/admin/reported-lessons"
-                    className={
-                      isActive("/dashboard/admin/reported-lessons")
-                        ? "active"
-                        : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/admin/reported-lessons">
                     Reported Lessons
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/admin/profile"
-                    className={
-                      isActive("/dashboard/admin/profile") ? "active" : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/admin/profile">
                     Admin Profile
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             </div>
@@ -124,50 +94,29 @@ const Sidebar = () => {
               <h4 className="nav-header">User Dashboard</h4>
               <ul>
                 <li>
-                  <Link
-                    to="/dashboard"
-                    className={isActive("/dashboard") ? "active" : ""}
-                  >
+                  <NavLink to="/dashboard" end>
                     My Dashboard
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/add-lesson"
-                    className={
-                      isActive("/dashboard/add-lesson") ? "active" : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/add-lesson">
                     Add Lesson
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/my-lessons"
-                    className={
-                      isActive("/dashboard/my-lessons") ? "active" : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/my-lessons">
                     My Lessons
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/my-favorites"
-                    className={
-                      isActive("/dashboard/my-favorites") ? "active" : ""
-                    }
-                  >
+                  <NavLink to="/dashboard/my-favorites">
                     My Favorites
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
-                    to="/dashboard/profile"
-                    className={isActive("/dashboard/profile") ? "active" : ""}
-                  >
+                  <NavLink to="/dashboard/profile">
                     My Profile
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             </div>

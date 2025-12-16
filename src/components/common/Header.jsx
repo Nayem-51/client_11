@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import "./Header.css";
 
@@ -103,7 +103,12 @@ const Header = () => {
     <header className="header">
       <div className="header-container">
         <Link to="/" className="logo">
-          <span className="logo-icon">📚</span>
+                      <img 
+              src="/logo.png" 
+              alt="Digital Life Lessons" 
+              className="logo-icon" 
+              style={{ height: "32px", width: "32px", objectFit: "contain" }}
+            />
           <span className="logo-text">Digital Life Lessons</span>
         </Link>
 
@@ -116,47 +121,47 @@ const Header = () => {
         </button>
 
         <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
-          <Link
+          <NavLink
             to="/"
-            className="nav-link"
+            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
             onClick={() => setMobileMenuOpen(false)}
           >
             Home
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/lessons"
-            className="nav-link"
+            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
             onClick={() => setMobileMenuOpen(false)}
           >
             Public Lessons
-          </Link>
+          </NavLink>
 
           {isAuthenticated && (
             <>
               {user?.role === "admin" ? (
-                <Link
+                <NavLink
                   to="/dashboard/admin"
-                  className="nav-link"
+                  className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Admin Dashboard
-                </Link>
+                </NavLink>
               ) : (
                 <>
-                  <Link
+                  <NavLink
                     to="/dashboard/add-lesson"
-                    className="nav-link"
+                    className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Add Lesson
-                  </Link>
-                  <Link
+                  </NavLink>
+                  <NavLink
                     to="/dashboard/my-lessons"
-                    className="nav-link"
+                    className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     My Lessons
-                  </Link>
+                  </NavLink>
                 </>
               )}
 
@@ -166,13 +171,13 @@ const Header = () => {
                     Premium ⭐
                   </span>
                 ) : (
-                  <Link
+                  <NavLink
                     to="/pricing"
-                    className="nav-link"
+                    className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Pricing/Upgrade
-                  </Link>
+                  </NavLink>
                 ))}
             </>
           )}

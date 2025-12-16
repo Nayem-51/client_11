@@ -120,10 +120,18 @@
   font-weight: 500;
 }
 
-.sidebar-nav a:hover {
-  background: #f3f4f6;
-  color: #2563eb;
-  padding-left: 16px;
+/* Active State - Full Button Style */
+.sidebar-nav a.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
+
+.sidebar-nav a:hover:not(.active) {
+  background: var(--bg-subtle);
+  color: var(--primary);
+  transform: translateX(4px);
 }
 
 .sidebar-footer {

@@ -369,7 +369,16 @@ const Home = () => {
               <div key={contributor.name} className="contributor-card">
                 <div className="avatar" aria-hidden>
                   {contributor.avatar ? (
-                    <img src={contributor.avatar} alt={contributor.name} />
+                    <img
+                      src={contributor.avatar}
+                      alt={contributor.name}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerText =
+                          contributor.name.charAt(0);
+                      }}
+                    />
                   ) : (
                     <span>{contributor.name.charAt(0)}</span>
                   )}
