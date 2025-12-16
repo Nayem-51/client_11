@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "digitallifelessonsa11",
+    "prod": "digitallifelessonsa11"
+  },
+  "targets": {},
+  "etags": {}
+}
