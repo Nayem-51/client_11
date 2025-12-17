@@ -247,7 +247,6 @@
   border-bottom: none;
 }
 
-
 .section {
   margin: 60px 0;
 }
@@ -2561,6 +2560,64 @@ textarea:focus {
   .profile-avatar {
     width: 80px;
     height: 80px;
+  }
+}
+
+/* Profile specific responsiveness */
+.profile-page .profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .profile-page .profile-grid {
+    grid-template-columns: 1fr; /* stack left and right */
+  }
+
+  .profile-page .lesson-card {
+    width: 100%;
+  }
+
+  .profile-page .lesson-card > div:first-child {
+    display: block;
+  }
+
+  .profile-page .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    gap: 14px;
+  }
+
+  .profile-page .stats-grid {
+    grid-template-columns: 1fr; /* single column stats on small phones */
+  }
+
+  .profile-page .lesson-card {
+    padding: 14px;
+  }
+
+  .profile-page .lesson-card .creator-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .profile-page .lesson-card h2 {
+    font-size: 18px;
+  }
+
+  .profile-page .profile-form .form-actions {
+    justify-content: stretch;
+  }
+
+  .profile-page .profile-form .btn {
+    width: 100%;
   }
 }
 

@@ -145,8 +145,6 @@ const Profile = () => {
       <div
         className="profile-grid"
         style={{
-          display: "grid",
-          gridTemplateColumns: "320px 1fr",
           gap: "20px",
           alignItems: "start",
         }}
@@ -178,7 +176,13 @@ const Profile = () => {
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <span style={{ fontWeight: 700, color: "#4338ca", fontSize: "24px" }}>
+                <span
+                  style={{
+                    fontWeight: 700,
+                    color: "#4338ca",
+                    fontSize: "24px",
+                  }}
+                >
                   {initials}
                 </span>
               )}
