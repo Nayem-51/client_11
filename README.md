@@ -2,7 +2,7 @@
 
 ## 1. Lessons App
 **Description:** A modern React application for creating, sharing, and learning lessons.  
-**Live Project:** digitallifelessonsa11.web.app 
+**Live Project:** [Lessons App Live](https://digitallifelessonsa11.web.app)  
 **Technologies:** React, Vite, Axios, Context API, CSS, Node.js, MongoDB  
 
 **Core Features:**
