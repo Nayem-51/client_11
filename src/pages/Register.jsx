@@ -1,192 +1,127 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 import { authAPI } from "../api/endpoints";
-import { auth } from "../firebase/firebase.config";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useAuth } from "../hooks/useAuth";
 import { toast, Toaster } from "react-hot-toast";
-import "./Pages.css";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    photoURL: "",
     password: "",
-    confirmPassword: "",
+    photoURL: "",
   });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const isValidPassword = (pwd) => {
-    const hasUpper = /[A-Z]/.test(pwd);
-    const hasLower = /[a-z]/.test(pwd);
-    const longEnough = pwd.length >= 6;
-    return hasUpper && hasLower && longEnough;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (!isValidPassword(formData.password)) {
-      toast.error(
-        "Password must have uppercase, lowercase, and be at least 6 characters"
-      );
-      return;
+    
+    if (formData.password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        return;
     }
 
     setLoading(true);
     try {
-      const response = await authAPI.register({
-        displayName: formData.name,
-        email: formData.email,
-        photoURL: formData.photoURL,
-        password: formData.password,
-      });
-      const { token, user } = response.data.data;
-      localStorage.setItem("token", token);
-      login(user);
-      toast.success("Account created successfully");
-      navigate("/dashboard");
+      const { data } = await authAPI.register(formData);
+      login(data.token, data.user);
+      toast.success("Registration successful!");
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed");
+      const msg = err.response?.data?.message || "Registration failed";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleRegister = async () => {
-    setLoading(true);
+  const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({
-        prompt: "select_account",
-      });
-
       const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
-      const token = await firebaseUser.getIdToken();
-
-      // Sync with backend
-      await authAPI.register({
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName:
-          firebaseUser.displayName || firebaseUser.email.split("@")[0],
-        photoURL: firebaseUser.photoURL,
+      const user = result.user;
+      
+      const { data } = await authAPI.googleLogin({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL
       });
 
-      localStorage.setItem("token", token);
-
-      // Fetch user from backend to get complete data
-      const userResponse = await authAPI.getCurrentUser();
-      const backendUser =
-        userResponse.data?.data?.user || userResponse.data?.user;
-
-      login(backendUser);
-      toast.success("Signed up with Google");
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Google register error:", err);
-
-      // Handle popup blocker
-      if (err.code === "auth/popup-blocked") {
-        toast.error("Popup was blocked. Please allow popups for this site.");
-      } else if (err.code === "auth/popup-closed-by-user") {
-        toast.error("Sign-in cancelled");
-      } else if (err.code === "auth/cancelled-popup-request") {
-        return;
-      } else {
-        toast.error(
-          err.response?.data?.message || err.message || "Google signup failed"
-        );
-      }
-    } finally {
-      setLoading(false);
+      login(data.data.token, data.data.user);
+      toast.success("Google registration successful!");
+      setTimeout(() => navigate("/", { replace: true }), 1000);
+    } catch (error) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Google registration failed";
+      toast.error(msg);
     }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
   };
 
   return (
-    <div className="page auth-page">
-      <Toaster position="top-center" reverseOrder={false} />
+    <div className="auth-page">
+      <Toaster position="top-center" />
       <div className="form-container">
-        <h2>Create Account</h2>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+           <h2 style={{ marginBottom: "0.5rem" }}>Create Account</h2>
+           <p className="text-muted" style={{ margin: 0 }}>
+             Join our community of lifelong learners
+           </p>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label>Full Name</label>
             <input
-              id="name"
               type="text"
               name="name"
+              placeholder="John Doe"
               value={formData.name}
               onChange={handleChange}
-              placeholder="John Doe"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label>Email Address</label>
             <input
-              id="email"
               type="email"
               name="email"
+              placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
-              placeholder="your@email.com"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="photoURL">Photo URL</label>
+            <label>Password</label>
             <input
-              id="photoURL"
-              type="url"
-              name="photoURL"
-              value={formData.photoURL}
-              onChange={handleChange}
-              placeholder="https://example.com/avatar.jpg"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
               type="password"
               name="password"
+              placeholder="Min 6 characters"
               value={formData.password}
               onChange={handleChange}
-              placeholder="••••••••"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label>Photo URL (Optional)</label>
             <input
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
+              type="url"
+              name="photoURL"
+              placeholder="https://..."
+              value={formData.photoURL}
               onChange={handleChange}
-              placeholder="••••••••"
-              required
             />
           </div>
 
@@ -194,24 +129,24 @@ const Register = () => {
             type="submit"
             className="btn btn-primary btn-block"
             disabled={loading}
+            style={{ marginBottom: "1rem" }}
           >
             {loading ? "Creating Account..." : "Sign Up"}
           </button>
+          
+           <button
+             type="button"
+             onClick={handleGoogleSignup}
+             className="btn btn-secondary btn-block"
+             style={{ fontSize: "0.85rem", marginBottom: "1.5rem" }}
+           >
+             🇬 Sign up with Google
+           </button>
 
-          <button
-            type="button"
-            className="btn btn-secondary btn-block"
-            onClick={handleGoogleRegister}
-            disabled={loading}
-            style={{ marginTop: 10 }}
-          >
-            {loading ? "Signing up..." : "Continue with Google"}
-          </button>
+          <div className="auth-link">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </div>
         </form>
-
-        <p className="auth-link">
-          Already have an account? <Link to="/login">Login here</Link>
-        </p>
       </div>
     </div>
   );

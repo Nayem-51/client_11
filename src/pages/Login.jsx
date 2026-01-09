@@ -1,131 +1,101 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { authAPI } from "../api/endpoints";
-import { auth } from "../firebase/firebase.config";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useAuth } from "../hooks/useAuth";
 import { toast, Toaster } from "react-hot-toast";
-import "./Pages.css";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
 
+    setLoading(true);
     try {
-      const response = await authAPI.login(formData);
-      const { token, user } = response.data.data;
-      localStorage.setItem("token", token);
-      login(user);
-      // Navigate immediately without toast
-      if (user?.role === "admin") {
-        navigate("/dashboard/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      const { data } = await authAPI.login({ email, password });
+      login(data.token, data.user);
+      toast.success(`Welcome back, ${data.user.name}!`);
+      setTimeout(() => navigate(from, { replace: true }), 1000);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      const msg = err.response?.data?.message || "Login failed";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({
-        prompt: "select_account",
-      });
-
       const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
-      const token = await firebaseUser.getIdToken();
-
-      // Sync with backend
-      await authAPI.register({
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName:
-          firebaseUser.displayName || firebaseUser.email.split("@")[0],
-        photoURL: firebaseUser.photoURL,
+      const user = result.user;
+      
+      const { data } = await authAPI.googleLogin({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL
       });
 
-      localStorage.setItem("token", token);
-
-      // Fetch user from backend to get complete data
-      const userResponse = await authAPI.getCurrentUser();
-      const backendUser =
-        userResponse.data?.data?.user || userResponse.data?.user;
-
-      login(backendUser);
-      // Navigate immediately without showing toast since user will see the dashboard
-      if (backendUser?.role === "admin") {
-        navigate("/dashboard/admin");
-      } else {
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      console.error("Google login error:", err);
-
-      // Handle popup blocker
-      if (err.code === "auth/popup-blocked") {
-        toast.error("Popup was blocked. Please allow popups for this site.");
-      } else if (err.code === "auth/popup-closed-by-user") {
-        toast.error("Sign-in cancelled");
-      } else if (err.code === "auth/cancelled-popup-request") {
-        return;
-      } else {
-        toast.error(
-          err.response?.data?.message || err.message || "Google login failed"
-        );
-      }
-    } finally {
-      setLoading(false);
+      login(data.data.token, data.data.user);
+      toast.success("Google login successful!");
+      setTimeout(() => navigate(from, { replace: true }), 1000);
+    } catch (error) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Google sign-in failed";
+      toast.error(msg);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleDemoLogin = async () => {
+    setEmail("admin@example.com");
+    setPassword("123456");
+    toast.success("Credentials filled! Click Login.");
   };
 
   return (
-    <div className="page auth-page">
-      <Toaster position="top-center" reverseOrder={false} />
+    <div className="auth-page">
+      <Toaster position="top-center" />
       <div className="form-container">
-        <h2>Login</h2>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+           <h2 style={{ marginBottom: "0.5rem" }}>Welcome Back</h2>
+           <p className="text-muted" style={{ margin: 0 }}>
+             Sign in to access your lessons and progress
+           </p>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label>Email Address</label>
             <input
-              id="email"
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="your@email.com"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label>Password</label>
             <input
-              id="password"
               type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -134,24 +104,34 @@ const Login = () => {
             type="submit"
             className="btn btn-primary btn-block"
             disabled={loading}
+            style={{ marginBottom: "1rem" }}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "1.5rem" }}>
+             <button
+               type="button"
+               onClick={handleDemoLogin}
+               className="btn btn-secondary"
+               style={{ fontSize: "0.85rem" }}
+             >
+               🪄 Demo User
+             </button>
+             <button
+               type="button"
+               onClick={handleGoogleLogin}
+               className="btn btn-secondary"
+               style={{ fontSize: "0.85rem" }}
+             >
+               🇬 Google
+             </button>
+          </div>
 
-          <button
-            type="button"
-            className="btn btn-secondary btn-block"
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            style={{ marginTop: 10 }}
-          >
-            {loading ? "Signing in..." : "Continue with Google"}
-          </button>
+          <div className="auth-link">
+            Don't have an account? <Link to="/register">Sign up</Link>
+          </div>
         </form>
-
-        <p className="auth-link">
-          Don't have an account? <Link to="/register">Register here</Link>
-        </p>
       </div>
     </div>
   );

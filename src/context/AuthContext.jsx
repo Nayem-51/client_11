@@ -78,9 +78,10 @@ export const AuthProvider = ({ children }) => {
     syncUserFromApi();
   }, [syncUserFromApi]);
 
-  const login = (userData) => {
+  const login = (token, userData) => {
     setUser(userData);
     setIsAuthenticated(true);
+    localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 

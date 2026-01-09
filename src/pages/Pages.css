@@ -177,7 +177,7 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -2925,5 +2925,57 @@ textarea:focus {
 @media (max-width: 899px) and (min-width: 600px) {
   .lessons-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Responsiveness Overrides */
+@media (max-width: 640px) {
+  .page {
+    padding: 0 1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 32px;
+  }
+  
+  .hero-slider {
+    grid-template-columns: 1fr;
+    max-height: none;
+    min-height: auto;
+  }
+  
+  .hero-slider__aside {
+    display: none;
+  }
+  
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-grid, .lessons-grid, .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .admin-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }

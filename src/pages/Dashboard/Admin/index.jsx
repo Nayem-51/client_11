@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { adminAPI, lessonsAPI } from "../../../api/endpoints";
 import Spinner from "../../../components/common/Spinner";
 import { toast, Toaster } from "react-hot-toast";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import "../../Pages.css";
 
 const monthKeys = (count = 6) => {
@@ -257,23 +266,22 @@ const AdminPanel = () => {
                   <h3>Lesson Growth</h3>
                 </div>
               </div>
-              <div className="chart-bars">
-                {statsData.growthData.lessonGrowth.length === 0 ? (
-                  <p className="muted">No growth data yet.</p>
-                ) : (
-                  statsData.growthData.lessonGrowth.map((item) => (
-                    <div key={item.label} className="chart-bar">
-                      <div className="chart-bar__label">{item.label}</div>
-                      <div className="chart-bar__track">
-                        <div
-                          className="chart-bar__fill"
-                          style={{ width: `${Math.min(item.value * 12, 100)}%` }}
-                        />
-                      </div>
-                      <div className="chart-bar__value">{item.value}</div>
-                    </div>
-                  ))
-                )}
+              <div style={{ width: "100%", height: 300 }}>
+                 <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={statsData.growthData.lessonGrowth}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="label" tick={{fontSize: 12, fill: '#64748b'}} tickLine={false} axisLine={false} />
+                      <YAxis tick={{fontSize: 12, fill: '#64748b'}} tickLine={false} axisLine={false} />
+                      <Tooltip 
+                        cursor={{fill: '#f8fafc'}}
+                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                      />
+                      <Bar dataKey="value" fill="#4f46e5" radius={[4, 4, 0, 0]} name="New Lessons" />
+                    </BarChart>
+                 </ResponsiveContainer>
               </div>
             </div>
 
@@ -284,23 +292,22 @@ const AdminPanel = () => {
                   <h3>User Growth</h3>
                 </div>
               </div>
-              <div className="chart-bars">
-                {statsData.growthData.userGrowth.length === 0 ? (
-                  <p className="muted">No growth data yet.</p>
-                ) : (
-                  statsData.growthData.userGrowth.map((item) => (
-                    <div key={item.label} className="chart-bar">
-                      <div className="chart-bar__label">{item.label}</div>
-                      <div className="chart-bar__track">
-                        <div
-                          className="chart-bar__fill chart-bar__fill--secondary"
-                          style={{ width: `${Math.min(item.value * 20, 100)}%` }}
-                        />
-                      </div>
-                      <div className="chart-bar__value">{item.value}</div>
-                    </div>
-                  ))
-                )}
+              <div style={{ width: "100%", height: 300 }}>
+                 <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={statsData.growthData.userGrowth}
+                      margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="label" tick={{fontSize: 12, fill: '#64748b'}} tickLine={false} axisLine={false} />
+                      <YAxis tick={{fontSize: 12, fill: '#64748b'}} tickLine={false} axisLine={false} />
+                      <Tooltip 
+                        cursor={{fill: '#f8fafc'}}
+                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                      />
+                      <Bar dataKey="value" fill="#10b981" radius={[4, 4, 0, 0]} name="New Users" />
+                    </BarChart>
+                 </ResponsiveContainer>
               </div>
             </div>
           </div>

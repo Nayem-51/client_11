@@ -43,6 +43,7 @@ const PublicLessons = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [tone, setTone] = useState("all");
+  const [access, setAccess] = useState("all"); // New access filter
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
 
@@ -51,9 +52,10 @@ const PublicLessons = () => {
     try {
       const params = {
         page,
-        limit: 6, // 6 per page for grid
+        limit: 8, // 8 per page for grid
         category: category === "all" ? undefined : category,
         emotionalTone: tone === "all" ? undefined : tone,
+        access: access === "all" ? undefined : access, // New param
         sort:
           sort === "newest"
             ? "-createdAt"
@@ -87,7 +89,9 @@ const PublicLessons = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [page, category, tone, sort, search]);
+  }, [page, category, tone, access, sort, search]); // Added access dependency
+
+  // ... handlers ...
 
   // Handlers
   const handlePageChange = (newPage) => {
@@ -180,6 +184,23 @@ const PublicLessons = () => {
               {t}
             </option>
           ))}
+        </select>
+
+        <select
+          value={access}
+          onChange={(e) => {
+            setAccess(e.target.value);
+            setPage(1);
+          }}
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <option value="all">Any Price</option>
+          <option value="free">Free</option>
+          <option value="premium">Premium</option>
         </select>
 
         <select
