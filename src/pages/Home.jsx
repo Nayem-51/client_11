@@ -248,7 +248,7 @@ const Home = () => {
       <section className="section featured-section">
         <div className="section-header">
           <div>
-            <p className="eyebrow">Admin curated</p>
+            {/* <p className="eyebrow">Admin curated</p> */}
             <h2>Featured Life Lessons</h2>
             <p className="section-subtitle">
               Highlighted lessons surfaced from the manage-lessons dashboard.
