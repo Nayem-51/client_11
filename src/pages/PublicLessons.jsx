@@ -4,6 +4,9 @@ import { lessonsAPI } from "../api/endpoints";
 import { useAuth } from "../hooks/useAuth";
 import Spinner from "../components/common/Spinner";
 import { toast, Toaster } from "react-hot-toast";
+import LessonCard from "../components/common/LessonCard";
+import SkeletonCard from "../components/common/SkeletonCard";
+import "../components/common/SkeletonCard.css";
 import "./Pages.css";
 
 const CATEGORIES = [
@@ -196,123 +199,20 @@ const PublicLessons = () => {
         </select>
       </div>
 
+
+
       {loading ? (
-        <div
-          style={{ minHeight: "300px", display: "grid", placeItems: "center" }}
-        >
-          <Spinner label="Finding lessons..." />
+        <div className="lessons-grid">
+          {Array(8).fill(0).map((_, i) => (
+             <SkeletonCard key={i} />
+          ))}
         </div>
       ) : (
         <>
           <div className="lessons-grid">
-            {lessons.map((lesson) => {
-              const isPremiumLesson =
-                lesson.isPremium || lesson.accessLevel === "premium";
-              const isLocked = isPremiumLesson && !isPremiumUser;
-              const creatorName =
-                lesson.instructor?.displayName ||
-                lesson.instructor?.name ||
-                "Instructor";
-              const creatorPhoto = lesson.instructor?.photoURL;
-              const accessLabel = isPremiumLesson ? "Premium" : "Free";
-              const createdDate = lesson.createdAt
-                ? new Date(lesson.createdAt).toLocaleDateString()
-                : "";
-              const preview = lesson.description
-                ? `${lesson.description.substring(0, 100)}${
-                    lesson.description.length > 100 ? "..." : ""
-                  }`
-                : "";
-
-              return (
-                <div
-                  key={lesson._id}
-                  className={`lesson-card lesson-card--public ${
-                    isLocked ? "lesson-card--locked" : ""
-                  }`}
-                >
-                  {isLocked && (
-                    <div className="lesson-lock-overlay">
-                      <div className="lesson-lock-message">
-                        <span className="lesson-lock-icon" aria-hidden="true">
-                          🔒
-                        </span>
-                        <span>Premium Lesson – Upgrade to view</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="lesson-card__top">
-                    <span className="pill">{lesson.category || "Lesson"}</span>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span
-                        className="pill"
-                        style={{
-                          background: isPremiumLesson ? "#fef3c7" : "#ecfdf3",
-                          color: isPremiumLesson ? "#b45309" : "#15803d",
-                        }}
-                      >
-                        {accessLabel}
-                      </span>
-                    </div>
-                  </div>
-
-                  <h3>{lesson.title}</h3>
-                  <p className="lesson-desc">{preview}</p>
-
-                  <div className="lesson-meta-line">
-                    <span className="tone">
-                      {lesson.emotionalTone || "Balanced"}
-                    </span>
-                    <span>{createdDate}</span>
-                  </div>
-
-                  <div className="lesson-footer">
-                    <div className="lesson-author creator-row">
-                      <div className="creator-avatar">
-                        {creatorPhoto ? (
-                          <img
-                            src={creatorPhoto}
-                            alt={creatorName}
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.parentElement.innerText = creatorName[0];
-                            }}
-                          />
-                        ) : (
-                          creatorName[0]
-                        )}
-                      </div>
-                      <span>{creatorName}</span>
-                    </div>
-                    {isLocked ? (
-                      <Link
-                        to="/pricing"
-                        className="btn btn-secondary"
-                        style={{ fontSize: "12px", padding: "6px 12px" }}
-                      >
-                        Unlock
-                      </Link>
-                    ) : (
-                      <Link
-                        to={`/lessons/${lesson._id}`}
-                        className="btn btn-secondary"
-                        style={{ fontSize: "12px", padding: "6px 12px" }}
-                      >
-                        See Details
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+            {lessons.map((lesson) => (
+              <LessonCard key={lesson._id} lesson={lesson} />
+            ))}
           </div>
 
           {lessons.length === 0 && (

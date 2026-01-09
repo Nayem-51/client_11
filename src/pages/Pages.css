@@ -325,18 +325,25 @@
   background: #0f172a;
   color: white;
   border-radius: 16px;
-  padding: 28px;
+  padding: 0;
   display: grid;
   grid-template-columns: 1.6fr 1fr;
-  gap: 20px;
+  gap: 0;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   margin-bottom: 60px;
+  min-height: 65vh; /* 60-70% screen height */
+  max-height: 70vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .hero-slider__content {
   position: relative;
   overflow: hidden;
-  min-height: 260px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero-slide {
@@ -345,13 +352,115 @@
   opacity: 0;
   transform: translateX(20px);
   transition: all 0.5s ease;
-  border-radius: 12px;
-  padding: 32px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  background-size: cover;
-  background-position: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
+}
+
+/* Statistics Section */
+.stats-section {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  border: 1px solid var(--border-light);
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.stat-card h3 {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.testimonial-card {
+  background: var(--bg-surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary-light);
+}
+
+/* FAQ */
+.faq-grid {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--bg-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.faq-item h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Newsletter */
+.newsletter-section {
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.newsletter-section h2, .newsletter-section p {
+  color: white;
+}
+
+.newsletter-form {
+  max-width: 500px;
+  margin: 2rem auto 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.newsletter-form input {
+  padding: 1rem;
+  border-radius: var(--radius-full);
+  border: none;
+}
+
+/* CTA */
+.cta-section {
+  text-align: center;
+  padding: 4rem 0;
 }
 
 .hero-slide.is-active {
@@ -2672,5 +2781,149 @@ textarea:focus {
   .pill {
     font-size: 10px;
     padding: 4px 8px;
+  }
+}
+
+/* Lesson Card Refreshed */
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%; /* Ensure equal height in grid */
+}
+
+.lesson-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.lesson-card-image {
+  position: relative;
+  height: 200px; /* Fixed height for image */
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+
+.lesson-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+}
+
+.card-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.category-badge {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-dark);
+  backdrop-filter: blur(4px);
+}
+
+.premium-badge {
+  background: var(--accent-500);
+  color: white;
+}
+
+.lesson-card-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Pushes footer down */
+  gap: 0.75rem;
+}
+
+.lesson-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lesson-excerpt {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.lesson-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: auto; /* Pushes to bottom of content area */
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lesson-actions {
+  margin-top: 1rem;
+}
+
+/* Updated Grid System for 4 cards */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+@media (min-width: 1200px) {
+  .lessons-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 900px) {
+  .lessons-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 899px) and (min-width: 600px) {
+  .lessons-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

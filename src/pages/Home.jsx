@@ -447,6 +447,112 @@ const Home = () => {
             })}
         </div>
       </section>
+      <section className="section testimonials-section">
+        <div className="section-header">
+          <p className="eyebrow">What People Say</p>
+          <h2>Stories from the Community</h2>
+          <p className="section-subtitle">
+            Hear from people who are changing their lives one lesson at a time.
+          </p>
+        </div>
+        <div className="testimonials-grid">
+          <div className="testimonial-card">
+            <p>"This platform has completely changed how I approach my daily habits. The lessons are short, actionable, and deeply impactful."</p>
+            <div className="testimonial-author">
+              <div className="testimonial-avatar"></div>
+              <div>
+                <strong>Sarah Jenkins</strong>
+                <p className="text-sm text-muted">Product Designer</p>
+              </div>
+            </div>
+          </div>
+          <div className="testimonial-card">
+            <p>"I love that I can share my own experiences. Writing them down helps me process, and knowing it helps others is a bonus."</p>
+            <div className="testimonial-author">
+              <div className="testimonial-avatar"></div>
+              <div>
+                <strong>David Chen</strong>
+                <p className="text-sm text-muted">Software Engineer</p>
+              </div>
+            </div>
+          </div>
+          <div className="testimonial-card">
+            <p>"The best way to learn is from the mistakes and successes of others. this site is a goldmine of practical wisdom."</p>
+            <div className="testimonial-author">
+              <div className="testimonial-avatar"></div>
+              <div>
+                <strong>Emily Rodriguez</strong>
+                <p className="text-sm text-muted">Teacher</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section stats-section">
+        <div className="container">
+          <p className="eyebrow">Our Impact</p>
+          <h2>Growing Together</h2>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <h3>2k+</h3>
+              <p>Active Learners</p>
+            </div>
+            <div className="stat-card">
+              <h3>500+</h3>
+              <p>Shared Lessons</p>
+            </div>
+            <div className="stat-card">
+              <h3>15k+</h3>
+              <p>Lessons Saved</p>
+            </div>
+            <div className="stat-card">
+              <h3>50+</h3>
+              <p>Countries</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section faq-section">
+        <div className="section-header">
+          <p className="eyebrow">Common Questions</p>
+          <h2>Frequently Asked Questions</h2>
+        </div>
+        <div className="faq-grid">
+          <div className="faq-item">
+            <h3>Is it free to join?</h3>
+            <p>Yes! You can explore public lessons for free. We also offer a Premium membership for advanced features like saving unlimited lessons and accessing exclusive content.</p>
+          </div>
+          <div className="faq-item">
+            <h3>Can I contribute my own lessons?</h3>
+            <p>Absolutely. We believe everyone has something to teach. Once you create an account, you can start drafting and publishing your lessons immediately.</p>
+          </div>
+          <div className="faq-item">
+            <h3>How do I save lessons?</h3>
+            <p>Simply click the "Save" or "Heart" icon on any lesson card. You can view your saved lessons in your dashboard at any time.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section newsletter-section">
+        <div className="container">
+          <h2>Weekly Wisdom in Your Inbox</h2>
+          <p>Join 5,000+ others receiving the top 3 life lessons of the week.</p>
+          <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
+            <input type="email" placeholder="Enter your email address" required />
+            <button type="button" className="btn btn-secondary">Subscribe</button>
+          </form>
+        </div>
+      </section>
+
+      <section className="section cta-section">
+        <div className="container">
+          <h2>Ready to turn your experiences into wisdom?</h2>
+          <p className="mb-4">Join our community today and start your journey.</p>
+          <Link to="/register" className="btn btn-primary">Get Started for Free</Link>
+        </div>
+      </section>
     </div>
   );
 };

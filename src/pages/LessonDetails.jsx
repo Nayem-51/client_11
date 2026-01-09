@@ -283,16 +283,15 @@ const LessonDetails = () => {
             <Link to="/pricing" className="btn btn-primary">
               View Plans
             </Link>
-            <Link to="/pricing" className="btn btn-secondary">
-              Already premium? Refresh
-            </Link>
           </div>
         </div>
       )}
 
       <div className={`lesson-shell ${!canView ? "is-locked" : ""}`}>
+        
+        {/* SECTION 1: OVERVIEW / DESCRIPTION */}
         <header className="lesson-hero">
-          <div>
+          <div className="lesson-hero-content">
             <div className="pill-row">
               <span className="pill">{lesson.category || "Life"}</span>
               <span className="pill pill-accent">
@@ -304,7 +303,23 @@ const LessonDetails = () => {
             </div>
             <h1>{lesson.title}</h1>
             <p className="lesson-subline">{lesson.description}</p>
+            
+            <div className="lesson-hero-meta">
+               <div className="creator-row">
+                 <div className="creator-avatar" aria-hidden>
+                   {creatorPhoto ? (
+                     <img src={creatorPhoto} alt={creatorName} />
+                   ) : (
+                     creatorName[0]
+                   )}
+                 </div>
+                 <span>By {creatorName}</span>
+               </div>
+               <span>•</span>
+               <span>{createdDate || "Recently"}</span>
+            </div>
           </div>
+        
           {lesson.featuredImage && (
             <div className="featured-image-wrap">
               <img src={lesson.featuredImage} alt={lesson.title} />
@@ -312,70 +327,41 @@ const LessonDetails = () => {
           )}
         </header>
 
-        <section className="lesson-metadata">
-          <div>
-            <p className="meta-label">Created</p>
-            <p className="meta-value">{createdDate || "-"}</p>
-          </div>
-          <div>
-            <p className="meta-label">Updated</p>
-            <p className="meta-value">{updatedDate || "-"}</p>
-          </div>
-          <div>
-            <p className="meta-label">Visibility</p>
-            <p className="meta-value">{lesson.accessLevel || "Public"}</p>
-          </div>
-          <div>
-            <p className="meta-label">Reading Time</p>
-            <p className="meta-value">{lesson.readTime || "~3 min"}</p>
+        {/* SECTION 2: KEY INFORMATION */}
+        <section className="key-info-section">
+          <h3>Key Information</h3>
+          <div className="key-info-grid">
+             <div className="info-item">
+               <span className="label">Reading Time</span>
+               <span className="value">{lesson.readTime || "~3 min"}</span>
+             </div>
+             <div className="info-item">
+               <span className="label">Difficulty</span>
+               <span className="value">{lesson.difficulty || "Beginner"}</span>
+             </div>
+             <div className="info-item">
+               <span className="label">Language</span>
+               <span className="value">{lesson.language || "English"}</span>
+             </div>
+             <div className="info-item">
+                <span className="label">Visibility</span>
+                <span className="value">{lesson.accessLevel || "Public"}</span>
+             </div>
           </div>
         </section>
 
+        <hr className="divider" />
+
         <section className="lesson-body-block">
-          <h3>Lesson Insight</h3>
+          <h3>Description & Overview</h3>
           <div className="lesson-body-text">
             {lesson.content || lesson.story || "No content provided."}
           </div>
         </section>
 
-        <section className="author-card">
-          <div className="author-left">
-            <div className="creator-avatar" aria-hidden>
-              {creatorPhoto ? (
-                <img src={creatorPhoto} alt={creatorName} />
-              ) : (
-                creatorName[0]
-              )}
-            </div>
-            <div>
-              <p className="creator-name">{creatorName}</p>
-              <p className="creator-sub">
-                {creatorLessonCount
-                  ? `${creatorLessonCount} lessons`
-                  : "Author"}
-              </p>
-            </div>
-          </div>
-          <Link to="/profile" className="btn btn-secondary">
-            View all lessons by this author
-          </Link>
-        </section>
-
-        <section className="stats-grid">
-          <div className="stat-card">
-            ❤️ {likesCount.toLocaleString()} Likes
-          </div>
-          <div className="stat-card">
-            🔖 {(lesson.favoritesCount || 0).toLocaleString()} Favorites
-          </div>
-          <div className="stat-card">
-            👀 {randomViews.toLocaleString()} Views
-          </div>
-        </section>
-
         <section className="actions-row">
           <button onClick={handleLike} className="btn btn-secondary">
-            {isLiked ? "❤️ Liked" : "❤️ Like"}
+            {isLiked ? "❤️ Liked" : "❤️ Like"} ({likesCount})
           </button>
           {isFavorite ? (
             <button
@@ -386,77 +372,79 @@ const LessonDetails = () => {
             </button>
           ) : (
             <button onClick={handleAddFavorite} className="btn btn-secondary">
-              🔖 Save to Favorites
+               🔖 Save
             </button>
           )}
-          <button
-            onClick={() => setReportOpen(true)}
-            className="btn btn-secondary"
-          >
-            🚩 Report Lesson
-          </button>
           <button onClick={handleShare} className="btn btn-secondary">
             Share
           </button>
+           <button
+            onClick={() => setReportOpen(true)}
+            className="btn btn-ghost"
+            style={{ marginLeft: "auto", fontSize: "0.8rem" }}
+          >
+            🚩 Report
+          </button>
         </section>
 
+        {/* SECTION 3: REVIEWS / RATINGS */}
         <section className="comments-section">
           <div className="section-header">
             <div>
-              <p className="eyebrow">Comments</p>
-              <h3>Join the discussion</h3>
+              <p className="eyebrow">Reviews</p>
+              <h3>Community Feedback</h3>
             </div>
           </div>
-          <div className="comment-input">
-            <textarea
-              placeholder={
-                isAuthenticated
-                  ? "Share your thoughts"
-                  : "Log in to add a comment"
-              }
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              disabled={!isAuthenticated}
-            />
-            <button
-              className="btn btn-primary"
-              onClick={handleCommentSubmit}
-              disabled={!isAuthenticated}
-            >
-              Post Comment
-            </button>
-          </div>
-
+          
           <div className="comments-list">
-            {comments.length === 0 && <p className="muted">No comments yet.</p>}
+            {comments.length === 0 && <p className="muted">No reviews yet. Be the first to share your thoughts.</p>}
             {comments.map((c, idx) => (
               <div key={`${c._id || idx}`} className="comment-item">
                 <div className="comment-avatar" aria-hidden>
-                  {c.user?.photoURL ? (
-                    <img src={c.user.photoURL} alt={c.user?.name || "User"} />
-                  ) : (
-                    (c.user?.name || "?")[0]
-                  )}
+                   {c.user?.photoURL ? (
+                     <img src={c.user.photoURL} alt={c.user?.name || "User"} />
+                   ) : (
+                     (c.user?.name || "?")[0]
+                   )}
                 </div>
                 <div>
                   <p className="comment-author">{c.user?.name || "User"}</p>
                   <p className="comment-text">{c.text}</p>
-                  <p className="comment-date">
-                    {c.createdAt
-                      ? new Date(c.createdAt).toLocaleString()
-                      : "Just now"}
-                  </p>
                 </div>
               </div>
             ))}
           </div>
+          
+          <div className="comment-input-area" style={{ marginTop: "2rem" }}>
+             <h4>Leave a Review</h4>
+             <div className="comment-input">
+                <textarea
+                  placeholder={
+                    isAuthenticated
+                      ? "Write your review here..."
+                      : "Log in to leave a review"
+                  }
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  disabled={!isAuthenticated}
+                />
+                <button
+                  className="btn btn-primary"
+                  onClick={handleCommentSubmit}
+                  disabled={!isAuthenticated}
+                >
+                  Submit Review
+                </button>
+             </div>
+          </div>
         </section>
 
+        {/* SECTION 4: RELATED ITEMS */}
         <section className="similar-section">
           <div className="section-header">
             <div>
-              <p className="eyebrow">Discover More</p>
-              <h3>More on {lesson.category}</h3>
+              <p className="eyebrow">Related</p>
+              <h3>You might also like</h3>
             </div>
           </div>
           <div className="lessons-grid">
@@ -485,97 +473,20 @@ const LessonDetails = () => {
                     </span>
                   </div>
                   <h3>{item.title}</h3>
-                  <p className="lesson-desc">
-                    {item.description?.slice(0, 120) || "No description"}
-                  </p>
-                  <div className="lesson-meta-line">
-                    <span className="tone">
-                      Tone: {item.emotionalTone || "Balanced"}
-                    </span>
-                    <span className="date">
-                      {item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString()
-                        : ""}
-                    </span>
-                  </div>
                   <div className="lesson-footer">
                     <Link
                       to={`/lessons/${lessonId}`}
                       className="btn btn-secondary btn-block"
                     >
-                      {locked ? "🔒 Premium" : "See Details"}
+                      View
                     </Link>
                   </div>
                   {locked && <div className="lesson-lock-overlay" />}
                 </div>
               );
             })}
-            {similarCategoryLessons.length === 0 && (
-              <p className="muted">No related lessons found in this category.</p>
-            )}
-          </div>
-        </section>
-
-        <section className="similar-section">
-          <div className="section-header">
-            <div>
-              <p className="eyebrow">Vibe Check</p>
-              <h3>Similar Tone ({lesson.emotionalTone || "Balanced"})</h3>
-            </div>
-          </div>
-          <div className="lessons-grid">
-            {similarToneLessons.map((item) => {
-              const lessonId = item._id || item.id;
-              const locked =
-                item.accessLevel?.toLowerCase?.() === "premium" &&
-                !user?.isPremium;
-              return (
-                <div
-                  key={lessonId}
-                  className={`lesson-card lesson-card--public ${
-                    locked ? "lesson-card--locked" : ""
-                  }`}
-                >
-                  <div className="lesson-card__top">
-                    <span className="pill">{item.category || "Life"}</span>
-                    <span
-                      className={`pill ${
-                        item.accessLevel?.toLowerCase?.() === "premium"
-                          ? "pill-accent"
-                          : ""
-                      }`}
-                    >
-                      {item.accessLevel || "Public"}
-                    </span>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p className="lesson-desc">
-                    {item.description?.slice(0, 120) || "No description"}
-                  </p>
-                  <div className="lesson-meta-line">
-                    <span className="tone">
-                      Tone: {item.emotionalTone || "Balanced"}
-                    </span>
-                    <span className="date">
-                      {item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString()
-                        : ""}
-                    </span>
-                  </div>
-                  <div className="lesson-footer">
-                    <Link
-                      to={`/lessons/${lessonId}`}
-                      className="btn btn-secondary btn-block"
-                    >
-                      {locked ? "🔒 Premium" : "See Details"}
-                    </Link>
-                  </div>
-                  {locked && <div className="lesson-lock-overlay" />}
-                </div>
-              );
-            })}
-            {similarToneLessons.length === 0 && (
-              <p className="muted">No related lessons found with this tone.</p>
+             {similarCategoryLessons.length === 0 && (
+              <p className="muted">No related lessons found.</p>
             )}
           </div>
         </section>

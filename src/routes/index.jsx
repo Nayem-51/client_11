@@ -22,6 +22,9 @@ import Profile from "../pages/Profile";
 import Pricing from "../pages/Pricing";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentCancel from "../pages/PaymentCancel";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
+import Legal from "../pages/Legal";
 import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter(
@@ -45,6 +48,30 @@ const router = createBrowserRouter(
         {
           path: "lessons",
           element: <PublicLessons />,
+        },
+        {
+          path: "about",
+          element: <About />,
+        },
+        {
+          path: "contact",
+          element: <Contact />,
+        },
+        {
+          path: "terms",
+          element: <Legal />,
+        },
+        {
+          path: "privacy",
+          element: <Legal />,
+        },
+        {
+          path: "cookies",
+          element: <Legal />,
+        },
+        {
+          path: "disclaimer",
+          element: <Legal />,
         },
         {
           path: "lessons/:id",

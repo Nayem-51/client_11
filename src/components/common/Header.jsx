@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { ThemeContext } from "../../context/ThemeContext";
 import "./Header.css";
 
 const Header = () => {
   const { isAuthenticated, user, logout, refreshUser } = useAuth();
+  const { theme, toggleTheme } = React.useContext(ThemeContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -135,6 +137,20 @@ const Header = () => {
           >
             Public Lessons
           </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Contact
+          </NavLink>
 
           {isAuthenticated && (
             <>
@@ -184,6 +200,14 @@ const Header = () => {
         </nav>
 
         <div className="header-right">
+          <button 
+            onClick={toggleTheme} 
+            className="btn btn-secondary" 
+            style={{ padding: "8px", borderRadius: "50%", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center" }}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           {!isAuthenticated ? (
             <div className="auth-buttons">
               <Link
