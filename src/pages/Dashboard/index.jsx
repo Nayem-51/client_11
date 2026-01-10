@@ -118,10 +118,10 @@ const Dashboard = () => {
             height: 300,
             minHeight: 300,
             width: "100%",
-            background: "#fff",
+            background: "var(--bg-surface)",
             padding: "20px",
             borderRadius: "12px",
-            border: "1px solid #e5e7eb",
+            border: "1px solid var(--border-light)",
           }}
         >
           <ResponsiveContainer width="100%" height={260}>
@@ -132,26 +132,30 @@ const Dashboard = () => {
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
-                stroke="#e5e7eb"
+                stroke="var(--border-light)"
               />
               <XAxis
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tick={{ fill: "var(--text-muted)", fontSize: 12 }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                 allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
+                  backgroundColor: "var(--bg-surface)",
+                  borderColor: "var(--border-light)",
+                  color: "var(--text-main)",
                   borderRadius: "8px",
-                  border: "none",
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
+                itemStyle={{ color: "var(--text-main)" }}
+                labelStyle={{ color: "var(--text-muted)" }}
               />
               <Line
                 type="monotone"

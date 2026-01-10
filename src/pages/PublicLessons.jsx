@@ -115,19 +115,7 @@ const PublicLessons = () => {
       </div>
 
       {/* Filters Bar */}
-      <div
-        className="filters-bar"
-        style={{
-          display: "flex",
-          gap: "12px",
-          flexWrap: "wrap",
-          marginBottom: "24px",
-          padding: "16px",
-          background: "white",
-          borderRadius: "12px",
-          border: "1px solid #e5e7eb",
-        }}
-      >
+      <div className="filters-bar">
         <div className="filter-group" style={{ flex: "1 1 200px" }}>
           <input
             type="text"
@@ -137,12 +125,6 @@ const PublicLessons = () => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #e5e7eb",
-            }}
           />
         </div>
 
@@ -151,11 +133,6 @@ const PublicLessons = () => {
           onChange={(e) => {
             setCategory(e.target.value);
             setPage(1);
-          }}
-          style={{
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
           }}
         >
           <option value="all">All Categories</option>
@@ -172,11 +149,6 @@ const PublicLessons = () => {
             setTone(e.target.value);
             setPage(1);
           }}
-          style={{
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-          }}
         >
           <option value="all">All Tones</option>
           {TONES.map((t) => (
@@ -192,11 +164,6 @@ const PublicLessons = () => {
             setAccess(e.target.value);
             setPage(1);
           }}
-          style={{
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-          }}
         >
           <option value="all">Any Price</option>
           <option value="free">Free</option>
@@ -208,11 +175,6 @@ const PublicLessons = () => {
           onChange={(e) => {
             setSort(e.target.value);
             setPage(1);
-          }}
-          style={{
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
           }}
         >
           <option value="newest">Newest First</option>

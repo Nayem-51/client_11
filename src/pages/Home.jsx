@@ -459,7 +459,15 @@ const Home = () => {
           <div className="testimonial-card">
             <p>"This platform has completely changed how I approach my daily habits. The lessons are short, actionable, and deeply impactful."</p>
             <div className="testimonial-author">
-              <div className="testimonial-avatar"></div>
+              <div
+                className="testimonial-avatar"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
               <div>
                 <strong>Sarah Jenkins</strong>
                 <p className="text-sm text-muted">Product Designer</p>
@@ -469,7 +477,15 @@ const Home = () => {
           <div className="testimonial-card">
             <p>"I love that I can share my own experiences. Writing them down helps me process, and knowing it helps others is a bonus."</p>
             <div className="testimonial-author">
-              <div className="testimonial-avatar"></div>
+              <div
+                className="testimonial-avatar"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
               <div>
                 <strong>David Chen</strong>
                 <p className="text-sm text-muted">Software Engineer</p>
@@ -479,7 +495,15 @@ const Home = () => {
           <div className="testimonial-card">
             <p>"The best way to learn is from the mistakes and successes of others. this site is a goldmine of practical wisdom."</p>
             <div className="testimonial-author">
-              <div className="testimonial-avatar"></div>
+              <div
+                className="testimonial-avatar"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
               <div>
                 <strong>Emily Rodriguez</strong>
                 <p className="text-sm text-muted">Teacher</p>

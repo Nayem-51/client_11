@@ -12,7 +12,7 @@
 .main-content {
   flex: 1;
   padding: 20px;
-  background: #f9fafb;
+  background: var(--bg-body);
   overflow-y: auto;
 }
 

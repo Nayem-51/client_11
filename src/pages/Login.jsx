@@ -26,9 +26,17 @@ const Login = () => {
     setLoading(true);
     try {
       const { data } = await authAPI.login({ email, password });
-      login(data.token, data.user);
-      toast.success(`Welcome back, ${data.user.name}!`);
-      setTimeout(() => navigate(from, { replace: true }), 1000);
+      // authController returns: { success: true, data: { user, token } }
+      // So 'data' here is the response body. We need data.data.user
+      login(data.data.token, data.data.user);
+      toast.success(`Welcome back, ${data.data.user.displayName || "User"}!`, { duration: 2000 });
+      
+      const userRole = data.data.user.role;
+      if (userRole === 'admin') {
+         setTimeout(() => navigate('/dashboard/admin', { replace: true }), 2000);
+      } else {
+         setTimeout(() => navigate(from, { replace: true }), 2000);
+      }
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed";
       toast.error(msg);
@@ -51,7 +59,7 @@ const Login = () => {
       });
 
       login(data.data.token, data.data.user);
-      toast.success("Google login successful!");
+      toast.success("Google login successful!", { duration: 1000 });
       setTimeout(() => navigate(from, { replace: true }), 1000);
     } catch (error) {
       console.error(error);
@@ -61,9 +69,15 @@ const Login = () => {
   };
 
   const handleDemoLogin = async () => {
-    setEmail("admin@example.com");
-    setPassword("123456");
-    toast.success("Credentials filled! Click Login.");
+    setEmail("demo1234@gmail.com");
+    setPassword("Nayem1234@");
+    toast.success("Credentials filled! Click Login.", { duration: 1000 });
+  };
+
+  const handleAdminFill = async () => {
+    setEmail("nayem20talukdar@gmail.com");
+    setPassword("Nayem1234@");
+    toast.success("Admin credentials filled! Click Login.", { duration: 1000 });
   };
 
   return (
@@ -109,20 +123,28 @@ const Login = () => {
             {loading ? "Signing in..." : "Sign In"}
           </button>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "1.5rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "1.5rem" }}>
              <button
                type="button"
                onClick={handleDemoLogin}
                className="btn btn-secondary"
-               style={{ fontSize: "0.85rem" }}
+               style={{ fontSize: "0.8rem", padding: "0.5rem" }}
              >
-               🪄 Demo User
+               🪄 Demo
+             </button>
+             <button
+               type="button"
+               onClick={handleAdminFill}
+               className="btn btn-secondary"
+               style={{ fontSize: "0.8rem", padding: "0.5rem" }}
+             >
+               🔑 Admin
              </button>
              <button
                type="button"
                onClick={handleGoogleLogin}
                className="btn btn-secondary"
-               style={{ fontSize: "0.85rem" }}
+               style={{ fontSize: "0.8rem", padding: "0.5rem" }}
              >
                🇬 Google
              </button>

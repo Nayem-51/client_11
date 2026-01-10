@@ -15,12 +15,18 @@ const LessonCard = ({ lesson }) => {
     : "Unknown Date";
   
   // Use a placeholder if no featured image is provided
-  const featuredImage = lesson.featuredImage || "https://placehold.co/600x400/e2e8f0/1e293b?text=Lesson";
+  // const featuredImage = lesson.featuredImage || "https://placehold.co/600x400/e2e8f0/1e293b?text=Lesson";
 
   return (
     <div className={`lesson-card ${isLocked ? "locked" : ""}`}>
       <div className="lesson-card-image">
-        <img src={featuredImage} alt={lesson.title} loading="lazy" />
+        {lesson.image ? (
+          <img src={lesson.image} alt={lesson.title} loading="lazy" />
+        ) : (
+          <div className="placeholder-image">
+            <span>Lesson</span>
+          </div>
+        )}
         {isLocked && (
           <div className="lock-overlay">
             <span className="lock-icon">🔒</span>

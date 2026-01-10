@@ -20,7 +20,7 @@ const MyLessons = () => {
     emotionalTone: "",
     isPublished: true,
     isPremium: false,
-    featuredImage: "",
+    image: "",
   });
   const [updating, setUpdating] = useState(false);
 
@@ -57,7 +57,7 @@ const MyLessons = () => {
       emotionalTone: lesson.emotionalTone || "",
       isPublished: lesson.isPublished !== undefined ? lesson.isPublished : true,
       isPremium: lesson.isPremium || false,
-      featuredImage: lesson.image || "",
+      image: lesson.image || "",
     });
     setEditModal(lesson._id);
   };
@@ -465,9 +465,9 @@ const MyLessons = () => {
                 <label>Featured Image URL (optional)</label>
                 <input
                   type="url"
-                  value={editForm.featuredImage}
+                  value={editForm.image}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, featuredImage: e.target.value })
+                    setEditForm({ ...editForm, image: e.target.value })
                   }
                   disabled={updating}
                   placeholder="https://example.com/image.jpg"

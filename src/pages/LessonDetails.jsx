@@ -320,9 +320,9 @@ const LessonDetails = () => {
             </div>
           </div>
         
-          {lesson.featuredImage && (
+          {lesson.image && (
             <div className="featured-image-wrap">
-              <img src={lesson.featuredImage} alt={lesson.title} />
+              <img src={lesson.image} alt={lesson.title} />
             </div>
           )}
         </header>

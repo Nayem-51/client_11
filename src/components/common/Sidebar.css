@@ -1,6 +1,6 @@
 .sidebar {
-  background: white;
-  border-right: 1px solid #e5e7eb;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-light);
   min-height: calc(100vh - 70px);
   width: 280px;
   padding: 20px;
@@ -48,7 +48,7 @@
 .user-profile {
   text-align: center;
   padding: 20px 0;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-light);
   margin-bottom: 20px;
 }
 
@@ -75,14 +75,14 @@
 
 .user-profile h3 {
   margin: 8px 0 4px 0;
-  color: #0f172a;
+  color: var(--text-main);
   font-size: 16px;
   font-weight: 600;
 }
 
 .user-profile p {
   margin: 0;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
@@ -94,7 +94,7 @@
 .sidebar-nav h4 {
   font-size: 12px;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
   font-weight: 700;
@@ -112,7 +112,7 @@
 .sidebar-nav a {
   display: block;
   padding: 10px 12px;
-  color: #475569;
+  color: var(--text-muted);
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.2s ease;
@@ -137,8 +137,8 @@
 .sidebar-footer {
   text-align: center;
   padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-  color: #9ca3af;
+  border-top: 1px solid var(--border-light);
+  color: var(--text-muted);
   font-size: 12px;
 }
 
