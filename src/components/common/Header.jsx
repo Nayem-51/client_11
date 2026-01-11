@@ -152,6 +152,7 @@ const Header = () => {
             Contact
           </NavLink>
 
+
           {isAuthenticated && (
             <>
               {user?.role === "admin" ? (
@@ -197,6 +198,26 @@ const Header = () => {
                 ))}
             </>
           )}
+
+          {/* Mobile Auth Buttons - Visible only on mobile inside the menu */}
+          {!isAuthenticated && (
+            <div className="auth-buttons-mobile">
+              <Link
+                to="/login"
+                className="btn btn-login"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="btn btn-signup"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
         </nav>
 
         <div className="header-right">
@@ -208,8 +229,10 @@ const Header = () => {
           >
             {theme === 'light' ? '🌙' : '☀️'}
           </button>
+          
+          {/* Desktop Auth Buttons - Visible only on desktop */}
           {!isAuthenticated ? (
-            <div className="auth-buttons">
+            <div className="auth-buttons-desktop">
               <Link
                 to="/login"
                 className="btn btn-login"

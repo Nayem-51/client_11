@@ -60,7 +60,7 @@ const Footer = () => {
             <h4 className="footer-title">Follow Us</h4>
             <div className="social-links">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/md.nayemislam.9693001"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link"
@@ -80,7 +80,7 @@ const Footer = () => {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/nayem-talukdar/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-link"
