@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { authAPI } from "../api/endpoints";
 import { useAuth } from "../hooks/useAuth";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 
@@ -29,9 +29,14 @@ const Login = () => {
       // authController returns: { success: true, data: { user, token } }
       // So 'data' here is the response body. We need data.data.user
       login(data.data.token, data.data.user);
-      toast.success(`Welcome back, ${data.data.user.displayName || "User"}!`, { duration: 2000 });
       
       const userRole = data.data.user.role;
+      const welcomeMessage = userRole === 'admin' 
+        ? "Welcome back, Admin!" 
+        : `Welcome back, ${data.data.user.displayName || "User"}!`;
+      
+      toast.success(welcomeMessage, { duration: 2000 });
+      
       if (userRole === 'admin') {
          setTimeout(() => navigate('/dashboard/admin', { replace: true }), 2000);
       } else {
@@ -82,7 +87,7 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <Toaster position="top-center" />
+
       <div className="form-container">
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
            <h2 style={{ marginBottom: "0.5rem" }}>Welcome Back</h2>
