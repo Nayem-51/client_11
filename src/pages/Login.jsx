@@ -59,8 +59,8 @@ const Login = () => {
       });
 
       login(data.data.token, data.data.user);
-      toast.success("Google login successful!", { duration: 1000 });
-      setTimeout(() => navigate(from, { replace: true }), 1000);
+      toast.success("Google login successful!", { duration: 2000 });
+      setTimeout(() => navigate(from, { replace: true }), 2000);
     } catch (error) {
       console.error(error);
       const msg = error.response?.data?.message || "Google sign-in failed";
