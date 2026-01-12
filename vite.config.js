@@ -10,7 +10,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://digitallifelessonsa11.web.app",
         changeOrigin: true,
       },
     },
