@@ -8,12 +8,7 @@ export default defineConfig({
       "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
     },
     port: 5173,
-    proxy: {
-      "/api": {
-        target: "http://localhost:5000",
-        changeOrigin: true,
-      },
-    },
+    port: 5173,
   },
   optimizeDeps: {
     exclude: ["@stripe/stripe-js"],
